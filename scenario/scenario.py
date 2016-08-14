@@ -4,7 +4,7 @@ TIMEOUT = 1
 ACTORS = list('RAIO')
 
 def parse_scenario_line(scenario_line):
-    parts = tuple(scenario_line.split(': '))
+    parts = tuple(scenario_line.split(': ', 1))
 
     assert len(parts) == 2, 'Each line should be in the format of <actor>: <quote>'
     assert parts[0] in ACTORS, '{} is not recognized actor (Only {})' \
