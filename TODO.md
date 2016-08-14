@@ -4,6 +4,7 @@
 - [ ] code documentation
 - [ ] support files (IO)
 - [ ] documentation (include snr files)
+- [ ] running one directory of snr files on given executable
 
 ### Less
 - [ ] examples
