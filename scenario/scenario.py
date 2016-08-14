@@ -60,17 +60,17 @@ def play_scenario(scenario, executable_path):
             elif actor == 'I':
                 p.sendline(quote)
 
-            feedback += 'ok <{}>\n'.format(quote)
+            feedback += 'ok {!r}\n'.format(quote)
 
     except pexpect.EOF:
         feedback += 'not ok TOO EARLY END OF EXECUTION\n'
-        feedback += '---at <{}>\n'.format(quote)
+        feedback += '---at {!r}\n'.format(quote)
         feedback += 'FAILED!\n'
 
     except pexpect.TIMEOUT:
         feedback += 'not ok MISMATCH\n'
-        feedback += '---should be <{}>\n'.format(quote)
-        feedback += '---but got   <{}>\n'.format(repr(p.before.strip('\r\n')))
+        feedback += '---should be {!r}\n'.format(quote)
+        feedback += '---but got   {!r}\n'.format(p.before.strip('\r\n'))
         feedback += 'FAILED!\n'
 
     else:
@@ -79,7 +79,7 @@ def play_scenario(scenario, executable_path):
 
         except pexpect.TIMEOUT:
             feedback += 'not ok EXPECTED END OF EXECUTION\n'
-            feedback += '---at <{}>\n'.format(quote)
+            feedback += '---at {!r}\n'.format(quote)
             feedback += 'FAILED!\n'
 
         else:
