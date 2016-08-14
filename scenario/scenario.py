@@ -12,7 +12,6 @@ def parse_scenario_line(scenario_line):
 
     return parts
 
-
 def parse_scenario_file(scenario_path):
     with open(scenario_path, 'r') as f:
         lines = f.read().splitlines()
@@ -41,32 +40,51 @@ def parse_scenario_file(scenario_path):
 
     return {'args': args, 'dialog': dialog}
 
-
 def play_scenario(scenario, executable_path):
+
+    feedback = ''
+
+    feedback += 'executing {}...\n'.format(executable_path)
+
     executable_path_with_args = executable_path + ' '+ scenario['args']
     p = pexpect.spawn(executable_path_with_args, timeout=TIMEOUT)
 
     try:
-        for index, (actor, qoute) in enumerate(scenario['dialog']):
+        for index, (actor, quote) in enumerate(scenario['dialog']):
             if actor == 'O':
-                match_index = p.expect_exact(qoute)
-                print p.match
+                p.expect_exact(quote)
 
             elif actor == 'I':
-                p.sendline(qoute)
+                p.sendline(quote)
 
-
-        p.expect(pexpect.EOF)
+            feedback += 'ok <{}>\n'.format(quote)
 
     except pexpect.EOF:
-        print 'EOF'
+        feedback += 'not ok <{}>\n'.format(quote)
+        feedback += '---execuation finished before expected\n'
+        feedback += 'FAILED!\n'
 
     except pexpect.TIMEOUT:
-        print 'TIMEOUT'
+        feedback += 'not ok <{}>\n'.format(quote)
+        feedback += '---got <{}>\n'.format(p.before.strip('\r\n'))
+        feedback += 'FAILD!\n'
 
-    p.close()
-    print p.exitstatus
+    else:
+        try:
+            p.expect(pexpect.EOF)
+
+        except pexpect.TIMEOUT:
+            feedback += 'not ok <expected end of execution>\n'
+            feedback += 'FAILED!\n'
+
+        else:
+            feedback += 'exit code {}\n'.format(p.exitstatus)
+            feedback += 'SUCCEED!\n'
+
+    return feedback
 
 def run_scenario(executable_path, scenario_path):
     scenario = parse_scenario_file(scenario_path)
     feedback = play_scenario(scenario, executable_path)
+
+    print feedback
