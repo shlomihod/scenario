@@ -60,21 +60,23 @@ def play_scenario(scenario, executable_path):
             feedback += 'ok <{}>\n'.format(quote)
 
     except pexpect.EOF:
-        feedback += 'not ok <{}>\n'.format(quote)
-        feedback += '---execuation finished before expected\n'
+        feedback += 'not ok TOO EARLY END OF EXECUTION\n'
+        feedback += '---at <{}>\n'.format(quote)
         feedback += 'FAILED!\n'
 
     except pexpect.TIMEOUT:
-        feedback += 'not ok <{}>\n'.format(quote)
-        feedback += '---got <{}>\n'.format(p.before.strip('\r\n'))
-        feedback += 'FAILD!\n'
+        feedback += 'not ok MISMACH\n'
+        feedback += '---should be <{}>\n'.format(quote)
+        feedback += '---but got   <{}>\n'.format(repr(p.before.strip('\r\n')))
+        feedback += 'FAILED!\n'
 
     else:
         try:
             p.expect(pexpect.EOF)
 
         except pexpect.TIMEOUT:
-            feedback += 'not ok <expected end of execution>\n'
+            feedback += 'not ok EXPECTED END OF EXECUTION\n'
+            feedback += '---at <{}>\n'.format(quote)
             feedback += 'FAILED!\n'
 
         else:
