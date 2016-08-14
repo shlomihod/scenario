@@ -42,6 +42,7 @@ def parse_scenario_file(scenario_path):
 
 def play_scenario(scenario, executable_path):
 
+    result = None
     feedback = ''
 
     executable_path_with_args = executable_path + ' '+ scenario['args']
@@ -66,12 +67,14 @@ def play_scenario(scenario, executable_path):
         feedback += 'not ok TOO EARLY END OF EXECUTION\n'
         feedback += '---at {!r}\n'.format(quote)
         feedback += 'FAILED!\n'
+        result = False
 
     except pexpect.TIMEOUT:
         feedback += 'not ok MISMATCH\n'
         feedback += '---should be {!r}\n'.format(quote)
         feedback += '---but got   {!r}\n'.format(p.before.strip('\r\n'))
         feedback += 'FAILED!\n'
+        result = False
 
     else:
         try:
@@ -87,15 +90,17 @@ def play_scenario(scenario, executable_path):
                 feedback += '---print after {!r}\n'\
                             .format(p.before.strip('\r\n'))
             feedback += 'FAILED!\n'
+            result = False
 
         else:
             feedback += 'exit code {}\n'.format(p.exitstatus)
             feedback += 'SUCCEED!\n'
+            result = True
 
-    return feedback
+    return result, feedback
 
 def run_scenario(executable_path, scenario_path):
     scenario = parse_scenario_file(scenario_path)
-    feedback = play_scenario(scenario, executable_path)
+    result, feedback = play_scenario(scenario, executable_path)
 
-    print feedback
+    return result, feedback
