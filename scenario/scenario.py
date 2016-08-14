@@ -47,7 +47,7 @@ def play_scenario(scenario, executable_path):
     feedback += 'executing {}...\n'.format(executable_path)
 
     executable_path_with_args = executable_path + ' '+ scenario['args']
-    p = pexpect.spawn(executable_path_with_args, timeout=TIMEOUT)
+    p = pexpect.spawn(executable_path_with_args, timeout=TIMEOUT, echo=False)
 
     try:
         for index, (actor, quote) in enumerate(scenario['dialog']):
