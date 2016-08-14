@@ -85,9 +85,15 @@ def play_scenario(scenario, executable_path):
         try:
             p.expect(pexpect.EOF)
 
+            if p.before.strip('\r\n'):
+                raise  pexpect.TIMEOUT(TIMEOUT)
+
         except pexpect.TIMEOUT:
             feedback += 'not ok EXPECTED END OF EXECUTION\n'
-            feedback += '---at {!r}\n'.format(quote)
+
+            if p.before.strip('\r\n'):
+                feedback += '---print after {!r}\n'\
+                            .format(p.before.strip('\r\n'))
             feedback += 'FAILED!\n'
             result = False
 
