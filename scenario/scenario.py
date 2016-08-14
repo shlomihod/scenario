@@ -44,9 +44,10 @@ def play_scenario(scenario, executable_path):
 
     feedback = ''
 
-    feedback += 'executing {}...\n'.format(executable_path)
-
     executable_path_with_args = executable_path + ' '+ scenario['args']
+
+    feedback += 'executing {}\n'.format(executable_path_with_args)
+    
     p = pexpect.spawn(executable_path_with_args, timeout=TIMEOUT, echo=False)
 
     try:
