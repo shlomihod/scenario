@@ -53,6 +53,8 @@ def play_scenario(scenario, executable_path):
         for index, (actor, quote) in enumerate(scenario['dialog']):
             if actor == 'O':
                 p.expect_exact(quote)
+                if p.before.strip('\r\n') != '':
+                    raise pexpect.TIMEOUT(TIMEOUT)
 
             elif actor == 'I':
                 p.sendline(quote)
