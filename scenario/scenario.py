@@ -65,7 +65,7 @@ def play_scenario(scenario, executable_path):
         feedback += 'FAILED!\n'
 
     except pexpect.TIMEOUT:
-        feedback += 'not ok MISMACH\n'
+        feedback += 'not ok MISMATCH\n'
         feedback += '---should be <{}>\n'.format(quote)
         feedback += '---but got   <{}>\n'.format(repr(p.before.strip('\r\n')))
         feedback += 'FAILED!\n'
