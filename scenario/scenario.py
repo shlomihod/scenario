@@ -19,6 +19,8 @@ def parse_scenario_file(scenario_path):
     args = ''
     dialog = []
 
+    assert len(lines) != 0, 'Scenario file cannot be empty'
+
     try:
         for i, line in enumerate(lines):
             
