@@ -1,7 +1,7 @@
 import pexpect
 
 TIMEOUT = 1
-ACTORS = list('RAIO')
+ACTORS = list('NRAIO')
 
 def parse_scenario_line(scenario_line):
     parts = tuple(scenario_line.split(': ', 1))
@@ -16,13 +16,19 @@ def parse_scenario_file(scenario_path):
     with open(scenario_path, 'r') as f:
         lines = f.read().splitlines()
 
+    name = ''
     args = ''
     dialog = []
 
     assert len(lines) != 0, 'Scenario file cannot be empty'
 
+    parsed_line = parse_scenario_line(lines[0])
+    assert parsed_line[0] == 'N', 'Frist line sholud be Name'
+    assert parsed_line[1].strip() != '', 'Cannot be empty name'
+    name = parsed_line[1].strip()
+
     try:
-        for i, line in enumerate(lines):
+        for i, line in enumerate(lines[1:]):
             
                 parsed_line = parse_scenario_line(line)
 
@@ -30,7 +36,7 @@ def parse_scenario_file(scenario_path):
                     continue
                 
                 elif parsed_line[0] == 'A':
-                    assert args == '', "Cannot be more than one A actor"
+                    assert args == '', 'Cannot be more than one A actor'
                     args = parsed_line[1]
                 
                 else:
@@ -40,7 +46,7 @@ def parse_scenario_file(scenario_path):
         raise RuntimeError('Error in scenario file at line {}: {}' \
                             .format(i, e))
 
-    return {'args': args, 'dialog': dialog}
+    return {'name': name, 'args': args, 'dialog': dialog}
 
 def play_scenario(scenario, executable_path):
 
@@ -49,7 +55,7 @@ def play_scenario(scenario, executable_path):
 
     executable_path_with_args = executable_path + ' '+ scenario['args']
 
-    feedback += 'executing {}\n'.format(executable_path_with_args)
+    feedback += 'executing {}\n'.format(scenario['name'])
     
     p = pexpect.spawn(executable_path_with_args, timeout=TIMEOUT, echo=False)
 
