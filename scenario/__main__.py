@@ -3,23 +3,27 @@ import argparse
 
 from scenario import run_scenario
 
-verbose = False
+def main():
 
-def main(args=None):
+    parser = argparse.ArgumentParser(description='Checking IO scenario on execution.')
+    parser.add_argument('executable_path', type=str,
+                        help='executable to be checked')
 
-    if args is None:
-        args = sys.argv[1:]
-    
-    assert len(args) == 2, 'Usage: scenario <executable> <scenario>'
+    parser.add_argument('scenario_path', type=str,
+                        help='scenario file with IO dialog')
 
-    executable_path = args[0]
-    scenario_path = args[1]
+    parser.add_argument('-v', '--verbose', help='increase output verbosity',
+                        action='store_true')
+
+    args = parser.parse_args()
 
     try:
-        result, feedback = run_scenario(executable_path, scenario_path, verbose)
+        result, feedback = run_scenario(args.executable_path,
+                                        args.scenario_path,
+                                        args.verbose)
     
     except Exception, e:
-        if verbose:
+        if args.verbose:
             raise e
         else:
             print 'ERROR: {!s}'.format(e)
