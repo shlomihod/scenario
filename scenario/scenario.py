@@ -48,14 +48,17 @@ def parse_scenario_file(scenario_path):
 
     return {'name': name, 'args': args, 'dialog': dialog}
 
-def play_scenario(scenario, executable_path):
+def play_scenario(scenario, executable_path, verbose=False):
 
     result = None
+
     feedback = ''
+    feedback_header = ''
+    feedback_comments = []
+    feedback_runlog = []
+    
 
     executable_path_with_args = executable_path + ' '+ scenario['args']
-
-    feedback += 'executing {}\n'.format(scenario['name'])
     
     p = pexpect.spawn(executable_path_with_args, timeout=TIMEOUT, echo=False)
 
@@ -74,19 +77,19 @@ def play_scenario(scenario, executable_path):
 
                 p.sendline(quote)
 
-            feedback += 'ok {!r}\n'.format(quote)
+            feedback_runlog.append('<OK> {!r}'.format(quote))
 
     except pexpect.EOF:
-        feedback += 'not ok TOO EARLY END OF EXECUTION\n'
-        feedback += '---at {!r}\n'.format(quote)
-        feedback += 'FAILED!\n'
+        feedback_comments.append('the program finised too early')
+        feedback_comments.append('at line:')
+        feedback_comments.append('{!r}'.format(quote))
         result = False
 
     except pexpect.TIMEOUT:
-        feedback += 'not ok MISMATCH\n'
-        feedback += '---should be {!r}\n'.format(quote)
-        feedback += '---but got   {!r}\n'.format(p.before.strip('\r\n'))
-        feedback += 'FAILED!\n'
+        feedback_comments.append('the program should have had this output:')
+        feedback_comments.append('{!r}'.format(quote))
+        feedback_comments.append('but the program output was:')
+        feedback_comments.append('{!r}'.format(p.before.strip('\r\n')))
         result = False
 
     else:
@@ -97,23 +100,34 @@ def play_scenario(scenario, executable_path):
                 raise pexpect.TIMEOUT(TIMEOUT)
 
         except pexpect.TIMEOUT:
-            feedback += 'not ok EXPECTED END OF EXECUTION\n'
-
+            feedback_comments.append('the program should have finished')
             if p.before.strip('\r\n'):
-                feedback += '---print after {!r}\n'\
-                            .format(p.before.strip('\r\n'))
-            feedback += 'FAILED!\n'
+                feedback_comments.append('but the program output was:')
+                feedback_comments.append('{!r}'.format(p.before.strip('\r\n')))
             result = False
 
         else:
-            feedback += 'exit code {}\n'.format(p.exitstatus)
-            feedback += 'SUCCEED!\n'
+            feedback_runlog.append('<EXIT CODE> {}'.format(p.exitstatus))
             result = True
 
+    feedback_header += scenario['name'] + ' :: '
+    if result:
+        feedback_header += 'SUCCESS'
+    else:
+        feedback_header += 'FAILED'
+
+    feedback += feedback_header + '\n'
+
+    feedback += '\n'.join(['\t' + line for line in feedback_comments])
+    
+    if verbose:
+        feedback += '\n'.join(['VERBOSE ' + line for line in feedback_runlog])
+    
     return result, feedback
 
-def run_scenario(executable_path, scenario_path):
+def run_scenario(executable_path, scenario_path, verbose=False):
+
     scenario = parse_scenario_file(scenario_path)
-    result, feedback = play_scenario(scenario, executable_path)
+    result, feedback = play_scenario(scenario, executable_path, verbose)
 
     return result, feedback

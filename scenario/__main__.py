@@ -1,6 +1,9 @@
 import sys
+import argparse
 
 from scenario import run_scenario
+
+verbose = False
 
 def main(args=None):
 
@@ -12,7 +15,15 @@ def main(args=None):
     executable_path = args[0]
     scenario_path = args[1]
 
-    result, feedback = run_scenario(executable_path, scenario_path)
+    try:
+        result, feedback = run_scenario(executable_path, scenario_path, verbose)
+    
+    except Exception, e:
+        if verbose:
+            raise e
+        else:
+            print 'ERROR: {!s}'.format(e)
+            sys.exit(2)
 
     print feedback
 
