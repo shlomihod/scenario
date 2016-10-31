@@ -5,12 +5,12 @@ from scenario import run_scenario
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Checking IO scenario on execution.')
+    parser = argparse.ArgumentParser(description='Checking an IO scenario on execution.')
     parser.add_argument('executable_path', type=str,
                         help='executable to be checked')
 
     parser.add_argument('scenario_path', type=str,
-                        help='scenario file with IO dialog')
+                        help='scenario file with an IO dialog')
 
     parser.add_argument('-v', '--verbose', help='increase output verbosity',
                         action='store_true')
