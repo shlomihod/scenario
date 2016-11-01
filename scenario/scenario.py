@@ -1,7 +1,7 @@
 import pexpect
 
-TIMEOUT = 1
-ACTORS = list('NRAIO')
+from _consts import ACTORS, VERBOSITY, TIMEOUT
+
 
 def parse_scenario_line(scenario_line):
     parts = tuple(scenario_line.split(': ', 1))
@@ -48,15 +48,11 @@ def parse_scenario_file(scenario_path):
 
     return {'name': name, 'args': args, 'dialog': dialog}
 
-def play_scenario(scenario, executable_path, verbose=False):
+def play_scenario(scenario, executable_path, verbosity=1):
 
     result = None
 
-    feedback = ''
-    feedback_header = ''
-    feedback_comments = []
-    feedback_runlog = []
-    
+    feedback = []
 
     executable_path_with_args = executable_path + ' '+ scenario['args']
     
@@ -64,7 +60,6 @@ def play_scenario(scenario, executable_path, verbose=False):
 
     try:
         for index, (actor, quote) in enumerate(scenario['dialog']):
-            
             if actor == 'O':
                 p.expect_exact(quote)
 
@@ -77,19 +72,21 @@ def play_scenario(scenario, executable_path, verbose=False):
 
                 p.sendline(quote)
 
-            feedback_runlog.append('<OK> {!r}'.format(quote))
+            if verbosity >=3:
+                feedback.append('[{:02d}] {!r}'.format(index+1, quote))
 
     except pexpect.EOF:
-        feedback_comments.append('the program finised too early')
-        feedback_comments.append('at line:')
-        feedback_comments.append('{!r}'.format(quote))
+        if verbosity >= 2:
+            feedback.append('----> the program finised too early')
+
         result = False
 
     except pexpect.TIMEOUT:
-        feedback_comments.append('the program should have had this output:')
-        feedback_comments.append('{!r}'.format(quote))
-        feedback_comments.append('but the program output was:')
-        feedback_comments.append('{!r}'.format(p.before.strip('\r\n')))
+        if verbosity >= 2:
+            feedback.append('[{:02d}] {!r}'.format(index+1, p.before.strip('\r\n').split('\r\n')[0]))
+            feedback.append('----> the program should have had this output:')
+            feedback.append('----> {!r}'.format(quote))
+        
         result = False
 
     else:
@@ -100,34 +97,38 @@ def play_scenario(scenario, executable_path, verbose=False):
                 raise pexpect.TIMEOUT(TIMEOUT)
 
         except pexpect.TIMEOUT:
-            feedback_comments.append('the program should have finished')
-            if p.before.strip('\r\n'):
-                feedback_comments.append('but the program output was:')
-                feedback_comments.append('{!r}'.format(p.before.strip('\r\n')))
+            if verbosity >= 2:
+                if p.before.strip('\r\n'):
+                    feedback.append('[{:02d}] {!r}'.format(index+1, p.before.strip('\r\n').split('\r\n')[0]))
+                feedback.append('----> the program should have finished')
+                if p.before.strip('\r\n'):
+                    feedback.append('----> insted the last line')
+                     
+            
             result = False
 
         else:
-            feedback_runlog.append('<EXIT CODE> {}'.format(p.exitstatus))
+            if verbosity >= 4:
+                feedback.append('EXIT CODE {}'.format(p.exitstatus))
+            
             result = True
 
-    feedback_header += scenario['name'] + ' :: '
-    if result:
-        feedback_header += 'SUCCESS'
-    else:
-        feedback_header += 'FAILED'
+    if verbosity >= 1:
+        feedback_header = scenario['name'] + ' :: '
+        if result:
+            feedback_header += 'SUCCESS'
+        else:
+            feedback_header += 'FAILED'
 
-    feedback += feedback_header + '\n'
+        feedback.insert(0, feedback_header)
 
-    feedback += '\n'.join(['\t' + line for line in feedback_comments])
-    
-    if verbose:
-        feedback += '\n'.join(['VERBOSE ' + line for line in feedback_runlog])
-    
+    feedback = '\n'.join([line for line in feedback])
+
     return result, feedback
 
-def run_scenario(executable_path, scenario_path, verbose=False):
+def run_scenario(executable_path, scenario_path, verbosity=1):
 
     scenario = parse_scenario_file(scenario_path)
-    result, feedback = play_scenario(scenario, executable_path, verbose)
+    result, feedback = play_scenario(scenario, executable_path, verbosity)
 
     return result, feedback
