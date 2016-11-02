@@ -1,5 +1,6 @@
 import sys
 import argparse
+import traceback
 
 from scenario import run_scenario
 
@@ -30,10 +31,10 @@ def main():
     
     except Exception, e:
         if args.v >= VERBOSITY['DEBUG']:
-            raise e
+            traceback.print_exc()
         else:
             print 'ERROR: {!s}'.format(e)
-            sys.exit(2)
+        sys.exit(2)
 
     print feedback
     
