@@ -91,7 +91,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     except pexpect.TIMEOUT:
         if verbosity >= VERBOSITY['ERROR']:
             feedback.append('[{:02d}] {!r}'.format(index+1, p.before.strip('\r\n').split('\r\n')[0]))
-            feedback.append('----> the program should have had this output insted:')
+            feedback.append('----> the program should have had this output instead:')
             feedback.append('----> {!r}'.format(quote))
         
         result = False
@@ -109,7 +109,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     feedback.append('[{:02d}] {!r}'.format(index+2, p.before.strip('\r\n').split('\r\n')[0]))
                 feedback.append('----> the program should have finished')
                 if p.before.strip('\r\n'):
-                    feedback.append('----> insted the last line')
+                    feedback.append('----> instead the last line')
                      
             
             result = False
