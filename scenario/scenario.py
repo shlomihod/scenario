@@ -17,6 +17,7 @@ def parse_scenario_file(scenario_path):
 
     name = ''
     args = ''
+    verbosity = None
     dialog = []
 
     assert len(lines) != 0, 'Scenario file cannot be empty'
@@ -38,6 +39,11 @@ def parse_scenario_file(scenario_path):
                     assert args == '', 'Cannot be more than one A actor'
                     args = parsed_line[1]
                 
+                elif parsed_line[0] == 'V':
+                    assert verbosity is None, 'Cannot be more than one V actor'
+                    assert parsed_line[1] in VERBOSITY.keys(), 'V actor must be only one of {!s}'.format(VERBOSITY.keys())
+                    verbosity = parsed_line[1]
+
                 else:
                     dialog.append(parsed_line)
 
@@ -45,7 +51,7 @@ def parse_scenario_file(scenario_path):
         raise RuntimeError('Error in scenario file at line {}: {}' \
                             .format(i, e))
 
-    return {'name': name, 'args': args, 'dialog': dialog}
+    return {'name': name, 'args': args, 'dialog': dialog, 'verbosity': verbosity}
 
 def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeout=TIMEOUT_DEFAULT):
 
@@ -133,9 +139,16 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
     return result, feedback
 
-def run_scenario(executable_path, scenario_path, verbosity=VERBOSITY_DEFAULT, timeout=TIMEOUT_DEFAULT):
+def run_scenario(executable_path, scenario_path, verbosity=None, timeout=TIMEOUT_DEFAULT):
 
     scenario = parse_scenario_file(scenario_path)
+
+    if verbosity is None:
+        if scenario['verbosity'] is not None:
+            verbosity = VERBOSITY[scenario['verbosity']]
+        else:
+            verbosity = VERBOSITY_DEFAULT
+
     result, feedback = play_scenario(scenario, executable_path, verbosity, timeout)
 
     return result, feedback

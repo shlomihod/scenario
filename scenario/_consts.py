@@ -1,4 +1,4 @@
-ACTORS = list('NRAIO')
+ACTORS = list('NRAIOV')
 
 VERBOSITY = {
     'RETURN_CODE' : 0,

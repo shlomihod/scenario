@@ -15,7 +15,7 @@ def main():
     parser.add_argument('scenario_path', type=str,
                         help='scenario file with an IO dialog')
 
-    parser.add_argument('-v', type=int, default=VERBOSITY_DEFAULT, 
+    parser.add_argument('-v', type=int, 
                         help='set output verbosity')
 
     parser.add_argument('-t', type=int, default=TIMEOUT_DEFAULT, 
