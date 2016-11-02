@@ -2,7 +2,6 @@ import pexpect
 
 from _consts import ACTORS, VERBOSITY, VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
 
-
 def parse_scenario_line(scenario_line):
     parts = tuple(scenario_line.split(': ', 1))
 
@@ -66,14 +65,8 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
                 except pexpect.EOF:
                     if p.before.strip('\r\n'):
-                        result = False
-                        
-                        if verbosity >= VERBOSITY['ERROR']:
-                            feedback.append('[{:02d}] {!r}'.format(index+1, p.before.strip('\r\n').split('\r\n')[0]))
-                            feedback.append('----> the program should have had this output insted:')
-                            feedback.append('----> {!r}'.format(quote))
+                        raise pexpect.TIMEOUT('')
 
-                            break
                     else:
                         raise pexpect.EOF('')
 
