@@ -61,14 +61,28 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     try:
         for index, (actor, quote) in enumerate(scenario['dialog']):
             if actor == 'O':
-                p.expect_exact(quote)
+                try:
+                    p.expect_exact(quote)
+
+                except pexpect.EOF:
+                    if p.before.strip('\r\n'):
+                        result = False
+                        
+                        if verbosity >= VERBOSITY['ERROR']:
+                            feedback.append('[{:02d}] {!r}'.format(index+1, p.before.strip('\r\n').split('\r\n')[0]))
+                            feedback.append('----> the program should have had this output insted:')
+                            feedback.append('----> {!r}'.format(quote))
+
+                            break
+                    else:
+                        raise pexpect.EOF('')
 
                 if p.before.strip('\r\n') != '':
                     raise pexpect.TIMEOUT(TIMEOUT)
 
             elif actor == 'I':
                 if not p.isalive():
-                    raise pexpect.EOF(TIMEOUT)
+                    raise pexpect.EOF('')
 
                 p.sendline(quote)
 
@@ -84,7 +98,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     except pexpect.TIMEOUT:
         if verbosity >= VERBOSITY['ERROR']:
             feedback.append('[{:02d}] {!r}'.format(index+1, p.before.strip('\r\n').split('\r\n')[0]))
-            feedback.append('----> the program should have had this output:')
+            feedback.append('----> the program should have had this output insted:')
             feedback.append('----> {!r}'.format(quote))
         
         result = False
@@ -99,7 +113,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         except pexpect.TIMEOUT:
             if verbosity >= VERBOSITY['ERROR']:
                 if p.before.strip('\r\n'):
-                    feedback.append('[{:02d}] {!r}'.format(index+1, p.before.strip('\r\n').split('\r\n')[0]))
+                    feedback.append('[{:02d}] {!r}'.format(index+2, p.before.strip('\r\n').split('\r\n')[0]))
                 feedback.append('----> the program should have finished')
                 if p.before.strip('\r\n'):
                     feedback.append('----> insted the last line')
