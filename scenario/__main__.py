@@ -3,7 +3,7 @@ import argparse
 
 from scenario import run_scenario
 
-from _consts import VERBOSITY
+from _consts import VERBOSITY, VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
 
 def main():
 
@@ -14,22 +14,26 @@ def main():
     parser.add_argument('scenario_path', type=str,
                         help='scenario file with an IO dialog')
 
-    parser.add_argument('-v', type=int, default=1, 
+    parser.add_argument('-v', type=int, default=VERBOSITY_DEFAULT, 
                         help='set output verbosity')
+
+    parser.add_argument('-t', type=int, default=TIMEOUT_DEFAULT, 
+                        help='set execution timeout in seconds')
 
     args = parser.parse_args()
 
-    #try:
-    result, feedback = run_scenario(args.executable_path,
+    try:
+        result, feedback = run_scenario(args.executable_path,
                                         args.scenario_path,
-                                        args.v)
+                                        args.v,
+                                        args.t)
     
-  #  except Exception, e:
-   #     if args.v >= 4:
-    #        raise e
-    #    else:
-     #       print 'ERROR: {!s}'.format(e)
-      #      sys.exit(2)
+    except Exception, e:
+        if args.v >= VERBOSITY['DEBUG']:
+            raise e
+        else:
+            print 'ERROR: {!s}'.format(e)
+            sys.exit(2)
 
     print feedback
     

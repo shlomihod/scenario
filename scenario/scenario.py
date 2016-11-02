@@ -1,6 +1,6 @@
 import pexpect
 
-from _consts import ACTORS, VERBOSITY, TIMEOUT
+from _consts import ACTORS, VERBOSITY, VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
 
 
 def parse_scenario_line(scenario_line):
@@ -48,7 +48,7 @@ def parse_scenario_file(scenario_path):
 
     return {'name': name, 'args': args, 'dialog': dialog}
 
-def play_scenario(scenario, executable_path, verbosity=1):
+def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeout=TIMEOUT_DEFAULT):
 
     result = None
 
@@ -56,7 +56,7 @@ def play_scenario(scenario, executable_path, verbosity=1):
 
     executable_path_with_args = executable_path + ' '+ scenario['args']
     
-    p = pexpect.spawn(executable_path_with_args, timeout=TIMEOUT, echo=False)
+    p = pexpect.spawn(executable_path_with_args, timeout=timeout, echo=False)
 
     try:
         for index, (actor, quote) in enumerate(scenario['dialog']):
@@ -76,13 +76,13 @@ def play_scenario(scenario, executable_path, verbosity=1):
                 feedback.append('[{:02d}] {!r}'.format(index+1, quote))
 
     except pexpect.EOF:
-        if verbosity >= 2:
+        if verbosity >= VERBOSITY['ERROR']:
             feedback.append('----> the program finised too early')
 
         result = False
 
     except pexpect.TIMEOUT:
-        if verbosity >= 2:
+        if verbosity >= VERBOSITY['ERROR']:
             feedback.append('[{:02d}] {!r}'.format(index+1, p.before.strip('\r\n').split('\r\n')[0]))
             feedback.append('----> the program should have had this output:')
             feedback.append('----> {!r}'.format(quote))
@@ -94,10 +94,10 @@ def play_scenario(scenario, executable_path, verbosity=1):
             p.expect(pexpect.EOF)
 
             if p.before.strip('\r\n'):
-                raise pexpect.TIMEOUT(TIMEOUT)
+                raise pexpect.TIMEOUT(timeout)
 
         except pexpect.TIMEOUT:
-            if verbosity >= 2:
+            if verbosity >= VERBOSITY['ERROR']:
                 if p.before.strip('\r\n'):
                     feedback.append('[{:02d}] {!r}'.format(index+1, p.before.strip('\r\n').split('\r\n')[0]))
                 feedback.append('----> the program should have finished')
@@ -108,12 +108,12 @@ def play_scenario(scenario, executable_path, verbosity=1):
             result = False
 
         else:
-            if verbosity >= 4:
+            if verbosity >= VERBOSITY['DEBUG']:
                 feedback.append('EXIT CODE {}'.format(p.exitstatus))
             
             result = True
 
-    if verbosity >= 1:
+    if verbosity >= VERBOSITY['RESULT']:
         feedback_header = scenario['name'] + ' :: '
         if result:
             feedback_header += 'SUCCESS'
@@ -126,9 +126,9 @@ def play_scenario(scenario, executable_path, verbosity=1):
 
     return result, feedback
 
-def run_scenario(executable_path, scenario_path, verbosity=1):
+def run_scenario(executable_path, scenario_path, verbosity=VERBOSITY_DEFAULT, timeout=TIMEOUT_DEFAULT):
 
     scenario = parse_scenario_file(scenario_path)
-    result, feedback = play_scenario(scenario, executable_path, verbosity)
+    result, feedback = play_scenario(scenario, executable_path, verbosity, timeout)
 
     return result, feedback
