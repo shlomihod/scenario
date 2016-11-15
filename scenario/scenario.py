@@ -41,8 +41,14 @@ def parse_scenario_file(scenario_path):
                 
                 elif parsed_line[0] == 'V':
                     assert verbosity is None, 'Cannot be more than one V actor'
-                    assert parsed_line[1] in VERBOSITY.keys(), 'V actor must be only one of {!s}'.format(VERBOSITY.keys())
-                    verbosity = parsed_line[1]
+                    if parsed_line[1] in VERBOSITY.keys():
+                        verbosity = parsed_line[1]
+                    elif parsed_line[1] in map(str, VERBOSITY.values()):
+                        verbosity = VERBOSITY.keys()[
+                                        map(str, VERBOSITY.values()).index(parsed_line[1])
+                                    ]
+                    else:
+                        raise AssertionError('V actor must be only one of {!s} or one of {!s}'.format(VERBOSITY.keys(), VERBOSITY.values()))
 
                 else:
                     dialog.append(parsed_line)
