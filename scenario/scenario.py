@@ -83,7 +83,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         raise pexpect.EOF('')
 
                 if p.before.strip('\r\n') != '':
-                    raise pexpect.TIMEOUT(TIMEOUT)
+                    raise pexpect.TIMEOUT('')
 
             elif actor == 'I':
                 if not p.isalive():
@@ -113,7 +113,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
             p.expect(pexpect.EOF)
 
             if p.before.strip('\r\n'):
-                raise pexpect.TIMEOUT(timeout)
+                raise pexpect.TIMEOUT('')
 
         except pexpect.TIMEOUT:
             if verbosity >= VERBOSITY['ERROR']:
