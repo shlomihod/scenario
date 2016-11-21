@@ -55,7 +55,7 @@ def parse_scenario_file(scenario_path):
 
     except AssertionError as e:
         raise RuntimeError('Error in scenario file at line {}: {}' \
-                            .format(i, e))
+                            .format(i+2, e))
 
     return {'name': name, 'args': args, 'dialog': dialog, 'verbosity': verbosity}
 
