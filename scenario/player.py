@@ -64,14 +64,14 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
                     p.sendline(quote)
                 
-                if verbosity >=3:
+                if verbosity >= VERBOSITY['EXECUTION']:
                     feedback.append('[{:02d}] {!r}'.format(n_line, quote))
 
             elif actor == 'F':
                 is_msg = play_file_quote(quote)
 
                 if is_msg:
-                    if verbosity >= 3:
+                    if verbosity >= VERBOSITY['EXECUTION']:
                         feedback.append('[**] Content of file {!r} is correct'.format(quote[1]))
 
     except pexpect.EOF:
