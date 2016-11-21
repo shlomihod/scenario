@@ -1,6 +1,8 @@
 from collections import OrderedDict
 
-ACTORS = list('NRAIOV')
+ACTORS = list('NRAIOVF')
+
+FILE_COMMANDS = ['copy', 'compare']
 
 VERBOSITY = OrderedDict(
             [ ('RETURN_CODE', 0),
