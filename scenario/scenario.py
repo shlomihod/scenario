@@ -48,7 +48,8 @@ def parse_scenario_file(scenario_path):
                                         map(str, VERBOSITY.values()).index(parsed_line[1])
                                     ]
                     else:
-                        raise AssertionError('V actor must be only one of {!s} or one of {!s}'.format(VERBOSITY.keys(), VERBOSITY.values()))
+                        raise AssertionError('V actor is {!r} but it must be only one of {!s} or one of {!s}'.
+                                            format(parsed_line[1], VERBOSITY.keys(), VERBOSITY.values()))
 
                 else:
                     dialog.append(parsed_line)
