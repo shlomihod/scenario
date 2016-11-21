@@ -29,7 +29,7 @@ def parse_scenario_file(scenario_path):
 
     try:
         for i, line in enumerate(lines[1:]):
-            
+            if line:
                 parsed_line = parse_scenario_line(line)
 
                 if parsed_line[0] == 'R':
