@@ -37,9 +37,11 @@ def parse_scenario_file(scenario_path, executable_path):
     with open(scenario_path, 'r') as f:
         lines = f.read().splitlines()
 
-    name = ''
-    args = ''
+    name = None
+    args = None
     verbosity = None
+
+    pre_dialog = []
     dialog = []
 
     assert len(lines) != 0, 'Scenario file cannot be empty'
@@ -58,7 +60,8 @@ def parse_scenario_file(scenario_path, executable_path):
                     continue
                 
                 elif parsed_line[0] == 'A':
-                    assert args == '', 'Cannot be more than one A actor'
+                    assert args is None, 'Cannot be more than one A actor'
+                    assert dialog == [], 'Cannot be I or O actors before A actor'
                     args = parsed_line[1]
                 
                 elif parsed_line[0] == 'V':
@@ -72,8 +75,13 @@ def parse_scenario_file(scenario_path, executable_path):
                     else:
                         raise AssertionError('V actor is {!r} but it must be only one of {!s} or one of {!s}'.
                                             format(parsed_line[1], VERBOSITY.keys(), VERBOSITY.values())) 
+
                 elif parsed_line[0] == 'F':
-                    dialog.append((parsed_line[0], parse_file_quote(parsed_line[1], scenario_path, executable_path)))
+                    quote = (parsed_line[0], parse_file_quote(parsed_line[1], scenario_path, executable_path))
+                    if args is None:
+                        pre_dialog.append(quote)
+                    else:
+                        dialog.append(quote)
                 
                 elif parsed_line[0] == 'N':
                     raise AssertionError('Cannot be more than one N actor')
@@ -86,4 +94,4 @@ def parse_scenario_file(scenario_path, executable_path):
         raise RuntimeError('Error in scenario file at line {}: {}' \
                             .format(i+2, e))
 
-    return {'name': name, 'args': args, 'dialog': dialog, 'verbosity': verbosity}
+    return {'name': name, 'args': args, 'dialog': dialog, 'pre_dialog': pre_dialog, 'verbosity': verbosity}

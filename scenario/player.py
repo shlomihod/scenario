@@ -28,14 +28,20 @@ def play_file_quote(quote):
         else:
             raise FileContentIncorrect()
 
+def pre_scenario(pre_dialog):
+    for index, (actor, quote) in enumerate(pre_dialog):
+        if actor == 'F':
+            play_file_quote(quote)
+
 def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeout=TIMEOUT_DEFAULT):
 
     result = None
 
     feedback = []
 
-    executable_path_with_args = executable_path + ' '+ scenario['args']
+    pre_scenario(scenario['pre_dialog'])
     
+    executable_path_with_args = executable_path + ' '+ scenario['args']
     p = pexpect.spawn(executable_path_with_args, timeout=timeout, echo=False)
 
     n_line = 0
