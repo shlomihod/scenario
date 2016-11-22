@@ -74,8 +74,13 @@ def parse_scenario_file(scenario_path, executable_path):
                                             format(parsed_line[1], VERBOSITY.keys(), VERBOSITY.values())) 
                 elif parsed_line[0] == 'F':
                     dialog.append((parsed_line[0], parse_file_quote(parsed_line[1], scenario_path, executable_path)))
+                
+                elif parsed_line[0] == 'N':
+                    raise AssertionError('Cannot be more than one N actor')
+            
                 elif parsed_line[0] in ['I', 'O']:
                     dialog.append(parsed_line)
+
 
     except AssertionError as e:
         raise RuntimeError('Error in scenario file at line {}: {}' \
