@@ -132,6 +132,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
         feedback.insert(0, feedback_header)
 
-    feedback = '\n'.join([line for line in feedback])
+    feedback = '\n'.join([line for line in feedback]) + '\n'
 
     return result, feedback
