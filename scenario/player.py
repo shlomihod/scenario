@@ -42,8 +42,12 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     pre_scenario(scenario['pre_dialog'])
     
     executable_path_with_args = executable_path
+    
     if scenario['args']:
-         executable_path_with_args += ' ' + scenario['args']
+        executable_path_with_args += ' ' + scenario['args']
+        if verbosity >= VERBOSITY['EXECUTION']:
+            feedback.append('[**] Arguments: {!r}'.format(scenario['args']))
+    
     p = pexpect.spawn(executable_path_with_args, timeout=timeout, echo=False)
 
     n_line = 0
