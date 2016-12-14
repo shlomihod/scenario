@@ -1,8 +1,10 @@
 from collections import OrderedDict
 
-ACTORS = list('NRAIOVF')
+ACTORS = list('NMRAIOVF')
 
 FILE_COMMANDS = ['copy', 'compare']
+
+MODES = ['STRICT', 'NONSTRICT']
 
 VERBOSITY = OrderedDict(
             [ ('RETURN_CODE', 0),
