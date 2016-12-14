@@ -6,16 +6,17 @@ FILE_COMMANDS = ['copy', 'compare']
 
 MODES = ['STRICT', 'NONSTRICT']
 
-MODE_DEFAULT = 'STRICT'
+STRICTNESS_DEFUALT = True
 
 VERBOSITY = OrderedDict(
             [ ('RETURN_CODE', 0),
               ('RESULT'     , 1),
-              ('ERROR'      , 2),
-              ('EXECUTION'  , 3),
-              ('DEBUG'      , 4),
+              ('WARNING'    , 2),
+              ('ERROR'      , 3),
+              ('EXECUTION'  , 4),
+              ('DEBUG'      , 5),
 ])    
 
 VERBOSITY_DEFAULT = VERBOSITY['RESULT']
 
-TIMEOUT_DEFAULT = 10
+TIMEOUT_DEFAULT = 1

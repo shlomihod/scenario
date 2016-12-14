@@ -1,5 +1,6 @@
 import shutil
 import filecmp
+import re
 
 import pexpect
 
@@ -53,12 +54,35 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     n_line = 0
 
     try:
-        for index, (actor, quote) in enumerate(scenario['dialog']):
+        for index, (actor, quote, options) in enumerate(scenario['dialog']):
+            is_warnings = False
+
             if actor in ['I', 'O']:
                 n_line += 1
                 if actor == 'O':
                     try:
-                        p.expect_exact(quote)
+                        if options['strictness']:
+                            p.expect_exact(quote)
+
+                        else:
+                            escaped_quote = quote #re.escape(quote)
+                            pattern_cases = re.compile(escaped_quote, re.IGNORECASE)
+                            
+                            spaces_pattern_string = '\s+'.join(escaped_quote.split())
+                            pattern_spaces = re.compile(spaces_pattern_string)
+
+                            pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
+                            
+                            index = p.expect([quote, pattern_cases, pattern_spaces, pattern_cases_spaces])
+                            
+                            if verbosity >= VERBOSITY['ERROR'] and index != 0:
+                                if index == 1:
+                                    msg = 'Letter Cases'
+                                if index == 2:
+                                    msg = 'Spaces'
+                                if index == 3:
+                                    msg = 'Letter Cases & Spaces'     
+                                feedback.append('[{:02d}] [WARNNING] {!s} are not correct'.format(n_line, msg) )
 
                     except pexpect.EOF:
                         if p.before.strip('\r\n'):
@@ -79,12 +103,13 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                 if verbosity >= VERBOSITY['EXECUTION']:
                     feedback.append('[{:02d}] {!r}'.format(n_line, quote))
 
+
             elif actor == 'F':
                 is_msg = play_file_quote(quote)
 
                 if is_msg:
                     if verbosity >= VERBOSITY['EXECUTION']:
-                        feedback.append('[**] Content of file {!r} is correct'.format(quote[1]))
+                        feedback.append('[**] [FILE] Content of {!r} is correct'.format(quote[1]))
 
     except pexpect.EOF:
         if verbosity >= VERBOSITY['ERROR']:
