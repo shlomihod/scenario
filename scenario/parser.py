@@ -72,7 +72,7 @@ def parse_scenario_file(scenario_path, executable_path):
                     if not all([f in MODES for f in mode_flags]):
                         raise AssertionError('M actor is {!r} but it all of the flags must be only one of {!s}'.
                                             format(parsed_line[1], MODES))
-                    assert len(mode_flags) == 1, 'Only one Mode flags is allowed, there is {!d}'.format(len(mode_flags))
+                    assert len(mode_flags) == 1, 'Only one Mode flag is allowed, there are {!s}'.format(len(mode_flags))
                     if 'STRICT' in mode_flags:
                         strictness = True
                     elif 'NONSTRICT' in mode_flags:
