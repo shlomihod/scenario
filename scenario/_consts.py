@@ -6,6 +6,8 @@ FILE_COMMANDS = ['copy', 'compare']
 
 MODES = ['STRICT', 'NONSTRICT']
 
+MODE_DEFAULT = 'STRICT'
+
 VERBOSITY = OrderedDict(
             [ ('RETURN_CODE', 0),
               ('RESULT'     , 1),
