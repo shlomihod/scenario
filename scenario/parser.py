@@ -1,6 +1,6 @@
 import os
 
-from _consts import ACTORS, FILE_COMMANDS, VERBOSITY
+from _consts import ACTORS, FILE_COMMANDS, VERBOSITY, MODES, STRICTNESS_DEFUALT
 
 def parse_scenario_line(scenario_line):
     parts = tuple(scenario_line.split(': ', 1))
@@ -40,6 +40,8 @@ def parse_scenario_file(scenario_path, executable_path):
     name = None
     args = None
     verbosity = None
+    mode_flags = None
+    strictness = STRICTNESS_DEFUALT
 
     pre_dialog = []
     dialog = []
@@ -63,7 +65,19 @@ def parse_scenario_file(scenario_path, executable_path):
                     assert args is None, 'Cannot be more than one A actor'
                     assert dialog == [], 'Cannot be I or O actors before A actor'
                     args = parsed_line[1]
-                
+
+                elif parsed_line[0] == 'M':
+                    assert mode_flags is None, 'Cannot be more than one M actor'
+                    mode_flags = parsed_line[1].split()
+                    if not all([f in MODES for f in mode_flags]):
+                        raise AssertionError('M actor is {!r} but it all of the flags must be only one of {!s}'.
+                                            format(parsed_line[1], MODES))
+                    assert len(mode_flags) == 1, 'Only one Mode flags is allowed, there is {!d}'.format(len(mode_flags))
+                    if 'STRICT' in mode_flags:
+                        strictness = True
+                    elif 'NONSTRICT' in mode_flags:
+                        strictness = False
+
                 elif parsed_line[0] == 'V':
                     assert verbosity is None, 'Cannot be more than one V actor'
                     if parsed_line[1] in VERBOSITY.keys():
@@ -77,18 +91,24 @@ def parse_scenario_file(scenario_path, executable_path):
                                             format(parsed_line[1], VERBOSITY.keys(), VERBOSITY.values())) 
 
                 elif parsed_line[0] == 'F':
-                    quote = (parsed_line[0], parse_file_quote(parsed_line[1], scenario_path, executable_path))
+                    dialog_line = (parsed_line[0], parse_file_quote(parsed_line[1], scenario_path, executable_path), {})
                     if args is None:
-                        pre_dialog.append(quote)
+                        pre_dialog.append(dialog_line)
                     else:
-                        dialog.append(quote)
+                        dialog_line = tuple(list(dialog_line) + [options])
+                        dialog.append(dialog_line)
                 
                 elif parsed_line[0] == 'N':
                     raise AssertionError('Cannot be more than one N actor')
             
-                elif parsed_line[0] in ['I', 'O']:
-                    dialog.append(parsed_line)
+                elif parsed_line[0] is 'I':
+                    dialog_line = tuple(list(parsed_line) + [{}])
+                    dialog.append(dialog_line)
 
+                elif parsed_line[0] is 'O':
+                    options = {'strictness': strictness}
+                    dialog_line = tuple(list(parsed_line) + [options])
+                    dialog.append(dialog_line)
 
     except AssertionError as e:
         raise RuntimeError('Error in scenario file at line {}: {}' \
