@@ -65,16 +65,17 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                             p.expect_exact(quote)
 
                         else:
-                            escaped_quote = quote #re.escape(quote)
+                            escaped_quote = re.escape(quote)
+                            pattern_quote = re.compile(escaped_quote)
+
                             pattern_cases = re.compile(escaped_quote, re.IGNORECASE)
                             
-                            spaces_pattern_string = '\s+'.join(escaped_quote.split())
+                            spaces_pattern_string = escaped_quote.replace('\ ', '\s+')
                             pattern_spaces = re.compile(spaces_pattern_string)
 
                             pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
                             
-                            index = p.expect([quote, pattern_cases, pattern_spaces, pattern_cases_spaces])
-                            
+                            index = p.expect([pattern_quote, pattern_cases, pattern_spaces, pattern_cases_spaces])
                             if verbosity >= VERBOSITY['ERROR'] and index != 0:
                                 if index == 1:
                                     msg = 'Letter Cases'
