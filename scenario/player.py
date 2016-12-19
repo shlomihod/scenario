@@ -70,7 +70,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
                             pattern_cases = re.compile(escaped_quote, re.IGNORECASE)
                             
-                            spaces_pattern_string = escaped_quote.replace('\ ', '\s+')
+                            spaces_pattern_string = re.escape(' '.join(quote.split())).replace('\ ', '\s+')
                             pattern_spaces = re.compile(spaces_pattern_string)
 
                             pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
