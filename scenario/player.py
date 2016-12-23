@@ -39,6 +39,12 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     result = None
 
     feedback = []
+    
+    def get_cleaned_before():
+        if options['strictness']:
+            return p.before.strip('\r\n')
+        else:
+            return p.before.strip(' \r\n')
 
     pre_scenario(scenario['pre_dialog'])
     
@@ -67,12 +73,10 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         else:
                             escaped_quote = re.escape(quote)
                             pattern_quote = re.compile(escaped_quote)
-
                             pattern_cases = re.compile(escaped_quote, re.IGNORECASE)
                             
                             spaces_pattern_string = re.escape(' '.join(quote.split())).replace('\ ', '\s+')
                             pattern_spaces = re.compile(spaces_pattern_string)
-
                             pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
                             
                             index = p.expect([pattern_quote, pattern_cases, pattern_spaces, pattern_cases_spaces])
@@ -86,13 +90,12 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                                 feedback.append('[{:02d}] [WARNNING] {!s} are not correct'.format(n_line, msg) )
 
                     except pexpect.EOF:
-                        if p.before.strip('\r\n'):
+                        if get_cleaned_before():
                             raise pexpect.TIMEOUT('')
 
                         else:
                             raise pexpect.EOF('')
-
-                    if p.before.strip('\r\n') != '':
+                    if get_cleaned_before():
                         raise pexpect.TIMEOUT('')
 
                 elif actor == 'I':
@@ -120,7 +123,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
     except pexpect.TIMEOUT:
         if verbosity >= VERBOSITY['ERROR']:
-            feedback.append('[{:02d}] {!r}'.format(n_line, p.before.strip('\r\n').split('\r\n')[0]))
+            feedback.append('[{:02d}] {!r}'.format(n_line, get_cleaned_before().split('\r\n')[0]))
             feedback.append('----> the program should have had this output instead:')
             feedback.append('----> {!r}'.format(quote))
         
@@ -134,16 +137,15 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     else:
         try:
             p.expect(pexpect.EOF)
-
-            if p.before.strip('\r\n'):
+            if get_cleaned_before():
                 raise pexpect.TIMEOUT('')
 
         except pexpect.TIMEOUT:
             if verbosity >= VERBOSITY['ERROR']:
-                if p.before.strip('\r\n'):
-                    feedback.append('[{:02d}] {!r}'.format(n_line+1, p.before.strip('\r\n').split('\r\n')[0]))
+                if get_cleaned_before():
+                    feedback.append('[{:02d}] {!r}'.format(n_line+1, get_cleaned_before().split('\r\n')[0]))
                 feedback.append('----> the program should have finished')
-                if p.before.strip('\r\n'):
+                if get_cleaned_before():
                     feedback.append('----> instead the last line')
                      
             
