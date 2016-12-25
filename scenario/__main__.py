@@ -17,11 +17,11 @@ def main():
     parser.add_argument('scenario_path', type=str,
                         help='scenario file (or directory with -d flag)')
 
-    parser.add_argument('-v', type=int, 
+    parser.add_argument('-v', type=int, default=VERBOSITY_DEFAULT,
                         help='set output verbosity')
 
     parser.add_argument('-d', '--directory', help='run on all scenario files (.snr) in the directory',
-                    action="store_true")
+                        action="store_true")
     
     parser.add_argument('-t', type=int, default=TIMEOUT_DEFAULT, 
                         help='set execution timeout in seconds')
