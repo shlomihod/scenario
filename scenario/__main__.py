@@ -20,6 +20,9 @@ def main():
     parser.add_argument('-v', type=int, default=VERBOSITY_DEFAULT,
                         help='set output verbosity')
 
+    parser.add_argument('-a', type=str,
+                        help='set extra arguments for executable')
+
     parser.add_argument('-d', '--directory', help='run on all scenario files (.snr) in the directory',
                         action="store_true")
     
@@ -33,7 +36,8 @@ def main():
             result, feedback = run_scenario(args.executable_path,
                                             args.scenario_path,
                                             args.v,
-                                            args.t)
+                                            args.t,
+                                            args.a)
         else:
             results = []
             feedbacks = []
@@ -45,7 +49,8 @@ def main():
                 scenario_file_result, scenario_file_feedback = run_scenario(args.executable_path,
                                                 scenario_file_path,
                                                 args.v,
-                                                args.t)
+                                                args.t,
+                                                args.a)
                 
                 results.append(scenario_file_result)
                 feedbacks.append(scenario_file_feedback)

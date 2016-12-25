@@ -34,7 +34,7 @@ def pre_scenario(pre_dialog):
         if actor == 'F':
             play_file_quote(quote)
 
-def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeout=TIMEOUT_DEFAULT):
+def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeout=TIMEOUT_DEFAULT, executable_extra_args=None):
 
     result = None
 
@@ -48,15 +48,18 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
     pre_scenario(scenario['pre_dialog'])
     
-    executable_path_with_args = executable_path
+    executable_path_with_snr_args = executable_path
     
     if scenario['args']:
-        executable_path_with_args += ' ' + scenario['args']
+        executable_path_with_snr_args += ' ' + scenario['args']
         if verbosity >= VERBOSITY['EXECUTION']:
             feedback.append('[**] Arguments: {!r}'.format(scenario['args']))
     
-    p = pexpect.spawn(executable_path_with_args, timeout=timeout, echo=False)
-
+    if not executable_extra_args:
+        p = pexpect.spawn(executable_path_with_snr_args, timeout=timeout, echo=False)
+    else:
+        executable_path_with_all_args = executable_path_with_snr_args + ' ' + executable_extra_args
+        p = pexpect.spawn('/bin/bash', ['-c', executable_path_with_all_args], timeout=timeout, echo=False)
     n_line = 0
 
     try:
