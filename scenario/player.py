@@ -41,7 +41,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     feedback = []
     
     def get_cleaned_before():
-        if options['strictness']:
+        if scenario['strictness']:
             return p.before.strip('\r\n')
         else:
             return p.before.strip(' \r\n')
@@ -60,14 +60,14 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     n_line = 0
 
     try:
-        for index, (actor, quote, options) in enumerate(scenario['dialog']):
+        for index, (actor, quote) in enumerate(scenario['dialog']):
             is_warnings = False
 
             if actor in ['I', 'O']:
                 n_line += 1
                 if actor == 'O':
                     try:
-                        if options['strictness']:
+                        if scenario['strictness']:
                             p.expect_exact(quote)
 
                         else:

@@ -95,23 +95,17 @@ def parse_scenario_file(scenario_path, executable_path):
                     if args is None:
                         pre_dialog.append(dialog_line)
                     else:
-                        dialog_line = tuple(list(dialog_line) + [options])
                         dialog.append(dialog_line)
                 
                 elif parsed_line[0] == 'N':
                     raise AssertionError('Cannot be more than one N actor')
             
-                elif parsed_line[0] is 'I':
-                    dialog_line = tuple(list(parsed_line) + [{}])
-                    dialog.append(dialog_line)
+                elif parsed_line[0] in ['O', 'I']:
+                    dialog.append(parsed_line)
 
-                elif parsed_line[0] is 'O':
-                    options = {'strictness': strictness}
-                    dialog_line = tuple(list(parsed_line) + [options])
-                    dialog.append(dialog_line)
 
     except AssertionError as e:
         raise RuntimeError('Error in scenario file at line {}: {}' \
                             .format(i+2, e))
 
-    return {'name': name, 'args': args, 'dialog': dialog, 'pre_dialog': pre_dialog, 'verbosity': verbosity}
+    return {'name': name, 'args': args, 'dialog': dialog, 'pre_dialog': pre_dialog, 'verbosity': verbosity, 'strictness': strictness}
