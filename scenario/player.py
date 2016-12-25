@@ -57,9 +57,11 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     
     if not executable_extra_args:
         p = pexpect.spawn(executable_path_with_snr_args, timeout=timeout, echo=False)
+    
     else:
         executable_path_with_all_args = executable_path_with_snr_args + ' ' + executable_extra_args
         p = pexpect.spawn('/bin/bash', ['-c', executable_path_with_all_args], timeout=timeout, echo=False)
+    
     n_line = 0
 
     try:

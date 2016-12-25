@@ -30,7 +30,7 @@ def main():
                         help='set execution timeout in seconds')
 
     args = parser.parse_args()
-
+    
     try:
         if not args.directory:
             result, feedback = run_scenario(args.executable_path,
