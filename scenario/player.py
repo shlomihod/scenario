@@ -100,7 +100,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                                     msg = 'Spaces'
                                 if index == 3:
                                     msg = 'Letter Cases & Spaces'     
-                                feedback.append('[{:02d}] [WARNNING] {!s} are not correct'.format(n_line, msg) )
+                                feedback.append('[{:02d}] [WARNNING] {!s} are not precise'.format(n_line, msg) )
 
                     except pexpect.EOF:
                         if get_cleaned_before():
