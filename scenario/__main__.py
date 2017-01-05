@@ -17,7 +17,7 @@ def main():
     parser.add_argument('scenario_path', type=str,
                         help='scenario file (or directory with -d flag)')
 
-    parser.add_argument('-v', type=int, default=VERBOSITY_DEFAULT,
+    parser.add_argument('-v', type=int,
                         help='set output verbosity')
 
     parser.add_argument('-a', type=str,
