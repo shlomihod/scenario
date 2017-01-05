@@ -118,8 +118,10 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     p.sendline(quote)
                 
                 if verbosity >= VERBOSITY['EXECUTION']:
-                    feedback.append('[{:02d}] {!r}'.format(n_line, quote))
-
+                    if scenario['strictness']:
+                        feedback.append('[{:02d}] {!r}'.format(n_line, quote))
+                    else:
+                        feedback.append('[{:02d}] {!r}'.format(n_line, p.match.group()))
 
             elif actor == 'F':
                 is_msg = play_file_quote(quote)
