@@ -80,7 +80,15 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                             pattern_quote = re.compile(escaped_quote)
                             pattern_cases = re.compile(escaped_quote, re.IGNORECASE)
                             
-                            spaces_pattern_string = re.escape(' '.join(quote.split())).replace('\ ', '\s+')
+                            # expand only spaces
+                            #spaces_pattern_string = re.escape(' '.join(quote.split())).replace('\ ', '\s+')
+
+                            # expand between every two chars
+                            spaces_pattern_string = ' '.join(list(quote.replace(' ', '').
+                                                                        replace('\t', '')))
+                            spaces_pattern_string = re.escape(spaces_pattern_string)
+                            spaces_pattern_string = spaces_pattern_string.replace('\ ', '\s*')
+
                             pattern_spaces = re.compile(spaces_pattern_string)
                             pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
                             
