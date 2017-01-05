@@ -111,18 +111,21 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     if get_cleaned_before():
                         raise pexpect.TIMEOUT('')
 
+                    if verbosity >= VERBOSITY['EXECUTION']:
+                        if scenario['strictness']:
+                            feedback.append('[{:02d}] {!r}'.format(n_line, quote))
+                        else:
+                            feedback.append('[{:02d}] {!r}'.format(n_line, p.match.group()))
+
                 elif actor == 'I':
                     if not p.isalive():
                         raise pexpect.EOF('')
 
                     p.sendline(quote)
-                
-                if verbosity >= VERBOSITY['EXECUTION']:
-                    if scenario['strictness']:
-                        feedback.append('[{:02d}] {!r}'.format(n_line, quote))
-                    else:
-                        feedback.append('[{:02d}] {!r}'.format(n_line, p.match.group()))
 
+                    if verbosity >= VERBOSITY['EXECUTION']:
+                        feedback.append('[{:02d}] {!r}'.format(n_line, quote))
+                    
             elif actor == 'F':
                 is_msg = play_file_quote(quote)
 
