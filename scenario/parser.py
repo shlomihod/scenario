@@ -82,11 +82,12 @@ def parse_scenario_file(scenario_path, executable_path):
 
                 elif parsed_line[0] == 'V':
                     assert verbosity is None, 'Cannot be more than one V actor'
-                    if parsed_line[1] in VERBOSITY.keys():
-                        verbosity = parsed_line[1]
-                    elif parsed_line[1] in map(str, VERBOSITY.values()):
+                    rstriped_quote = parsed_line[1].rstrip()
+                    if rstriped_quote in VERBOSITY.keys():
+                        verbosity = rstriped_quote
+                    elif rstriped_quote in map(str, VERBOSITY.values()):
                         verbosity = VERBOSITY.keys()[
-                                        map(str, VERBOSITY.values()).index(parsed_line[1])
+                                        map(str, VERBOSITY.values()).index(rstriped_quote)
                                     ]
                     else:
                         raise AssertionError('V actor is {!r} but it must be only one of {!s} or one of {!s}'.
