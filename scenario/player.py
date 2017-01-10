@@ -76,6 +76,9 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                             p.expect_exact(quote)
 
                         else:
+                            # Right spaces cannot be seen in run example
+                            quote = quote.rstrip()
+
                             escaped_quote = re.escape(quote)
                             pattern_quote = re.compile(escaped_quote)
                             pattern_cases = re.compile(escaped_quote, re.IGNORECASE)
