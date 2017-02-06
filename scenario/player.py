@@ -73,49 +73,57 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
             if actor in ['I', 'O']:
                 n_line += 1
+                
                 if actor == 'O':
-                    try:
-                        if scenario['strictness']:
-                            p.expect_exact(quote)
+                    patterns = []
 
-                        else:
-                            # Right spaces cannot be seen in run example
-                            quote = quote.rstrip()
+                    # Right spaces cannot be seen in run example
+                    quote = quote.rstrip()
 
-                            escaped_quote = re.escape(quote)
-                            pattern_quote = re.compile(escaped_quote)
-                            pattern_cases = re.compile(escaped_quote, re.IGNORECASE)
+                    escaped_quote = re.escape(quote)
+                    pattern_quote = re.compile(escaped_quote)
+
+                    patterns.append(pattern_quote)
+
+                    if not scenario['strictness']:
                             
-                            # expand only spaces
-                            #spaces_pattern_string = re.escape(' '.join(quote.split())).replace('\ ', '\s+')
+                        pattern_cases = re.compile(escaped_quote, re.IGNORECASE)
+                        patterns.append(pattern_cases)
 
-                            # expand between every two chars
-                            spaces_pattern_string = ' '.join(list(quote.replace(' ', '').
-                                                                        replace('\t', '')))
-                            spaces_pattern_string = re.escape(spaces_pattern_string)
-                            spaces_pattern_string = spaces_pattern_string.replace('\ ', '\s*')
+                        # expand only spaces
+                        #spaces_pattern_string = re.escape(' '.join(quote.split())).replace('\ ', '\s+')
 
-                            pattern_spaces = re.compile(spaces_pattern_string)
-                            pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
-                            
-                            index = p.expect([pattern_quote, pattern_cases, pattern_spaces, pattern_cases_spaces])
-                            if verbosity >= VERBOSITY['ERROR'] and index != 0:
-                                if index == 1:
-                                    msg = 'Letter Cases'
-                                if index == 2:
-                                    msg = 'Spaces'
-                                if index == 3:
-                                    msg = 'Letter Cases & Spaces'     
-                                feedback.append('[{:02d}] [WARNNING] {!s} are not precise'.format(n_line, msg) )
+                        # expand between every two chars
+                        spaces_pattern_string = ' '.join(list(quote.replace(' ', '').
+                                                                    replace('\t', '')))
+                        spaces_pattern_string = re.escape(spaces_pattern_string)
+                        spaces_pattern_string = spaces_pattern_string.replace('\ ', '\s*')
 
-                    except pexpect.EOF:
-                        if get_cleaned_before():
-                            raise pexpect.TIMEOUT('')
+                        pattern_spaces = re.compile(spaces_pattern_string)
+                        patterns.append(pattern_spaces)
 
-                        else:
-                            raise pexpect.EOF('')
+                        pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
+                        patterns.append(pattern_cases_spaces)
+
+                    
+                    index = p.expect(patterns)
+
                     if get_cleaned_before():
                         raise pexpect.TIMEOUT('')
+
+                    if verbosity >= VERBOSITY['ERROR'] and index != 0:
+                        if index == 1:
+                            msg = 'Letter Cases'
+
+                        if index == 2:
+                            msg = 'Spaces'
+
+                        if index == 3:
+                            msg = 'Letter Cases & Spaces'     
+
+                        feedback.append('[{:02d}] [WARNNING] {!s} are not precise'.format(n_line, msg) )
+
+
 
                     if verbosity >= VERBOSITY['EXECUTION']:
                         if scenario['strictness']:
