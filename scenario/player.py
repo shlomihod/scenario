@@ -9,6 +9,9 @@ from _consts import VERBOSITY, VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
 class FileContentIncorrect(Exception):
     pass
 
+class ShouldEOF(Exception):
+    pass
+
 def play_file_quote(quote):
     '''
     TODO: better names
@@ -136,48 +139,49 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     if verbosity >= VERBOSITY['EXECUTION']:
                         feedback.append('[**] [FILE] Content of {!r} is correct'.format(quote[1]))
 
+        try:
+            p.expect(pexpect.EOF)
+        except pexpect.TIMEOUT:
+            raise ShouldEOF()
+        
+        if get_cleaned_before():
+            raise ShouldEOF()
+
+        result = True
+
+        if verbosity >= VERBOSITY['DEBUG']:
+                feedback.append('EXIT CODE {}'.format(p.exitstatus))
+
     except pexpect.EOF:
+        result = False
+
         if verbosity >= VERBOSITY['ERROR']:
             feedback.append('----> the program finised too early')
 
+    except pexpect.TIMEOUT:
         result = False
 
-    except pexpect.TIMEOUT:
         if verbosity >= VERBOSITY['ERROR']:
             feedback.append('[{:02d}] {!r}'.format(n_line, get_cleaned_before().split('\r\n')[0]))
             feedback.append('----> the program should have had this output instead:')
-            feedback.append('----> {!r}'.format(quote))
-        
-        result = False
+            feedback.append('----> {!r}'.format(quote))   
 
     except FileContentIncorrect:
         result = False
+
         if verbosity >= VERBOSITY['ERROR']:
             feedback.append('----> Content of file {!r} is incorrect'.format(quote[1]))
 
-    else:
-        try:
-            p.expect(pexpect.EOF)
+    except ShouldEOF:
+        result = False
+
+        if verbosity >= VERBOSITY['ERROR']:
             if get_cleaned_before():
-                raise pexpect.TIMEOUT('')
-
-        except pexpect.TIMEOUT:
-            if verbosity >= VERBOSITY['ERROR']:
-                if get_cleaned_before():
-                    feedback.append('[{:02d}] {!r}'.format(n_line+1, get_cleaned_before().split('\r\n')[0]))
-                feedback.append('----> the program should have finished')
-                if get_cleaned_before():
-                    feedback.append('----> instead the last line')
-                     
-            
-            result = False
-
-        else:
-            if verbosity >= VERBOSITY['DEBUG']:
-                feedback.append('EXIT CODE {}'.format(p.exitstatus))
-            
-            result = True
-
+                feedback.append('[{:02d}] {!r}'.format(n_line+1, get_cleaned_before().split('\r\n')[0]))
+            feedback.append('----> the program should have finished')
+            if get_cleaned_before():
+                feedback.append('----> instead the last line')
+                 
     if verbosity >= VERBOSITY['RESULT']:
         feedback_header = scenario['name'] + ' :: '
         if result:
