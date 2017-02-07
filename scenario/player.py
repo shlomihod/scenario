@@ -12,6 +12,9 @@ class FileContentIncorrect(Exception):
 class ShouldEOF(Exception):
     pass
 
+class ShouldOutputBeforeEOF(Exception):
+    pass
+
 def play_file_quote(quote):
     '''
     TODO: better names
@@ -105,8 +108,10 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
                         patterns.append(pattern_cases_spaces)
 
-                    
-                    index = p.expect(patterns)
+                    try:                
+                        index = p.expect(patterns)
+                    except pexpect.EOF:
+                        raise ShouldOutputBeforeEOF('')
 
                     if get_cleaned_before():
                         raise pexpect.TIMEOUT('')
@@ -122,8 +127,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                             msg = 'Letter Cases & Spaces'     
 
                         feedback.append('[{:02d}] [WARNNING] {!s} are not precise'.format(n_line, msg) )
-
-
 
                     if verbosity >= VERBOSITY['EXECUTION']:
                         if scenario['strictness']:
@@ -174,12 +177,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
             feedback.append('----> the program should have had this output instead:')
             feedback.append('----> {!r}'.format(quote))   
 
-    except FileContentIncorrect:
-        result = False
-
-        if verbosity >= VERBOSITY['ERROR']:
-            feedback.append('----> Content of file {!r} is incorrect'.format(quote[1]))
-
     except ShouldEOF:
         result = False
 
@@ -189,7 +186,21 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
             feedback.append('----> the program should have finished')
             if get_cleaned_before():
                 feedback.append('----> instead the last line')
-                 
+    
+    except ShouldOutputBeforeEOF:
+        result = False
+
+        if verbosity >= VERBOSITY['ERROR']:
+            feedback.append('[{:02d}] {!r}'.format(n_line, get_cleaned_before().split('\r\n')[0]))
+            feedback.append('----> the program should have had this output before finishing:')
+            feedback.append('----> {!r}'.format(quote))   
+
+    except FileContentIncorrect:
+        result = False
+
+        if verbosity >= VERBOSITY['ERROR']:
+            feedback.append('----> Content of file {!r} is incorrect'.format(quote[1]))
+
     if verbosity >= VERBOSITY['RESULT']:
         feedback_header = scenario['name'] + ' :: '
         if result:
