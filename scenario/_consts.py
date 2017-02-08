@@ -4,9 +4,11 @@ ACTORS = list('NMRAIOVF')
 
 FILE_COMMANDS = ['copy', 'compare']
 
-MODES = ['STRICT', 'NONSTRICT']
+MODES = ['STRICT', 'NONSTRICT', 'FLOW']
 
 STRICTNESS_DEFUALT = True
+
+FLOW_DEFAULT = False
 
 VERBOSITY = OrderedDict(
             [ ('RETURN_CODE', 0),

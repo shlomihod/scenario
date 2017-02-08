@@ -13,6 +13,7 @@ class TestPlayer(TestCase):
         scenario['pre_dialog'] = []
         scenario['verobisty'] = TEST_VERBOSITY
         scenario['strictness'] = True
+        scenario['flow'] = False
 
         scenario['args'] = test_name.replace('_strict', '') \
                                     .replace('_nonstrict', '')

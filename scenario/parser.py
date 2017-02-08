@@ -2,7 +2,7 @@
 
 import os
 
-from _consts import ACTORS, FILE_COMMANDS, VERBOSITY, MODES, STRICTNESS_DEFUALT
+from _consts import ACTORS, FILE_COMMANDS, VERBOSITY, MODES, STRICTNESS_DEFUALT, FLOW_DEFAULT
 
 def parse_scenario_line(scenario_line):
     parts = tuple(scenario_line.split(': ', 1))
@@ -44,6 +44,7 @@ def parse_scenario_file(scenario_path, executable_path):
     verbosity = None
     mode_flags = None
     strictness = STRICTNESS_DEFUALT
+    flow = FLOW_DEFAULT
 
     pre_dialog = []
     dialog = []
@@ -74,11 +75,14 @@ def parse_scenario_file(scenario_path, executable_path):
                     if not all([f in MODES for f in mode_flags]):
                         raise AssertionError('M actor is {!r} but it all of the flags must be only one of {!s}'.
                                             format(parsed_line[1], MODES))
-                    assert len(mode_flags) == 1, 'Only one Mode flag is allowed, there are {!s}'.format(len(mode_flags))
+                    assert len(mode_flags) <= 2, 'Only one or two Mode flag is allowed, there are {!s}'.format(len(mode_flags))
                     if 'STRICT' in mode_flags:
                         strictness = True
                     elif 'NONSTRICT' in mode_flags:
                         strictness = False
+
+                    if 'FLOW' in mode_flags:
+                        flow = True
 
                 elif parsed_line[0] == 'V':
                     assert verbosity is None, 'Cannot be more than one V actor'
@@ -111,4 +115,12 @@ def parse_scenario_file(scenario_path, executable_path):
         raise RuntimeError('Error in scenario file at line {}: {}' \
                             .format(i+2, e))
 
-    return {'name': name, 'args': args, 'dialog': dialog, 'pre_dialog': pre_dialog, 'verbosity': verbosity, 'strictness': strictness}
+    return {
+            'name': name,
+            'args': args,
+            'dialog': dialog,
+            'pre_dialog': pre_dialog,
+            'verbosity': verbosity,
+            'strictness': strictness,
+            'flow': flow
+           }
