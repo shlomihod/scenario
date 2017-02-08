@@ -63,7 +63,7 @@ def generate_feedback_text(feedback, verbosity):
    
     if verbosity >= VERBOSITY['EXECUTION']:
         if feedback['args']:
-            feedback_text.append(f2t('**', 'Arguments' + feedback['args'])) 
+            feedback_text.append(f2t('**', 'Arguments: ' + feedback['args'])) 
         feedback_text.extend(execution)
 
 
