@@ -36,8 +36,17 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
     def get_cleaned_after():
         if isinstance(p.after, str):
+
             if scenario['strictness']:
-                return p.after.strip('\r\n')
+
+                #In STRICT mode, spaces in the end of the line are ignored
+                after_lines = p.after.split('\r\n')
+                if (after_lines and
+                    not any([set(l) - set(' ') for l in after_lines[1:]])):
+                    return after_lines[0].strip(' \r\n')
+                else:
+                    return p.after.strip('\r\n')
+            
             else:
                 return p.after.strip(' \r\n')
 
@@ -121,7 +130,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                 elif actor == 'I':
                     p.expect(['.+', pexpect.TIMEOUT])
                     feedback['execution'].append(get_new_execution_text(p))
-
+                    print(repr(p.after), repr(get_cleaned_after()))
                     if not scenario['flow'] and get_cleaned_after():
                         raise OutputBeforeInput('')
 

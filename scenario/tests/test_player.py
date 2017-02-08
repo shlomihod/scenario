@@ -45,14 +45,17 @@ class TestPlayer(TestCase):
              test_name.startswith('extra-spaces-beginning-line-print_input') or \
              test_name.startswith('extra-spaces-end-line-print_input')       or \
              test_name.startswith('extra-spaces-end-print_input'):
-            
+
             if 'nonstrict' in test_name:
                 scenario['strictness'] = False
                 exp_result = True
 
             elif 'strict' in test_name:
                 scenario['strictness'] = True
-                exp_result = False
+                if 'end' in test_name:
+                    exp_result = True
+                else:
+                    exp_result = False
 
 
             scenario['dialog'] = [('O', quote) \
