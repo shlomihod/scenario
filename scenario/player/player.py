@@ -2,11 +2,11 @@ import re
 
 import pexpect
 
-from .._consts import VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
+from scenario.consts import VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
 
-from exceptions import  FileContentIncorrect, OutputBeforeInput, ShouldEOF, ShouldOutputBeforeEOF
-from files import pre_scenario, play_file_quote
-from feedback import generate_feedback_text, create_empty_feedback
+from scenario.player.exceptions import  FileContentIncorrect, OutputBeforeInput, ShouldEOF, ShouldOutputBeforeEOF
+from scenario.player.files import pre_scenario, play_file_quote
+from scenario.player.feedback import generate_feedback_text, create_empty_feedback
 
 def get_new_execution_text(p, with_after=True):
     text = p.before
@@ -101,7 +101,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
                         pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
                         patterns.append(pattern_cases_spaces)
-    
                     try:                
                         index = p.expect(patterns)
                     except pexpect.EOF:

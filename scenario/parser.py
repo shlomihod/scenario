@@ -1,8 +1,6 @@
-
-
 import os
 
-from _consts import ACTORS, FILE_COMMANDS, VERBOSITY, MODES, STRICTNESS_DEFUALT, FLOW_DEFAULT
+from scenario.consts import ACTORS, FILE_COMMANDS, VERBOSITY, MODES, STRICTNESS_DEFUALT, FLOW_DEFAULT
 
 def parse_scenario_line(scenario_line):
     parts = tuple(scenario_line.split(': ', 1))

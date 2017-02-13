@@ -4,9 +4,9 @@ import glob
 import argparse
 import traceback
 
-from scenario import run_scenario
+from scenario.runner import run_scenario
 
-from _consts import VERBOSITY, VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
+from scenario.consts import VERBOSITY, VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
 
 def main():
 
@@ -58,14 +58,14 @@ def main():
             result = all(results)
             feedback = '\n'.join(feedbacks)
 
-    except Exception, e:
-        if args.v >= VERBOSITY['DEBUG']:
+    except Exception as e:
+        if args.v and args.v >= VERBOSITY['DEBUG']:
             traceback.print_exc()
         else:
-            print 'ERROR: {!s}'.format(e)
+            print('ERROR: {!s}'.format(e))
         sys.exit(2)
 
-    print feedback
+    print(feedback)
     
     if result:
     	sys.exit(0)

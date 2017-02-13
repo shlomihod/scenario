@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name='scenario',
       version='0.4.0',
-      packages=['scenario'],
+      packages=['scenario', 'scenario.player'],
       install_requires=['pexpect'],
       entry_points={
           'console_scripts': [

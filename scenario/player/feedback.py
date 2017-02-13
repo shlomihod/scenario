@@ -1,4 +1,4 @@
-from .._consts import VERBOSITY
+from scenario.consts import VERBOSITY
 
 def create_empty_feedback():
     return { 
