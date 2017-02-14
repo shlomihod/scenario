@@ -101,6 +101,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
                         pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
                         patterns.append(pattern_cases_spaces)
+                    
                     try:                
                         index = p.expect(patterns)
                     except pexpect.EOF:
@@ -109,8 +110,17 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     if not scenario['flow'] and get_cleaned_before():
                         raise pexpect.TIMEOUT('')
                     
-                    feedback['execution'].append(get_new_execution_text(p))
+                    _, text = get_new_execution_text(p)
 
+                    p.expect(['\r\n', pexpect.TIMEOUT])
+                    _, text_br = get_new_execution_text(p)
+                    text += text_br
+
+                    feedback['execution'].append(('O', text ))
+
+                    if not scenario['flow'] and get_cleaned_before():
+                        raise pexpect.TIMEOUT('')
+                    
 
                     '''
                     if verbosity >= VERBOSITY['ERROR'] and index != 0:
@@ -169,8 +179,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
     except pexpect.TIMEOUT:
         feedback['result'] = False
-
-        feedback['execution'].append(get_new_execution_text(p, False))
 
         feedback['last'] = True
         feedback['error'].append('the program should have had this output instead:')
