@@ -127,7 +127,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     '''
 
                 elif actor == 'I':
-                    p.expect([pexpect.TIMEOUT])
+                    p.expect(['.+', pexpect.TIMEOUT])
                     feedback['execution'].append(get_new_execution_text(p))
 
                     if not scenario['flow'] and get_cleaned_after():
@@ -146,7 +146,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         feedback['execution'].append(('F', 'Content of {!r} is correct'.format(quote[1])))
 
         if scenario['flow']:
-            p.expect([pexpect.TIMEOUT, pexpect.EOF])
+            p.expect(['.+', pexpect.TIMEOUT, pexpect.EOF])
             feedback['execution'].append(get_new_execution_text(p))
 
         try:
