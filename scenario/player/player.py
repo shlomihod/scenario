@@ -204,7 +204,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         feedback['error'].append('{!r}'.format(quote))
 
     except ShouldEOF:
-        ffeedback['result'] = False
+        feedback['result'] = False
 
         feedback['execution'].append(get_new_execution_text(p))
 
