@@ -180,6 +180,9 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     except pexpect.TIMEOUT:
         feedback['result'] = False
 
+        if scenario['flow']:
+            feedback['execution'].append(get_new_execution_text(p))
+            
         feedback['last'] = True
         feedback['error'].append('the program should have had this output instead:')
         feedback['error'].append('{!r}'.format(quote))
