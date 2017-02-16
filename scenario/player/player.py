@@ -23,16 +23,18 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     feedback['name'] = scenario['name']
     
     def get_cleaned_before():
-        if scenario['strictness']:
+        if isinstance(p.before, str):
 
-            before_lines = p.before.split('\r\n')
-            if not any([set(l) - set(' ') for l in before_lines[:-1]]):
-                return before_lines[-1].strip('\r\n')
+            if scenario['strictness']:
+
+                before_lines = p.before.split('\r\n')
+                if not any([set(l) - set(' ') for l in before_lines[:-1]]):
+                    return before_lines[-1]
+                else:
+                    return p.before.strip('\r\n')
+                
             else:
-                return p.before.strip('\r\n')
-            
-        else:
-            return p.before.strip(' \r\n')
+                return p.before.strip(' \r\n')
 
     def get_cleaned_after():
         if isinstance(p.after, str):
@@ -107,21 +109,23 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     except pexpect.EOF:
                         raise ShouldOutputBeforeEOF('')
 
+                    
                     if not scenario['flow'] and get_cleaned_before():
                         raise pexpect.TIMEOUT('')
+                    
                     
                     _, text = get_new_execution_text(p)
 
+                    
                     p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
                     _, text_br = get_new_execution_text(p)
                     text += text_br
-
+                    
                     feedback['execution'].append(('O', text ))
-
-                    if not scenario['flow'] and get_cleaned_before():
+                    
+                    if not scenario['flow'] and get_cleaned_before().strip(' '):
                         raise pexpect.TIMEOUT('')
                     
-
                     '''
                     if verbosity >= VERBOSITY['ERROR'] and index != 0:
                         if index == 1:

@@ -52,7 +52,10 @@ class TestPlayer(TestCase):
 
             elif 'strict' in test_name:
                 scenario['strictness'] = True
-                exp_result = False
+                if 'end' in test_name:
+                    exp_result = True
+                else:
+                    exp_result = False
 
             scenario['dialog'] = [('O', quote) \
                                   for quote in ANNABEL_LEE.splitlines()]   \
