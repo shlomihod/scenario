@@ -9,3 +9,6 @@ class ShouldOutputBeforeEOF(Exception):
 
 class OutputBeforeInput(Exception):
     pass
+
+class ShouldInputBeforeEOF(Exception):
+    pass

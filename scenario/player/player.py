@@ -143,7 +143,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         raise OutputBeforeInput('')
 
                     if not p.isalive():
-                        raise pexpect.EOF('')
+                        raise ShouldInputBeforeEOF('')
 
                     p.sendline(quote)
                     feedback['execution'].append(get_new_execution_text(p))
@@ -175,7 +175,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         
         feedback['execution'].append(get_new_execution_text(p))
 
-        feedback['error'].append('the program finised too early')
+        feedback['error'].append('the program finished too early')
 
     except pexpect.TIMEOUT:
         feedback['result'] = False
@@ -195,6 +195,14 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
         feedback['last'] = True
         feedback['error'].append('the program should not have output')
+        feedback['error'].append('the program should get input')
+
+    except ShouldInputBeforeEOF:
+        feedback['result'] = False
+        
+        feedback['execution'].append(get_new_execution_text(p))
+
+        feedback['error'].append('the program finished too early')
         feedback['error'].append('the program should get input')
 
     except ShouldOutputBeforeEOF:
