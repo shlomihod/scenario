@@ -138,7 +138,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
                 elif actor == 'I':
                     p.expect(['.+', pexpect.TIMEOUT])
-                    feedback['execution'].append(get_new_execution_text(p))
 
                     if not scenario['flow'] and get_cleaned_after():
                         raise OutputBeforeInput('')
@@ -147,6 +146,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         raise pexpect.EOF('')
 
                     p.sendline(quote)
+                    feedback['execution'].append(get_new_execution_text(p))
                     feedback['execution'].append(('I', quote))
                     
             elif actor == 'F':
