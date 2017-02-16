@@ -112,7 +112,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     
                     _, text = get_new_execution_text(p)
 
-                    p.expect(['\r\n', pexpect.TIMEOUT])
+                    p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
                     _, text_br = get_new_execution_text(p)
                     text += text_br
 
