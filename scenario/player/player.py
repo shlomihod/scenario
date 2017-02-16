@@ -4,7 +4,7 @@ import pexpect
 
 from scenario.consts import VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
 
-from scenario.player.exceptions import  FileContentIncorrect, OutputBeforeInput, ShouldEOF, ShouldOutputBeforeEOF
+from scenario.player.exceptions import  FileContentIncorrect, OutputBeforeInput, ShouldEOF, ShouldOutputBeforeEOF, ShouldInputBeforeEOF
 from scenario.player.files import pre_scenario, play_file_quote
 from scenario.player.feedback import generate_feedback_text, create_empty_feedback
 
