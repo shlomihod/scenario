@@ -116,12 +116,15 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     
                     _, text = get_new_execution_text(p)
 
+                    if not scenario['flow']:
+                        p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
+                        _, text_br = get_new_execution_text(p)
+                        text += text_br
                     
-                    p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
-                    _, text_br = get_new_execution_text(p)
-                    text += text_br
-                    
-                    feedback['execution'].append(('O', text ))
+                    if scenario['flow'] and '\r\n' not in text:
+                        feedback['execution'].append(('O+', text ))
+                    else:
+                        feedback['execution'].append(('O', text ))
                     
                     if not scenario['flow'] and get_cleaned_before().strip(' '):
                         raise pexpect.TIMEOUT('')

@@ -29,15 +29,24 @@ def generate_execution(feedback):
     i = 1
     last_output = []
     execution = []
+
     for a, e in feedback['execution']:
-        last_output = []
         if a == 'O':
+            last_output = []
             for  l in e.splitlines():
                 if l.strip():
                     last_output.append(f2t(i, l, True))
                     i += 1
             execution.extend(last_output)
-
+        elif a == 'O+':
+            if not execution or not execution[-1][1:3].isdigit():
+                last_output = []
+                last_output.append(f2t(i, e, True))
+                execution.extend(last_output)
+                i += 1
+            else:
+                last_output[-1] = last_output[-1][:-1] + e + "'"
+                execution[-1] = execution[-1][:-1] + e + "'"
         elif a == 'I':
             execution.append(f2t('>>', e, True))
 
