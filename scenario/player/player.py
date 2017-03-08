@@ -1,4 +1,5 @@
 import re
+import string
 
 import pexpect
 
@@ -114,6 +115,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         raise pexpect.TIMEOUT('')
                     
                     
+                    # NEED TO BE DOCUMENTED OR REFACTORED
                     _, text = get_new_execution_text(p)
 
                     if not scenario['flow']:
@@ -121,6 +123,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         _, text_br = get_new_execution_text(p)
                         text += text_br
                     
+                    # WHY DO I CHECK THAT \r\n IS NOT IN TEXT?!                    
                     if scenario['flow'] and '\r\n' not in text:
                         feedback['execution'].append(('O+', text ))
                     else:
@@ -164,7 +167,16 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
         if scenario['flow']:
             p.expect(['.+', pexpect.TIMEOUT, pexpect.EOF])
-            feedback['execution'].append(get_new_execution_text(p))
+            _, text = get_new_execution_text(p)
+
+            lines = string.split(text, '\r\n', maxsplit=1)
+            if lines:
+                feedback['execution'].append(('O+', lines[0] ))
+                
+                if lines[1]:
+                    feedback['execution'].append(('O', lines[1] ))
+
+            #feedback['execution'].append(get_new_execution_text(p))
 
         try:
             p.expect(pexpect.EOF)
