@@ -170,10 +170,10 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
             _, text = get_new_execution_text(p)
 
             lines = string.split(text, '\r\n', maxsplit=1)
-            if lines:
+            if len(lines) > 0:
                 feedback['execution'].append(('O+', lines[0] ))
                 
-                if lines[1]:
+                if len(lines) > 1 and lines[1]:
                     feedback['execution'].append(('O', lines[1] ))
 
             #feedback['execution'].append(get_new_execution_text(p))
