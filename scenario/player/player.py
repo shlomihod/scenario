@@ -242,6 +242,8 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
         if not scenario['flow']:
             feedback['error'].append('instead the last line')
+        
+        feedback['error'].append('it might be that the program expects input, although it should not')
 
         '''
         if get_cleaned_before():
