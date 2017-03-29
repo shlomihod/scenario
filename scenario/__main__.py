@@ -26,7 +26,7 @@ def main():
     parser.add_argument('-d', '--directory', help='run on all scenario files (.snr) in the directory',
                         action="store_true")
     
-    parser.add_argument('-t', type=int, default=TIMEOUT_DEFAULT, 
+    parser.add_argument('-t', type=float, default=TIMEOUT_DEFAULT, 
                         help='set execution timeout in seconds')
 
     args = parser.parse_args()
