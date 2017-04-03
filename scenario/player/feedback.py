@@ -5,6 +5,7 @@ def create_empty_feedback():
             'name': '',
             'result': None,
             'exit_code': None,
+            'signal_code': None,
             'args': '',
             'warnings': [],
             'last': False,
@@ -80,10 +81,14 @@ def generate_feedback_text(feedback, verbosity):
         if verbosity == VERBOSITY['ERROR'] and feedback['last']:
             feedback_text.extend(last_output)
 
-        feedback_text.extend(['----> ' + e for e in feedback['error']])
+        feedback_text.extend(['---> ' + e for e in feedback['error']])
+
+        if feedback['signal_code'] == 11:
+            feedback_text.append('!!!! Segmentation Fault !!!!')
 
     if verbosity >= VERBOSITY['DEBUG']:
         feedback_text.append('EXIT CODE {}'.format(feedback['exit_code']))
+        feedback_text.append('SIGNAL CODE {}'.format(feedback['signal_code']))
 
     feedback_text = '\n'.join(feedback_text)
     return feedback_text
