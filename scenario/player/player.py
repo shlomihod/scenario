@@ -259,7 +259,10 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         feedback['error'].append('Content of file {!r} is incorrect'.format(quote[1]))
     
 
+    p.close()
     feedback['exit_code'] = p.exitstatus
-    feedback_text = generate_feedback_text(feedback, verbosity)
+    feedback['signal_code'] = p.signalstatus
 
+    feedback_text = generate_feedback_text(feedback, verbosity)
+    
     return feedback['result'], feedback_text
