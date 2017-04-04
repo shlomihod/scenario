@@ -3,6 +3,7 @@ import os
 import glob
 import argparse
 import traceback
+import collections
 
 from scenario.runner import run_scenario
 
@@ -26,6 +27,9 @@ def main():
     parser.add_argument('-d', '--directory', help='run on all scenario files (.snr) in the directory',
                         action="store_true")
     
+    parser.add_argument('-s', '--forward-signal', help='forward signal from executable to scenario',
+                        action="store_true")
+
     parser.add_argument('-t', type=float, default=TIMEOUT_DEFAULT, 
                         help='set execution timeout in seconds')
 
@@ -33,30 +37,38 @@ def main():
     
     try:
         if not args.directory:
-            result, feedback = run_scenario(args.executable_path,
+            feedback, feedback_text = run_scenario(args.executable_path,
                                             args.scenario_path,
                                             args.v,
                                             args.t,
                                             args.a)
+
+            result = feedback['result']
+            signal_ = feedback['signal_code']
+
         else:
-            results = []
             feedbacks = []
+            feedback_texts = []
             
             scenario_file_directory_path = os.path.join(args.scenario_path, '*.snr')
             scenario_file_paths = glob.glob(scenario_file_directory_path)
 
             for scenario_file_path in scenario_file_paths:
-                scenario_file_result, scenario_file_feedback = run_scenario(args.executable_path,
+                scenario_file_feedback, scenario_file_feedback_text = run_scenario(args.executable_path,
                                                 scenario_file_path,
                                                 args.v,
                                                 args.t,
                                                 args.a)
                 
-                results.append(scenario_file_result)
                 feedbacks.append(scenario_file_feedback)
+                feedback_texts.append(scenario_file_feedback_text)
 
-            result = all(results)
-            feedback = '\n'.join(feedbacks)
+            result = all([feedback['result'] for feedback in feedbacks])
+
+            signals = [feedback['signal_code'] for feedback in feedbacks]
+            signal_ = next((item for item in signals if item is not None), None)
+
+            feedback_text = '\n\n'.join(feedback_texts)
 
     except Exception as e:
         if args.v and args.v >= VERBOSITY['DEBUG']:
@@ -65,8 +77,11 @@ def main():
             print('ERROR: {!s}'.format(e))
         sys.exit(2)
 
-    print(feedback)
-    
+    print(feedback_text)
+
+    if args.forward_signal and signal_ is not None:
+        os.kill(os.getpid(), signal_)
+
     if result:
     	sys.exit(0)
     else:
@@ -74,3 +89,4 @@ def main():
     
 if __name__ == '__main__':
     main()
+
