@@ -1,4 +1,4 @@
-from scenario.consts import VERBOSITY
+from scenario.consts import VERBOSITY, SIGNALS
 
 def create_empty_feedback():
     return { 
@@ -62,6 +62,11 @@ def generate_feedback_text(feedback, verbosity):
 
     execution, last_output = generate_execution(feedback)
 
+    # http://www.tldp.org/LDP/abs/html/exitcodes.html
+    if 129 <= feedback['exit_code'] <= 162:
+        feedback['signal_code'] = feedback['exit_code'] - 128
+        feedback['exit_code'] = None
+
     if verbosity >= VERBOSITY['RESULT']:
         feedback_header = feedback['name'] + ' :: '
         if feedback['result']:
@@ -83,8 +88,8 @@ def generate_feedback_text(feedback, verbosity):
 
         feedback_text.extend(['---> ' + e for e in feedback['error']])
 
-        if feedback['signal_code'] == 11:
-            feedback_text.append('!!!! Segmentation Fault !!!!')
+        if feedback['signal_code'] is not None:
+            feedback_text.append('!!!! {0} - {1} !!!!'.format(*SIGNALS[feedback['signal_code']]))
 
     if verbosity >= VERBOSITY['DEBUG']:
         feedback_text.append('EXIT CODE {}'.format(feedback['exit_code']))

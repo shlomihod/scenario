@@ -12,13 +12,51 @@ FLOW_DEFAULT = False
 
 VERBOSITY = OrderedDict(
             [ ('RETURN_CODE', 0),
-              ('RESULT'     , 1),
-              ('WARNING'    , 2),
-              ('ERROR'      , 3),
-              ('EXECUTION'  , 4),
-              ('DEBUG'      , 5),
+              ('RESULT'    , 1),
+              ('WARNING'   , 2),
+              ('ERROR'     , 3),
+              ('EXECUTION' , 4),
+              ('DEBUG'     , 5),
 ])    
 
 VERBOSITY_DEFAULT = VERBOSITY['RESULT']
 
 TIMEOUT_DEFAULT = 1
+
+# https://people.cs.pitt.edu/~alanjawi/cs449/code/shell/UnixSignals.htm
+SIGNALS = {
+ 1: ('SIGHUP', 'Hangup'),
+ 2: ('SIGINT', 'Interrupt'),
+ 3: ('SIGQUIT', 'Quit'),
+ 4: ('SIGILL', 'Illegal Instruction'),
+ 5: ('SIGTRAP', 'Trace/Breakpoint Trap'),
+ 6: ('SIGABRT', 'Abort'),
+ 7: ('SIGEMT', 'Emulation Trap'),
+ 8: ('SIGFPE', 'Arithmetic Exception'),
+ 9: ('SIGKILL', 'Killed'),
+ 10: ('SIGBUS', 'Bus Error'),
+ 11: ('SIGSEGV', 'Segmentation Fault'),
+ 12: ('SIGSYS', 'Bad System Call'),
+ 13: ('SIGPIPE', 'Broken Pipe'),
+ 14: ('SIGALRM', 'Alarm Clock'),
+ 15: ('SIGTERM', 'Terminated'),
+ 16: ('SIGUSR1', 'User Signal 1'),
+ 17: ('SIGUSR2', 'User Signal 2'),
+ 18: ('SIGCHLD', 'Child Status'),
+ 19: ('SIGPWR', 'Power Fail/Restart'),
+ 20: ('SIGWINCH', 'Window Size Change'),
+ 21: ('SIGURG', 'Urgent Socket Condition'),
+ 22: ('SIGPOLL', 'Socket I/O Possible'),
+ 23: ('SIGSTOP', 'Stopped (signal)'),
+ 24: ('SIGTSTP', 'Stopped (user)'),
+ 25: ('SIGCONT', 'Continued'),
+ 26: ('SIGTTIN', 'Stopped (tty input)'),
+ 27: ('SIGTTOU', 'Stopped (tty output)'),
+ 28: ('SIGVTALRM', 'Virtual Timer Expired'),
+ 29: ('SIGPROF', 'Profiling Timer Expired'),
+ 30: ('SIGXCPU', 'CPU time limit exceeded'),
+ 31: ('SIGXFSZ', 'File size limit exceeded'),
+ 32: ('SIGWAITING', 'All LWPs blocked'),
+ 33: ('SIGLWP', 'Virtual Interprocessor Interrupt for Threads Library'),
+ 34: ('SIGAIO', 'Asynchronous I/O')
+ }
