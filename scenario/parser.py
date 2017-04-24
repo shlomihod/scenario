@@ -1,6 +1,7 @@
 import os
 
-from scenario.consts import ACTORS, FILE_COMMANDS, VERBOSITY, MODES, STRICTNESS_DEFUALT, FLOW_DEFAULT
+from scenario.consts import ACTORS, FILE_COMMANDS, FILE_COMMANDS_PARAMS_2, FILE_COMMANDS_PARAMS_4, \
+                            VERBOSITY, MODES, STRICTNESS_DEFUALT, FLOW_DEFAULT
 
 def parse_scenario_line(scenario_line):
     parts = tuple(scenario_line.split(': ', 1))
@@ -13,8 +14,13 @@ def parse_scenario_line(scenario_line):
 
 def parse_file_quote(file_quote, scenario_path, executable_path):
     '''
-    TODO: better names
     quote[0] - command
+    
+    2:
+    quote[1] - exec env file path
+    quote[2] - exec full file path
+
+    4:
     quote[1] - exec env file path
     quote[2] - snr env file path
     quote[3] - exec full file path
@@ -22,14 +28,25 @@ def parse_file_quote(file_quote, scenario_path, executable_path):
     '''
 
     parts = file_quote.split()
-    assert len(parts) == 3, 'Each file quote should be in the format of <command> <exec env file path> <snr env file path>'
+    assert len(parts), 'File quote cannot be empty'
     assert parts[0] in FILE_COMMANDS, '{!r} is not recognized file command (Only {})' \
                                 .format(parts[0], FILE_COMMANDS)
+    
+    if parts[0] in FILE_COMMANDS_PARAMS_2:
+        assert len(parts) == 2, 'Each file quote should be in the format of <command> <exec env file path>'
 
-    exec_env_file_path = os.path.join(os.path.dirname(executable_path), parts[1])
-    snr_env_file_path = os.path.join(os.path.dirname(scenario_path), parts[2])
+        exec_env_file_path = os.path.join(os.path.dirname(executable_path), parts[1])
 
-    parts = tuple(parts + [exec_env_file_path, snr_env_file_path])
+        parts = tuple(parts + [exec_env_file_path])
+
+    elif parts[0] in FILE_COMMANDS_PARAMS_4:
+        assert len(parts) == 3, 'Each file quote should be in the format of <command> <exec env file path> <snr env file path>'
+   
+        exec_env_file_path = os.path.join(os.path.dirname(executable_path), parts[1])
+        snr_env_file_path = os.path.join(os.path.dirname(scenario_path), parts[2])
+
+        parts = tuple(parts + [exec_env_file_path, snr_env_file_path])
+
     return parts
 
 

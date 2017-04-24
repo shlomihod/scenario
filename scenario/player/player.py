@@ -5,8 +5,11 @@ import pexpect
 
 from scenario.consts import VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
 
-from scenario.player.exceptions import  FileContentIncorrect, OutputBeforeInput, ShouldEOF, ShouldOutputBeforeEOF, ShouldInputBeforeEOF
+from scenario.player.exceptions import FileContentIncorrect, FileShouldNotExist, FileShouldExist, \
+                                       OutputBeforeInput, ShouldEOF, ShouldOutputBeforeEOF, ShouldInputBeforeEOF
+
 from scenario.player.files import pre_scenario, play_file_quote
+
 from scenario.player.feedback import generate_feedback_text, create_empty_feedback
 
 def get_new_execution_text(p, with_after=True):
@@ -80,31 +83,41 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     # Right spaces cannot be seen in run example
                     quote = quote.rstrip()
 
-                    escaped_quote = re.escape(quote)
-                    pattern_quote = re.compile(escaped_quote)
+                    # if O is empty, then something need to be printed
+                    if not quote:
+                        escaped_quote = '.+\r\n'
 
-                    patterns.append(pattern_quote)
-
-                    if not scenario['strictness']:
+                        pattern_quote = re.compile(escaped_quote)
                             
-                        pattern_cases = re.compile(escaped_quote, re.IGNORECASE)
-                        patterns.append(pattern_cases)
+                        patterns.append(pattern_quote)
 
-                        # expand only spaces
-                        #spaces_pattern_string = re.escape(' '.join(quote.split())).replace('\ ', '\s+')
+                    else:
+                        escaped_quote = re.escape(quote)
 
-                        # expand between every two chars
-                        spaces_pattern_string = ' '.join(list(quote.replace(' ', '').
-                                                                    replace('\t', '')))
-                        spaces_pattern_string = re.escape(spaces_pattern_string)
-                        spaces_pattern_string = spaces_pattern_string.replace('\ ', '\s*')
+                        pattern_quote = re.compile(escaped_quote)
+                            
+                        patterns.append(pattern_quote)
 
-                        pattern_spaces = re.compile(spaces_pattern_string)
-                        patterns.append(pattern_spaces)
+                        if not scenario['strictness']:
+                                
+                            pattern_cases = re.compile(escaped_quote, re.IGNORECASE)
+                            patterns.append(pattern_cases)
 
-                        pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
-                        patterns.append(pattern_cases_spaces)
-                    
+                            # expand only spaces
+                            #spaces_pattern_string = re.escape(' '.join(quote.split())).replace('\ ', '\s+')
+
+                            # expand between every two chars
+                            spaces_pattern_string = ' '.join(list(quote.replace(' ', '').
+                                                                        replace('\t', '')))
+                            spaces_pattern_string = re.escape(spaces_pattern_string)
+                            spaces_pattern_string = spaces_pattern_string.replace('\ ', '\s*')
+
+                            pattern_spaces = re.compile(spaces_pattern_string)
+                            patterns.append(pattern_spaces)
+
+                            pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
+                            patterns.append(pattern_cases_spaces)
+                        
                     try:                
                         index = p.expect(patterns)
                     except pexpect.EOF:
@@ -254,14 +267,28 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         '''
 
     except FileContentIncorrect:
-        feedback_text['result'] = False
+        feedback['result'] = False
 
         feedback['error'].append('Content of file {!r} is incorrect'.format(quote[1]))
     
 
+    except  FileShouldNotExist:
+        feedback['result'] = False
+
+        feedback['error'].append('File {!r} should not exist'.format(quote[1]))
+
+
+    except FileShouldExist:
+        feedback['result'] = False
+
+        feedback['error'].append('File {!r} should exist'.format(quote[1]))
+    
     p.close()
     feedback['exit_code'] = p.exitstatus
     feedback['signal_code'] = p.signalstatus
+
+    if feedback['signal_code'] == 1:
+        feedback['signal_code'] = None
 
     if feedback['signal_code'] is not None:
         feedback['result'] = False

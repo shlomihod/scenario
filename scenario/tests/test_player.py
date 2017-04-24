@@ -84,8 +84,10 @@ class TestPlayer(TestCase):
 
     def __tester(self, test_name):
         scenario, exp_result, exp_feedback = self.__generate_scenario_test(test_name)
-        result, feedback = play_scenario(scenario, EXECUTABLE, verbosity=4)
-        print feedback
+        feedback, feedback_text = play_scenario(scenario, EXECUTABLE, verbosity=4)
+        
+        result = feedback['result']
+        print feedback_text
 
         self.assertTrue(exp_result == result)
         #self.assertTrue(exp_feedback == feedback)

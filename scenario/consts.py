@@ -2,7 +2,9 @@ from collections import OrderedDict
 
 ACTORS = list('NMRAIOVF')
 
-FILE_COMMANDS = ['copy', 'compare']
+FILE_COMMANDS_PARAMS_2 = ['exists', 'not_exists']
+FILE_COMMANDS_PARAMS_4 = ['copy', 'compare']
+FILE_COMMANDS = FILE_COMMANDS_PARAMS_2 + FILE_COMMANDS_PARAMS_4
 
 MODES = ['STRICT', 'NONSTRICT', 'FLOW']
 
