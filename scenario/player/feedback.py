@@ -30,8 +30,9 @@ def generate_execution(feedback):
     i = 1
     last_output = []
     execution = []
-
     for a, e in feedback['execution']:
+        if not e:
+            continue
         if a == 'O':
             last_output = []
             for  l in e.splitlines():
