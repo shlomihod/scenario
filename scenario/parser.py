@@ -96,7 +96,7 @@ def parse_scenario_file(scenario_path, executable_path):
                                             format(parsed_line[1], VERBOSITY.keys(), VERBOSITY.values())) 
 
                 elif parsed_line[0] == 'F':
-                    dialog_line = (parsed_line[0], parse_file_quote(parsed_line[1], scenario_path, executable_path), {})
+                    dialog_line = (parsed_line[0], parse_file_quote(parsed_line[1], scenario_path, executable_path))
                     if args is None:
                         pre_dialog.append(dialog_line)
                     else:
