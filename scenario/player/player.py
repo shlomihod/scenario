@@ -287,6 +287,9 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     feedback['exit_code'] = p.exitstatus
     feedback['signal_code'] = p.signalstatus
 
+    if feedback['signal_code'] == 1:
+        feedback['signal_code'] = None
+
     if feedback['signal_code'] is not None:
         feedback['result'] = False
         
