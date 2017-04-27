@@ -287,6 +287,11 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     feedback['exit_code'] = p.exitstatus
     feedback['signal_code'] = p.signalstatus
 
+    # http://www.tldp.org/LDP/abs/html/exitcodes.html
+    if 129 <= feedback['exit_code'] <= 162:
+        feedback['signal_code'] = feedback['exit_code'] - 128
+        feedback['exit_code'] = None
+
     if feedback['signal_code'] == 1:
         feedback['signal_code'] = None
 
