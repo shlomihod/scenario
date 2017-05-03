@@ -21,7 +21,15 @@ def play_file_quote(quote):
     '''
 
     if quote[0] == 'copy':
-        shutil.copy(quote[4], quote[3])
+        if os.path.isdir(quote[4]):
+            shutil.copytree(quote[4], quote[3])
+
+        elif os.path.isfile(quote[4]):
+            shutil.copy(quote[4], quote[3])
+
+        else:
+            raise TypeError
+
         return False
 
     elif quote[0] == 'compare':
