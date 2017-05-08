@@ -21,6 +21,9 @@ def play_file_quote(quote):
     '''
 
     if quote[0] == 'copy':
+        if not os.path.exists(quote[4]):
+            raise ValueError('{!r} not exsits'.format(quote[4]))
+
         if os.path.isdir(quote[4]):
             shutil.copytree(quote[4], quote[3])
 
@@ -28,11 +31,15 @@ def play_file_quote(quote):
             shutil.copy(quote[4], quote[3])
 
         else:
-            raise TypeError
+            raise ValueError('neither {!r} is neither a directory nor a file'.format(quote[4]))
 
         return False
 
     elif quote[0] == 'compare':
+
+        if not os.path.exists(quote[4]):
+            raise ValueError('{!r} not exsits'.format(quote[4]))
+
         if not os.path.exists(quote[3]):
             raise FileShouldExist()
 
