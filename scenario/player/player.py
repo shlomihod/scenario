@@ -273,11 +273,11 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         feedback['error'].append('Content of file {!r} is incorrect'.format(quote[1]))
 
         feedback['error'].append('')
-        feedback['error'].append('Diff scenario file VS. program file:')
+        feedback['error'].append('Diff executable file VS. scenario file:')
         
-        snr_file_content = open(quote[4], 'U').readlines()
         exec_file_content = open(quote[3], 'U').readlines()
-        diff = difflib.ndiff(snr_file_content, exec_file_content)
+        snr_file_content = open(quote[4], 'U').readlines()
+        diff = difflib.ndiff(exec_file_content, snr_file_content)
 
         feedback['error'].extend(''.join(diff).splitlines())
 
