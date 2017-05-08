@@ -5,6 +5,17 @@ import filecmp
 from scenario.player.exceptions import FileContentIncorrect, FileShouldNotExist, FileShouldExist, \
                                        OutputBeforeInput, ShouldEOF, ShouldOutputBeforeEOF, ShouldInputBeforeEOF
 
+
+def compare_text_files(p1, p2):
+    l1 = l2 = ' '
+    with open(p1, 'rt') as f1, open(p2, 'rt') as f2:
+        while l1 != '' and l2 != '':
+            l1 = f1.readline()
+            l2 = f2.readline()
+            if l1 != l2:
+                return False
+    return True
+
 def play_file_quote(quote):
     '''
     quote[0] - command
@@ -35,7 +46,8 @@ def play_file_quote(quote):
 
         return False
 
-    elif quote[0] == 'compare':
+
+    elif quote[0].startswith('compare'):
 
         if not os.path.exists(quote[4]):
             raise ValueError('{!r} not exsits'.format(quote[4]))
@@ -43,10 +55,20 @@ def play_file_quote(quote):
         if not os.path.exists(quote[3]):
             raise FileShouldExist()
 
-        if filecmp.cmp(quote[4], quote[3]):
-            return True
-        else:
-            raise FileContentIncorrect()
+        # first is backward compatibility
+        if quote[0] == 'compare' or quote[0] == 'compare_binary':
+            if filecmp.cmp(quote[4], quote[3]):
+                return True
+            else:
+                raise FileContentIncorrect()
+
+        # first is backward compatibility
+        if quote[0] == 'compare_text':
+            if compare_text_files(quote[4], quote[3]):
+                return True
+            else:
+                raise FileContentIncorrect()
+
 
     elif quote[0] == 'exists':
         if not os.path.exists(quote[2]):
