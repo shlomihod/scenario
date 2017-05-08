@@ -8,7 +8,7 @@ from scenario.player.exceptions import FileContentIncorrect, FileShouldNotExist,
 
 def compare_text_files(p1, p2):
     l1 = l2 = ' '
-    with open(p1, 'rt') as f1, open(p2, 'rt') as f2:
+    with open(p1, 'rU') as f1, open(p2, 'rU') as f2:
         while l1 != '' and l2 != '':
             l1 = f1.readline()
             l2 = f2.readline()
@@ -62,7 +62,6 @@ def play_file_quote(quote):
             else:
                 raise FileContentIncorrect()
 
-        # first is backward compatibility
         if quote[0] == 'compare_text':
             if compare_text_files(quote[4], quote[3]):
                 return True
