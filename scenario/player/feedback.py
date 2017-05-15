@@ -1,4 +1,15 @@
+import re
+import string
+
 from scenario.consts import VERBOSITY, SIGNALS
+
+def replace_unprintalbe(s):
+    replace_chars = re.compile('([^' + re.escape(string.printable) + '])')
+
+    def replace_chars_to_hex(match):
+        return r'\x{0:02x}'.format(ord(match.group()))
+
+    return replace_chars.sub(replace_chars_to_hex, s)
 
 def create_empty_feedback():
     return { 
@@ -92,4 +103,7 @@ def generate_feedback_text(feedback, verbosity):
         feedback_text.append('SIGNAL CODE {}'.format(feedback['signal_code']))
 
     feedback_text = '\n'.join(feedback_text)
+
+    feedback_text = replace_unprintalbe(feedback_text)
+
     return feedback_text
