@@ -24,9 +24,9 @@ def get_new_execution_text(p, with_after=True):
 def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeout=TIMEOUT_DEFAULT, executable_extra_args=None):
 
     feedback = create_empty_feedback()
-    
+
     feedback['name'] = scenario['name']
-    
+
     def get_cleaned_before():
         if isinstance(p.before, str):
 
@@ -37,7 +37,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     return before_lines[-1]
                 else:
                     return p.before.strip('\r\n')
-                
+
             else:
                 return p.before.strip(' \r\n')
 
@@ -53,62 +53,63 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     return after_lines[0].strip(' \r\n')
                 else:
                     return p.after.strip('\r\n')
-            
+
             else:
                 return p.after.strip(' \r\n')
 
-    pre_scenario(scenario['pre_dialog'])
-    
+    # pre_scenario(scenario['pre_dialogue'])
+
     executable_path_with_snr_args = executable_path
-    
+
     if scenario['args']:
-        executable_path_with_snr_args += ' ' + scenario['args']
+        executable_path_with_snr_args += ' ' + ' '.join(scenario['args'])
         feedback['args'] = '{!r}'.format(scenario['args'])
-    
+
     if not executable_extra_args:
         p = pexpect.spawn(executable_path_with_snr_args, timeout=timeout, echo=False)
-    
+
     else:
         executable_path_with_all_args = executable_path_with_snr_args + ' ' + executable_extra_args
         p = pexpect.spawn('/bin/bash', ['-c', executable_path_with_all_args], timeout=timeout, echo=False)
-    
-    
+
+
     try:
-        for index, (actor, quote) in enumerate(scenario['dialog']):
+        for index, quote in enumerate(scenario['dialogue']):
+
             # is_warnings = False
-            if actor in ['I', 'O']:
-                
-                if actor == 'O':
+            if quote in ['input', 'output']:
+
+                if quote == 'output':
                     patterns = []
 
                     # Right spaces cannot be seen in run example
-                    quote = quote.rstrip()
+                    quote_value = quote['value'].rstrip()
 
                     # if O is empty, then something need to be printed
-                    if not quote:
-                        escaped_quote = '.+\r\n'
+                    if not quote_value:
+                        escaped_quote_value = '.+\r\n'
 
-                        pattern_quote = re.compile(escaped_quote)
-                            
-                        patterns.append(pattern_quote)
+                        pattern_quote_value = re.compile(escaped_quote_value)
+
+                        patterns.append(pattern_quote_value)
 
                     else:
-                        escaped_quote = re.escape(quote)
+                        escaped_quote_value = re.escape(quote_value)
 
-                        pattern_quote = re.compile(escaped_quote)
-                            
-                        patterns.append(pattern_quote)
+                        pattern_quote_value = re.compile(escaped_quote_value)
+
+                        patterns.append(pattern_quote_value)
 
                         if not scenario['strictness']:
-                                
-                            pattern_cases = re.compile(escaped_quote, re.IGNORECASE)
-                            patterns.append(pattern_cases)
+
+                            pattern_cases = re.compile(escaped_quote_value, re.IGNORECASE)
+                            patterns.append(pattern_cases_value)
 
                             # expand only spaces
-                            #spaces_pattern_string = re.escape(' '.join(quote.split())).replace('\ ', '\s+')
+                            #spaces_pattern_string = re.escape(' '.join(quote_value.split())).replace('\ ', '\s+')
 
                             # expand between every two chars
-                            spaces_pattern_string = ' '.join(list(quote.replace(' ', '').
+                            spaces_pattern_string = ' '.join(list(quote_value.replace(' ', '').
                                                                         replace('\t', '')))
                             spaces_pattern_string = re.escape(spaces_pattern_string)
                             spaces_pattern_string = spaces_pattern_string.replace('\ ', '\s*')
@@ -118,17 +119,17 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
                             pattern_cases_spaces = re.compile(spaces_pattern_string, re.IGNORECASE)
                             patterns.append(pattern_cases_spaces)
-                        
-                    try:                
+
+                    try:
                         index = p.expect(patterns)
                     except pexpect.EOF:
                         raise ShouldOutputBeforeEOF('')
 
-                    
+
                     if not scenario['flow'] and get_cleaned_before():
                         raise pexpect.TIMEOUT('')
-                    
-                    
+
+
                     # NEED TO BE DOCUMENTED OR REFACTORED
                     _, text = get_new_execution_text(p)
 
@@ -136,16 +137,16 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
                         _, text_br = get_new_execution_text(p)
                         text += text_br
-                    
-                    # WHY DO I CHECK THAT \r\n IS NOT IN TEXT?!                    
+
+                    # WHY DO I CHECK THAT \r\n IS NOT IN TEXT?!
                     if scenario['flow'] and '\r\n' not in text:
                         feedback['execution'].append(('O+', text ))
                     else:
                         feedback['execution'].append(('O', text ))
-                    
+
                     if not scenario['flow'] and get_cleaned_before().strip(' '):
                         raise pexpect.TIMEOUT('')
-                    
+
                     '''
                     if verbosity >= VERBOSITY['ERROR'] and index != 0:
                         if index == 1:
@@ -155,12 +156,12 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                             msg = 'Spaces'
 
                         if index == 3:
-                            msg = 'Letter Cases & Spaces'     
+                            msg = 'Letter Cases & Spaces'
 
                         feedback['warnings'].append('[{:02d}] [WARNNING] {!s} are not precise'.format(n_line, msg) )
                     '''
 
-                elif actor == 'I':
+                elif quote == 'input':
                     p.expect(['.+', pexpect.TIMEOUT])
 
                     if not scenario['flow'] and get_cleaned_after():
@@ -172,13 +173,14 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     p.sendline(quote)
                     feedback['execution'].append(get_new_execution_text(p))
                     feedback['execution'].append(('I', quote))
-                    
+            '''
             elif actor == 'F':
                 is_msg = play_file_quote(quote)
 
                 if is_msg:
                         feedback['execution'].append(('F', 'Content of {!r} is correct'.format(quote[1])))
-
+            '''
+            
         if scenario['flow']:
             p.expect(['.+', pexpect.TIMEOUT, pexpect.EOF])
             _, text = get_new_execution_text(p)
@@ -186,7 +188,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
             lines = string.split(text, '\r\n', maxsplit=1)
             if len(lines) > 0:
                 feedback['execution'].append(('O+', lines[0] ))
-                
+
                 if len(lines) > 1 and lines[1]:
                     feedback['execution'].append(('O', lines[1] ))
 
@@ -197,7 +199,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
             if not scenario['flow'] and get_cleaned_before():
                 raise pexpect.TIMEOUT('')
-                    
+
         except pexpect.TIMEOUT:
             raise ShouldEOF()
 
@@ -205,7 +207,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
     except pexpect.EOF:
         feedback['result'] = False
-        
+
         feedback['execution'].append(get_new_execution_text(p))
 
         feedback['error'].append('the program finished too early')
@@ -215,7 +217,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
         #if scenario['flow']:
         feedback['execution'].append(get_new_execution_text(p))
-            
+
         feedback['last'] = True
         feedback['error'].append('the program should have had this output instead:')
         feedback['error'].append('{!r}'.format(quote))
@@ -232,7 +234,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
     except ShouldInputBeforeEOF:
         feedback['result'] = False
-        
+
         feedback['execution'].append(get_new_execution_text(p))
 
         feedback['error'].append('the program finished too early')
@@ -242,7 +244,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         feedback['result'] = False
 
         feedback['execution'].append(get_new_execution_text(p))
-        
+
         feedback['last'] = True
         feedback['error'].append('the program should have had this output before finishing:')
         feedback['error'].append('{!r}'.format(quote))
@@ -256,7 +258,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
         if not scenario['flow']:
             feedback['error'].append('instead the last line')
-        
+
         feedback['error'].append('it might be that the program expects input, although it should not')
 
         '''
@@ -274,7 +276,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
         feedback['error'].append('')
         feedback['error'].append('Diff executable file VS. scenario file:')
-        
+
         exec_file_content = open(quote[3], 'U').readlines()
         snr_file_content = open(quote[4], 'U').readlines()
         diff = difflib.ndiff(exec_file_content, snr_file_content)
@@ -291,7 +293,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         feedback['result'] = False
 
         feedback['error'].append('File {!r} should exist'.format(quote[1]))
-    
+
     p.close()
     feedback['exit_code'] = p.exitstatus
     feedback['signal_code'] = p.signalstatus
@@ -306,7 +308,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
     if feedback['signal_code'] is not None:
         feedback['result'] = False
-        
+
     feedback_text = generate_feedback_text(feedback, verbosity)
 
     return feedback, feedback_text
