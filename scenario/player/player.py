@@ -1,6 +1,7 @@
 import re
 import string
 import difflib
+import copy
 
 import pexpect
 
@@ -11,7 +12,7 @@ from scenario.player.exceptions import FileContentIncorrect, FileShouldNotExist,
 
 from scenario.player.files import pre_scenario, play_file_quote
 
-from scenario.player.feedback import generate_feedback_text, create_empty_feedback
+from scenario.player.feedback import generate_feedback_text#, create_empty_feedback
 
 def get_new_execution_text(p, with_after=True):
     text = p.before
@@ -23,9 +24,10 @@ def get_new_execution_text(p, with_after=True):
 
 def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeout=TIMEOUT_DEFAULT, executable_extra_args=None):
 
-    feedback = create_empty_feedback()
+    feedback = copy.deepcopy(scenario)
+    feedback['log'] = []
+    feedback['feedback'] = []
 
-    feedback['name'] = scenario['name']
 
     def get_cleaned_before():
         if isinstance(p.before, str):
@@ -63,7 +65,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
     if scenario['args']:
         executable_path_with_snr_args += ' ' + ' '.join(scenario['args'])
-        feedback['args'] = '{!r}'.format(scenario['args'])
 
     if not executable_extra_args:
         p = pexpect.spawn(executable_path_with_snr_args, timeout=timeout, echo=False)
@@ -140,9 +141,9 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
                     # WHY DO I CHECK THAT \r\n IS NOT IN TEXT?!
                     if scenario['flow'] and '\r\n' not in text:
-                        feedback['execution'].append(('O+', text ))
+                        feedback['log'].append(('O+', text ))
                     else:
-                        feedback['execution'].append(('O', text ))
+                        feedback['log'].append(('O', text ))
 
                     if not scenario['flow'] and get_cleaned_before().strip(' '):
                         raise pexpect.TIMEOUT('')
@@ -171,14 +172,14 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         raise ShouldInputBeforeEOF('')
 
                     p.sendline(quote['value'])
-                    feedback['execution'].append(get_new_execution_text(p))
-                    feedback['execution'].append(('I', quote))
+                    feedback['log'].append(get_new_execution_text(p))
+                    feedback['log'].append(('I', quote))
             '''
             elif actor == 'F':
                 is_msg = play_file_quote(quote)
 
                 if is_msg:
-                        feedback['execution'].append(('F', 'Content of {!r} is correct'.format(quote[1])))
+                        feedback['log'].append(('F', 'Content of {!r} is correct'.format(quote[1])))
             '''
         if scenario['flow']:
             p.expect(['.+', pexpect.TIMEOUT, pexpect.EOF])
@@ -186,12 +187,12 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
             lines = string.split(text, '\r\n', maxsplit=1)
             if len(lines) > 0:
-                feedback['execution'].append(('O+', lines[0] ))
+                feedback['log'].append(('O+', lines[0] ))
 
                 if len(lines) > 1 and lines[1]:
-                    feedback['execution'].append(('O', lines[1] ))
+                    feedback['log'].append(('O', lines[1] ))
 
-            #feedback['execution'].append(get_new_execution_text(p))
+            #feedback['log'].append(get_new_execution_text(p))
 
         try:
             p.expect(pexpect.EOF)
@@ -207,58 +208,58 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     except pexpect.EOF:
         feedback['result'] = False
 
-        feedback['execution'].append(get_new_execution_text(p))
+        feedback['log'].append(get_new_execution_text(p))
 
-        feedback['error'].append('the program finished too early')
+        feedback['feedback'].append('the program finished too early')
 
     except pexpect.TIMEOUT:
         feedback['result'] = False
 
         #if scenario['flow']:
-        feedback['execution'].append(get_new_execution_text(p))
+        feedback['log'].append(get_new_execution_text(p))
 
         feedback['last'] = True
-        feedback['error'].append('the program should have had this output instead:')
-        feedback['error'].append('{!r}'.format(quote))
+        feedback['feedback'].append('the program should have had this output instead:')
+        feedback['feedback'].append('{!r}'.format(quote))
 
 
     except OutputBeforeInput:
         feedback['result'] = False
 
-        feedback['execution'].append(get_new_execution_text(p, False))
+        feedback['log'].append(get_new_execution_text(p, False))
 
         feedback['last'] = True
-        feedback['error'].append('the program should not have output')
-        feedback['error'].append('the program should get input')
+        feedback['feedback'].append('the program should not have output')
+        feedback['feedback'].append('the program should get input')
 
     except ShouldInputBeforeEOF:
         feedback['result'] = False
 
-        feedback['execution'].append(get_new_execution_text(p))
+        feedback['log'].append(get_new_execution_text(p))
 
-        feedback['error'].append('the program finished too early')
-        feedback['error'].append('the program should get input')
+        feedback['feedback'].append('the program finished too early')
+        feedback['feedback'].append('the program should get input')
 
     except ShouldOutputBeforeEOF:
         feedback['result'] = False
 
-        feedback['execution'].append(get_new_execution_text(p))
+        feedback['log'].append(get_new_execution_text(p))
 
         feedback['last'] = True
-        feedback['error'].append('the program should have had this output before finishing:')
-        feedback['error'].append('{!r}'.format(quote))
+        feedback['feedback'].append('the program should have had this output before finishing:')
+        feedback['feedback'].append('{!r}'.format(quote))
 
     except ShouldEOF:
         feedback['result'] = False
 
-        feedback['execution'].append(get_new_execution_text(p))
+        feedback['log'].append(get_new_execution_text(p))
 
-        feedback['error'].append('the program should have finished')
+        feedback['feedback'].append('the program should have finished')
 
         if not scenario['flow']:
-            feedback['error'].append('instead the last line')
+            feedback['feedback'].append('instead the last line')
 
-        feedback['error'].append('it might be that the program expects input, although it should not')
+        feedback['feedback'].append('it might be that the program expects input, although it should not')
 
         '''
         if get_cleaned_before():
@@ -271,27 +272,27 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     except FileContentIncorrect:
         feedback['result'] = False
 
-        feedback['error'].append('Content of file {!r} is incorrect'.format(quote[1]))
+        feedback['feedback'].append('Content of file {!r} is incorrect'.format(quote[1]))
 
-        feedback['error'].append('')
-        feedback['error'].append('Diff executable file VS. scenario file:')
+        feedback['feedback'].append('')
+        feedback['feedback'].append('Diff executable file VS. scenario file:')
 
         exec_file_content = open(quote[3], 'U').readlines()
         snr_file_content = open(quote[4], 'U').readlines()
         diff = difflib.ndiff(exec_file_content, snr_file_content)
 
-        feedback['error'].extend(''.join(diff).splitlines())
+        feedback['feedback'].extend(''.join(diff).splitlines())
 
     except  FileShouldNotExist:
         feedback['result'] = False
 
-        feedback['error'].append('File {!r} should not exist'.format(quote[1]))
+        feedback['feedback'].append('File {!r} should not exist'.format(quote[1]))
 
 
     except FileShouldExist:
         feedback['result'] = False
 
-        feedback['error'].append('File {!r} should exist'.format(quote[1]))
+        feedback['feedback'].append('File {!r} should exist'.format(quote[1]))
 
     p.close()
     feedback['exit_code'] = p.exitstatus

@@ -10,9 +10,9 @@ def replace_unprintalbe(s):
         return r'\x{0:02x}'.format(ord(match.group()))
 
     return replace_chars.sub(replace_chars_to_hex, s)
-
+'''
 def create_empty_feedback():
-    return { 
+    return {
             'name': '',
             'result': None,
             'exit_code': None,
@@ -23,7 +23,7 @@ def create_empty_feedback():
             'error': [],
             'execution': [],
            }
-
+'''
 def f2t(s, e, is_repr=False):
     '''
     Feedback execution line to txt
@@ -41,7 +41,7 @@ def generate_execution(feedback):
     i = 1
     last_output = []
     execution = []
-    for a, e in feedback['execution']:
+    for a, e in feedback['log']:
         if not e:
             continue
         if a == 'O':
@@ -82,10 +82,10 @@ def generate_feedback_text(feedback, verbosity):
             feedback_header += 'FAILED'
 
         feedback_text.append(feedback_header)
-   
+
     if verbosity >= VERBOSITY['EXECUTION']:
         if feedback['args']:
-            feedback_text.append(f2t('**', 'Arguments: ' + feedback['args'])) 
+            feedback_text.append(f2t('**', 'Arguments: ' + ' '.join(feedback['args'])))
         feedback_text.extend(execution)
 
 
@@ -93,7 +93,7 @@ def generate_feedback_text(feedback, verbosity):
         if verbosity == VERBOSITY['ERROR'] and feedback['last']:
             feedback_text.extend(last_output)
 
-        feedback_text.extend(['---> ' + e for e in feedback['error']])
+        feedback_text.extend(['---> ' + e for e in feedback['feedback']])
 
         if feedback['signal_code'] is not None:
             feedback_text.append('!!!! {0} - {1} !!!!'.format(*SIGNALS[feedback['signal_code']]))
