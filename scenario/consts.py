@@ -1,4 +1,9 @@
 from collections import OrderedDict
+import json
+import pkg_resources
+
+SCENARIO_JSON_SCHEMA_PATH = 'schema/scenario.json'
+SCENARIO_JSON_SCHEMA = json.load(pkg_resources.resource_stream('scenario', SCENARIO_JSON_SCHEMA_PATH))
 
 ACTORS = list('NMRAIOVF')
 
@@ -19,7 +24,7 @@ VERBOSITY = OrderedDict(
               ('ERROR'     , 3),
               ('EXECUTION' , 4),
               ('DEBUG'     , 5),
-])    
+])
 
 VERBOSITY_DEFAULT = VERBOSITY['RESULT']
 
