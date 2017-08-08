@@ -30,6 +30,32 @@
           "string",
           "number"
         ]
+      },
+      "dialogue": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "output",
+                "input"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "name",
+            "value"
+          ]
+        }
       }
     },
     "log": {
@@ -100,6 +126,7 @@
     "flow",
     "strictness",
     "args",
+    "dialogue"
     "log",
     "result",
     "feedback"
