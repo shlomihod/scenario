@@ -77,9 +77,9 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         for index, quote in enumerate(scenario['dialogue']):
 
             # is_warnings = False
-            if quote in ['input', 'output']:
+            if quote['type'] in ['input', 'output']:
 
-                if quote == 'output':
+                if quote['type'] == 'output':
                     patterns = []
 
                     # Right spaces cannot be seen in run example
@@ -103,7 +103,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         if not scenario['strictness']:
 
                             pattern_cases = re.compile(escaped_quote_value, re.IGNORECASE)
-                            patterns.append(pattern_cases_value)
+                            patterns.append(pattern_cases)
 
                             # expand only spaces
                             #spaces_pattern_string = re.escape(' '.join(quote_value.split())).replace('\ ', '\s+')
@@ -161,7 +161,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                         feedback['warnings'].append('[{:02d}] [WARNNING] {!s} are not precise'.format(n_line, msg) )
                     '''
 
-                elif quote == 'input':
+                elif quote['type'] == 'input':
                     p.expect(['.+', pexpect.TIMEOUT])
 
                     if not scenario['flow'] and get_cleaned_after():
@@ -170,7 +170,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     if not p.isalive():
                         raise ShouldInputBeforeEOF('')
 
-                    p.sendline(quote)
+                    p.sendline(quote['value'])
                     feedback['execution'].append(get_new_execution_text(p))
                     feedback['execution'].append(('I', quote))
             '''
@@ -180,7 +180,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                 if is_msg:
                         feedback['execution'].append(('F', 'Content of {!r} is correct'.format(quote[1])))
             '''
-            
         if scenario['flow']:
             p.expect(['.+', pexpect.TIMEOUT, pexpect.EOF])
             _, text = get_new_execution_text(p)
