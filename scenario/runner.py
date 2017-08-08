@@ -9,6 +9,6 @@ def run_scenario(executable_path, scenario_path, verbosity=None, timeout=TIMEOUT
     if verbosity is None:
         verbosity = VERBOSITY[scenario['verbosity']]
 
-    feedback, feedback_text = play_scenario(scenario, executable_path, verbosity, timeout, executable_extra_args)
+    feedback = play_scenario(scenario, executable_path, verbosity, timeout, executable_extra_args)
 
-    return feedback, feedback_text
+    return feedback
