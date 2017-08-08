@@ -3,24 +3,33 @@
   "id": "https://github.com/shlomihod/scenario/tree/master/scenario/schema/scenario.json",
   "type": "object",
   "properties": {
-    "id": {"type": "string"},
-
-    "name": {"type": "string"},
-
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
     "verbosity": {
       "type": "number",
       "minimum": 0,
       "maximum": 5
     },
-
-    "flow": {"type": "boolean"},
-
-    "strictness": {"type": "boolean"},
-
+    "flow": {
+      "type": "boolean"
+    },
+    "strictness": {
+      "type": "boolean"
+    },
     "args": {
       "type": "array",
       "items": {
-        "type": ["string", "number"]
+        "type": [
+          "string",
+          "number"
+        ]
       }
     },
     "dialogue": {
@@ -30,15 +39,37 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["args", "output", "input"]
+            "enum": [
+              "output",
+              "input"
+            ]
           },
-          "name": {"type": "string"},
-          "value": {"type": ["string", "number"]}
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "string",
+              "number"
+            ]
+          }
         },
-        "required": ["type", "name", "value"]
+        "required": [
+          "type",
+          "name",
+          "value"
+        ]
       }
     }
   },
-
-  "required": ["id", "name", "verbosity", "flow", "strictness", "args", "dialogue"]
+  "required": [
+    "id",
+    "name",
+    "description",
+    "verbosity",
+    "flow",
+    "strictness",
+    "args",
+    "dialogue"
+  ]
 }
