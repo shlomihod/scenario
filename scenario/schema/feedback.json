@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "https://github.com/shlomihod/scenario/tree/master/scenario/schema/feedback.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "verbosity": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "flow": {
+      "type": "boolean"
+    },
+    "strictness": {
+      "type": "boolean"
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "number"
+        ]
+      }
+    },
+    "log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "en": {
+            "type": "string",
+            "enum": [
+              "output",
+              "input",
+              "print"
+            ]
+          },
+          "he": {
+            "type": "string",
+            "enum": [
+              "פלט",
+              "קלט",
+              "הדפסה"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "string",
+              "number"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      }
+    },
+    "reslut": {
+      "type": "object",
+      "properties": {
+        "bool": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string",
+          "enum": [
+            "הצלחה",
+            "אי-הצלחה"
+          ]
+        }
+      },
+      "required": [
+        "bool",
+        "text"
+      ]
+    },
+    "feedback": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "description",
+    "verbosity",
+    "flow",
+    "strictness",
+    "args",
+    "log",
+    "result",
+    "feedback"
+  ]
+}
