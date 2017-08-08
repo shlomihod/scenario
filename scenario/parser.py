@@ -1,5 +1,7 @@
 import os
 
+
+'''
 from scenario.consts import ACTORS, FILE_COMMANDS, FILE_COMMANDS_PARAMS_2, FILE_COMMANDS_PARAMS_4, \
                             VERBOSITY, MODES, STRICTNESS_DEFUALT, FLOW_DEFAULT
 
@@ -11,11 +13,11 @@ def parse_scenario_line(scenario_line):
                                 .format(parts[0], ACTORS)
 
     return parts
-
-def parse_file_quote(file_quote, scenario_path, executable_path):
-    '''
+'''
+#def parse_file_quote(file_quote, scenario_path, executable_path):
+'''
     quote[0] - command
-    
+
     2:
     quote[1] - exec env file path
     quote[2] - exec full file path
@@ -26,12 +28,12 @@ def parse_file_quote(file_quote, scenario_path, executable_path):
     quote[3] - exec full file path
     quote[4] - snr full file path
     '''
-
+'''
     parts = file_quote.split()
     assert len(parts), 'File quote cannot be empty'
     assert parts[0] in FILE_COMMANDS, '{!r} is not recognized file command (Only {})' \
                                 .format(parts[0], FILE_COMMANDS)
-    
+
     if parts[0] in FILE_COMMANDS_PARAMS_2:
         assert len(parts) == 2, 'Each file quote should be in the format of <command> <exec env file path>'
 
@@ -41,7 +43,7 @@ def parse_file_quote(file_quote, scenario_path, executable_path):
 
     elif parts[0] in FILE_COMMANDS_PARAMS_4:
         assert len(parts) == 3, 'Each file quote should be in the format of <command> <exec env file path> <snr env file path>'
-   
+
         exec_env_file_path = os.path.join(os.path.dirname(executable_path), parts[1])
         snr_env_file_path = os.path.join(os.path.dirname(scenario_path), parts[2])
 
@@ -78,7 +80,7 @@ def parse_scenario_file(scenario_path, executable_path):
 
                 if parsed_line[0] == 'R':
                     continue
-                
+
                 elif parsed_line[0] == 'A':
                     assert args is None, 'Cannot be more than one A actor'
                     assert dialog == [], 'Cannot be I or O actors before A actor'
@@ -110,7 +112,7 @@ def parse_scenario_file(scenario_path, executable_path):
                                     ]
                     else:
                         raise AssertionError('V actor is {!r} but it must be only one of {!s} or one of {!s}'.
-                                            format(parsed_line[1], VERBOSITY.keys(), VERBOSITY.values())) 
+                                            format(parsed_line[1], VERBOSITY.keys(), VERBOSITY.values()))
 
                 elif parsed_line[0] == 'F':
                     dialog_line = (parsed_line[0], parse_file_quote(parsed_line[1], scenario_path, executable_path))
@@ -118,10 +120,10 @@ def parse_scenario_file(scenario_path, executable_path):
                         pre_dialog.append(dialog_line)
                     else:
                         dialog.append(dialog_line)
-                
+
                 elif parsed_line[0] == 'N':
                     raise AssertionError('Cannot be more than one N actor')
-            
+
                 elif parsed_line[0] in ['O', 'I']:
                     dialog.append(parsed_line)
 
@@ -139,3 +141,17 @@ def parse_scenario_file(scenario_path, executable_path):
             'strictness': strictness,
             'flow': flow
            }
+'''
+
+import json
+import jsonschema
+
+from consts import SCENARIO_JSON_SCHEMA
+
+def parse_scenario_file(scenario_path, executable_path):
+    with open(scenario_path) as f:
+        scenario = json.load(f)
+
+    jsonschema.validate(scenario, SCENARIO_JSON_SCHEMA)
+
+    return scenario
