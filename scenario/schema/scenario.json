@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "https://github.com/shlomihod/scenario/tree/master/scenario/schema/scenario.json",
+  "id": "https://raw.github.com/shlomihod/scenario/tree/master/scenario/schema/scenario.json",
   "type": "object",
   "properties": {
     "id": {

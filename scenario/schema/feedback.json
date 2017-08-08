@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "https://github.com/shlomihod/scenario/tree/master/scenario/schema/feedback.json",
+  "id": "https://raw.github.com/shlomihod/scenario/tree/master/scenario/schema/feedback.json",
   "type": "object",
   "properties": {
     "id": {
@@ -95,7 +95,7 @@
         ]
       }
     },
-    "reslut": {
+    "result": {
       "type": "object",
       "properties": {
         "bool": {
@@ -116,7 +116,27 @@
     },
     "feedback": {
       "type": "string"
-    }
+    },
+    "exit_code": {
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 30
+        },
+        { "type": "null" }
+      ]
+    },
+    "signal_code": {
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 30
+        },
+        { "type": "null" }
+      ]
+    },
   },
   "required": [
     "id",
@@ -129,6 +149,8 @@
     "dialogue"
     "log",
     "result",
-    "feedback"
+    "feedback",
+    "exit_code",
+    "signal_code"
   ]
 }
