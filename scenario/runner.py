@@ -7,10 +7,7 @@ def run_scenario(executable_path, scenario_path, verbosity=None, timeout=TIMEOUT
     scenario = parse_scenario_file(scenario_path, executable_path)
 
     if verbosity is None:
-        if scenario['verbosity'] is not None:
-            verbosity = VERBOSITY[scenario['verbosity']]
-        else:
-            verbosity = VERBOSITY_DEFAULT
+        verbosity = VERBOSITY[scenario['verbosity']]
 
     feedback, feedback_text = play_scenario(scenario, executable_path, verbosity, timeout, executable_extra_args)
 
