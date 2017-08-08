@@ -10,7 +10,7 @@ class TestPlayer(TestCase):
     def __generate_scenario_test(self, test_name, strictness=True):
         scenario = {}
         scenario['name'] = test_name
-        scenario['pre_dialog'] = []
+        scenario['pre_dialogue'] = []
         scenario['verobisty'] = TEST_VERBOSITY
         scenario['strictness'] = True
         scenario['flow'] = False
@@ -19,25 +19,25 @@ class TestPlayer(TestCase):
                                     .replace('_nonstrict', '')
 
         if test_name == 'print':
-            scenario['dialog'] = [('O', quote) \
+            scenario['dialogue'] = [('O', quote) \
                                   for quote in ANNABEL_LEE.splitlines()]
             exp_result = True
 
         elif test_name == 'print_input':
-            scenario['dialog'] = [('O', quote) \
+            scenario['dialogue'] = [('O', quote) \
                                   for quote in ANNABEL_LEE.splitlines()]   \
                                   + [('I', 'some text')]
             exp_result = True
 
         elif test_name == 'print_print-input':
-            scenario['dialog'] = [('O', quote) \
+            scenario['dialogue'] = [('O', quote) \
                                   for quote in ANNABEL_LEE.splitlines()]   \
                                   + [('I', 'some text')]                   \
                                   + [('O', 'some text')]
             exp_result = True
 
         elif test_name == 'print-input':
-            scenario['dialog'] =  [('I', 'some text')]                    \
+            scenario['dialogue'] =  [('I', 'some text')]                    \
                                   + [('O', 'some text')]
             exp_result = True
 
@@ -57,7 +57,7 @@ class TestPlayer(TestCase):
                 else:
                     exp_result = False
 
-            scenario['dialog'] = [('O', quote) \
+            scenario['dialogue'] = [('O', quote) \
                                   for quote in ANNABEL_LEE.splitlines()]   \
                                   + [('I', 'some text')]                   \
                                   + [('O', 'some text')]      
@@ -73,13 +73,13 @@ class TestPlayer(TestCase):
                 scenario['strictness'] = True
                 exp_result = False
 
-            scenario['dialog'] = [['O', quote] \
+            scenario['dialogue'] = [['O', quote] \
                                   for quote in ANNABEL_LEE.splitlines()]   \
                                   + [('I', 'some text')]                   \
                                   + [('O', 'some text')] 
-            scenario['dialog'][3][1] = scenario['dialog'][3][1] + ' '
-            scenario['dialog'][5][1] = scenario['dialog'][5][1] + '  '
-            scenario['dialog'][7][1] = '    '.join(scenario['dialog'][7][1].split())
+            scenario['dialogue'][3][1] = scenario['dialogue'][3][1] + ' '
+            scenario['dialogue'][5][1] = scenario['dialogue'][5][1] + '  '
+            scenario['dialogue'][7][1] = '    '.join(scenario['dialogue'][7][1].split())
         return scenario, exp_result, ''
 
     def __tester(self, test_name):

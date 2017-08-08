@@ -77,7 +77,7 @@ def play_file_quote(quote):
         if os.path.exists(quote[2]):
             raise FileShouldNotExist()
 
-def pre_scenario(pre_dialog):
-    for index, (actor, quote) in enumerate(pre_dialog):
+def pre_scenario(pre_dialogue):
+    for index, (actor, quote) in enumerate(pre_dialogue):
         if actor == 'F':
             play_file_quote(quote)

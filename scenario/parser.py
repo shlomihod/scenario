@@ -63,8 +63,8 @@ def parse_scenario_file(scenario_path, executable_path):
     strictness = STRICTNESS_DEFUALT
     flow = FLOW_DEFAULT
 
-    pre_dialog = []
-    dialog = []
+    pre_dialogue = []
+    dialogue = []
 
     assert len(lines) != 0, 'Scenario file cannot be empty'
 
@@ -83,7 +83,7 @@ def parse_scenario_file(scenario_path, executable_path):
 
                 elif parsed_line[0] == 'A':
                     assert args is None, 'Cannot be more than one A actor'
-                    assert dialog == [], 'Cannot be I or O actors before A actor'
+                    assert dialogue == [], 'Cannot be I or O actors before A actor'
                     args = parsed_line[1]
 
                 elif parsed_line[0] == 'M':
@@ -115,17 +115,17 @@ def parse_scenario_file(scenario_path, executable_path):
                                             format(parsed_line[1], VERBOSITY.keys(), VERBOSITY.values()))
 
                 elif parsed_line[0] == 'F':
-                    dialog_line = (parsed_line[0], parse_file_quote(parsed_line[1], scenario_path, executable_path))
+                    dialogue_line = (parsed_line[0], parse_file_quote(parsed_line[1], scenario_path, executable_path))
                     if args is None:
-                        pre_dialog.append(dialog_line)
+                        pre_dialogue.append(dialogue_line)
                     else:
-                        dialog.append(dialog_line)
+                        dialogue.append(dialogue_line)
 
                 elif parsed_line[0] == 'N':
                     raise AssertionError('Cannot be more than one N actor')
 
                 elif parsed_line[0] in ['O', 'I']:
-                    dialog.append(parsed_line)
+                    dialogue.append(parsed_line)
 
 
     except AssertionError as e:
@@ -135,8 +135,8 @@ def parse_scenario_file(scenario_path, executable_path):
     return {
             'name': name,
             'args': args,
-            'dialog': dialog,
-            'pre_dialog': pre_dialog,
+            'dialogue': dialogue,
+            'pre_dialogue': pre_dialogue,
             'verbosity': verbosity,
             'strictness': strictness,
             'flow': flow
