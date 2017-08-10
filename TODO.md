@@ -1,6 +1,7 @@
 [x] Convert EOF to Feedback Exceptioמ
 [x] Adding suggestion to Feedback
-[ ] Delete extra code
-[ ] Whas is missing for new not working testing
+[x] Delete extra code
+[x] What is missing for new working testing
+[ ] README documentation
 [ ] Testing! Testing! Testing! (What about strict and non flow? later!)
 [ ] Fix Bugs
