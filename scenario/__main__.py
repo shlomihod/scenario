@@ -5,21 +5,17 @@ import os
 import glob
 import argparse
 import traceback
-import collections
 import json
 
-import jsonschema
-
 from scenario.runner import run_scenario
-from scenario.parser import ParserJSONLoadingError, \
-                            ParserJSONValidationError
-
+from scenario.parser import ParserError
 
 from scenario.consts import VERBOSITY,\
-                            TIMEOUT_DEFAULT,              \
-                            OUTPUT_FORMATS, OUTPUT_FORMATS_DEFAULT
+    TIMEOUT_DEFAULT,              \
+    OUTPUT_FORMATS, OUTPUT_FORMATS_DEFAULT
 
 from scenario.utils import build_feedback_text
+
 
 def main():
 
@@ -36,7 +32,7 @@ def main():
     parser.add_argument('-a', type=str,
                         help='set extra arguments for executable')
 
-    parser.add_argument('-d', '--directory', help='run on all scenario files (.snr) in the directory',
+    parser.add_argument('-d', '--directory', help='run on all scenario files (.json) in the directory',
                         action="store_true")
 
     parser.add_argument('-s', '--forward-signal', help='forward signal from executable to scenario',
@@ -47,7 +43,6 @@ def main():
 
     parser.add_argument('-f', '--format', dest='format', default=OUTPUT_FORMATS_DEFAULT,
                         action='store', choices=OUTPUT_FORMATS, help='output format to stdout')
-
 
     args = parser.parse_args()
 
@@ -73,24 +68,23 @@ def main():
 
             for scenario_file_path in scenario_file_paths:
                 scenario_file_feedback = run_scenario(args.executable_path,
-                                                scenario_file_path,
-                                                args.v,
-                                                args.t,
-                                                args.a)
+                                                      scenario_file_path,
+                                                      args.v,
+                                                      args.t,
+                                                      args.a)
 
                 feedback.append(scenario_file_feedback)
-                feedback_texts.append(scenario_file_feedback['log']['text'] + \
-                 '\n' +'====' + '\n' + str(feedback['result']['bool']))
+                feedback_texts.append(scenario_file_feedback['log']['text'] +
+                                      '\n' + '====' + '\n' + str(feedback['result']['bool']))
 
             result = all([feedback['result']['bool'] for feedback in feedbacks])
 
             signals = [feedback['signal_code'] for feedback in feedbacks]
             signal_ = next((item for item in signals if item is not None), None)
 
-
             feedback_text = build_feedback_text(feedback)
 
-    except (ParserJSONLoadingError, ParserJSONValidationError) as e:
+    except ParserError as e:
         print(e.msg)
         sys.exit(2)
 
@@ -110,9 +104,10 @@ def main():
         os.kill(os.getpid(), signal_)
 
     if result:
-    	sys.exit(0)
+        sys.exit(0)
     else:
-    	sys.exit(1)
+        sys.exit(1)
+
 
 if __name__ == '__main__':
     main()
