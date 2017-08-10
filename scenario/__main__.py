@@ -63,7 +63,7 @@ def main():
             feedback = []
             feedback_texts = []
 
-            scenario_file_directory_path = os.path.join(args.scenario_path, '*.snr')
+            scenario_file_directory_path = os.path.join(args.scenario_path, '*.json')
             scenario_file_paths = glob.glob(scenario_file_directory_path)
 
             for scenario_file_path in scenario_file_paths:
@@ -77,9 +77,9 @@ def main():
                 feedback_texts.append(scenario_file_feedback['log']['text'] +
                                       '\n' + '====' + '\n' + str(feedback['result']['bool']))
 
-            result = all([feedback['result']['bool'] for feedback in feedbacks])
+            result = all([fb['result']['bool'] for fb in feedback])
 
-            signals = [feedback['signal_code'] for feedback in feedbacks]
+            signals = [feedback['signal_code'] for fb in feedback]
             signal_ = next((item for item in signals if item is not None), None)
 
             feedback_text = build_feedback_text(feedback)
@@ -97,6 +97,7 @@ def main():
 
     if args.format == 'json':
         print(json.dumps(feedback, indent=2, sort_keys=True))
+
     elif args.format == 'text':
         print(feedback_text)
 
