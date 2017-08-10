@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from scenario.consts import VERBOSITY, VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
+from scenario.consts import VERBOSITY, TIMEOUT_DEFAULT
 
 from scenario.parser import parse_scenario_file
 from scenario.player import play_scenario

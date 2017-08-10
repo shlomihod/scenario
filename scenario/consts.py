@@ -10,19 +10,6 @@ SCENARIO_JSON_SCHEMA = json.load(pkg_resources.resource_stream('scenario', SCENA
 FEEDBACK_JSON_SCHEMA_PATH = 'schema/feedback.json'
 FEEDBACK_JSON_SCHEMA = json.load(pkg_resources.resource_stream('scenario', FEEDBACK_JSON_SCHEMA_PATH))
 
-
-ACTORS = list('NMRAIOVF')
-
-FILE_COMMANDS_PARAMS_2 = ['exists', 'not_exists']
-FILE_COMMANDS_PARAMS_4 = ['copy', 'compare', 'compare_binary', 'compare_text']
-FILE_COMMANDS = FILE_COMMANDS_PARAMS_2 + FILE_COMMANDS_PARAMS_4
-
-MODES = ['STRICT', 'NONSTRICT', 'FLOW']
-
-STRICTNESS_DEFUALT = True
-
-FLOW_DEFAULT = False
-
 VERBOSITY = OrderedDict(
             [ ('RETURN_CODE', 0),
               ('RESULT'    , 1),
@@ -31,8 +18,6 @@ VERBOSITY = OrderedDict(
               ('EXECUTION' , 4),
               ('DEBUG'     , 5),
 ])
-
-VERBOSITY_DEFAULT = VERBOSITY['RESULT']
 
 TIMEOUT_DEFAULT = 1
 

@@ -10,7 +10,7 @@ import json
 
 from scenario.runner import run_scenario
 
-from scenario.consts import VERBOSITY, VERBOSITY_DEFAULT, \
+from scenario.consts import VERBOSITY,\
                             TIMEOUT_DEFAULT,              \
                             OUTPUT_FORMATS, OUTPUT_FORMATS_DEFAULT
 

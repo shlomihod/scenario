@@ -9,7 +9,7 @@ import json
 import pexpect
 import jsonschema
 
-from scenario.consts import VERBOSITY_DEFAULT, TIMEOUT_DEFAULT, FEEDBACK_JSON_SCHEMA
+from scenario.consts import TIMEOUT_DEFAULT, FEEDBACK_JSON_SCHEMA
 
 from scenario.player.feedback_exceptions import SholdNoOutputBeforeInput, \
                                                 ShouldEOF,                \
@@ -18,12 +18,6 @@ from scenario.player.feedback_exceptions import SholdNoOutputBeforeInput, \
                                                 OutputIncorrect,          \
                                                 EOFIncorrect,             \
                                                 MemoryFeedbackError
-                                    #FileContentIncorrect, FileShouldNotExist, FileShouldExist, \
-
-
-#from scenario.player.files import pre_scenario, play_file_quote
-
-from scenario.player.feedback import generate_feedback_text#, create_empty_feedback
 
 from scenario.utils import xstr,                \
                            get_cleaned_before,  \
@@ -32,15 +26,11 @@ from scenario.utils import xstr,                \
                            get_quote_type_dict, \
                            get_feedback_dict
 
-def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeout=TIMEOUT_DEFAULT, executable_extra_args=None):
+def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT, executable_extra_args=None):
 
     feedback = copy.deepcopy(scenario)
     feedback['log'] = {'quotes': [], 'text': ''}
     feedback['feedback'] = {'type': None, 'text': None}
-
-
-
-    # pre_scenario(scenario['pre_dialogue'])
 
     executable_path_with_snr_args = executable_path
 
@@ -58,7 +48,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
     try:
         for index, quote in enumerate(scenario['dialogue']):
 
-            # is_warnings = False
             if quote['type'] in ['input', 'output']:
 
                 if quote['type'] == 'output':
@@ -176,31 +165,13 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
                     quote['type'] = get_quote_type_dict('input')
                     feedback['log']['quotes'].append(quote)# ('I', quote))
-            '''
-            elif actor == 'F':
-                is_msg = play_file_quote(quote)
 
-                if is_msg:
-                        feedback['log']['quotes'].append(('F', 'Content of {!r} is correct'.format(quote[1])))
-            '''
         if scenario['flow']:
             p.expect(['.+', pexpect.TIMEOUT, pexpect.EOF])
 
             feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
                                     'value': p.before + xstr(p.after)
                                  })
-            '''
-            _, text = get_new_execution_text(p)
-
-            lines = string.split(text, '\r\n', maxsplit=1)
-            if len(lines) > 0:
-                feedback['log']['quotes'].append(('O+', lines[0] ))
-
-                if len(lines) > 1 and lines[1]:
-                    feedback['log']['quotes'].append(('O', lines[1] ))
-
-            #feedback['log']['quotes'].append(get_new_execution_text(p))
-            '''
 
         try:
             p.expect(pexpect.EOF)
@@ -233,9 +204,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                                 'value': p.before + xstr(p.after)
                              })
 
-#        feedback['last'] = True
         feedback['feedback'] = get_feedback_dict(e)
-        #feedback['feedback'].append('{!r}'.format(quote))
 
 
     except SholdNoOutputBeforeInput as e:
@@ -247,7 +216,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
         feedback['last'] = True
         feedback['feedback'] = get_feedback_dict(e)
-        #feedback['feedback'].append('the program should get input')
 
     except ShouldInputBeforeEOF as e:
         feedback['result'] = get_result_dict(False)
@@ -257,7 +225,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                              })
 
         feedback['feedback'] = get_feedback_dict(e)
-        #feedback['feedback'].append('the program should get input')
 
     except ShouldOutputBeforeEOF as e:
         feedback['result'] = get_result_dict(False)
@@ -268,7 +235,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
 
         feedback['last'] = True
         feedback['feedback'] = get_feedback_dict(e)
-        #feedback['feedback'].append('{!r}'.format(quote))
 
     except ShouldEOF as e:
         feedback['result'] = get_result_dict(False)
@@ -277,7 +243,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                                 'value': p.before + xstr(p.after)
                              })
 
-        #feedback['feedback'] = ('the program should have finished')
 
         if not scenario['flow']:
             pass
@@ -292,32 +257,6 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         if get_cleaned_before(p, scenario['strictness']):
             feedback.append('----> instead the last line')
         '''
-    '''
-    except FileContentIncorrect:
-        feedback['result'] = False
-
-        feedback['feedback'].append('Content of file {!r} is incorrect'.format(quote[1]))
-
-        feedback['feedback'].append('')
-        feedback['feedback'].append('Diff executable file VS. scenario file:')
-
-        exec_file_content = open(quote[3], 'U').readlines()
-        snr_file_content = open(quote[4], 'U').readlines()
-        diff = difflib.ndiff(exec_file_content, snr_file_content)
-
-        feedback['feedback'].extend(''.join(diff).splitlines())
-
-    except  FileShouldNotExist:
-        feedback['result'] = False
-
-        feedback['feedback'].append('File {!r} should not exist'.format(quote[1]))
-
-
-    except FileShouldExist:
-        feedback['result'] = False
-
-        feedback['feedback'].append('File {!r} should exist'.format(quote[1]))
-    '''
 
     p.close()
     feedback['exit_code'] = p.exitstatus
