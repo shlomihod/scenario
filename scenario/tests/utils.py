@@ -1,4 +1,4 @@
-__all__ = [ANNABEL_LEE, EXECUTABLE]
+__all__ = ['ANNABEL_LEE', 'EXECUTABLE']
 
 ANNABEL_LEE = '''It was many and many a year ago,
 In a kingdom by the sea,
@@ -15,7 +15,7 @@ Coveted her and me.'''
 
 import os
 
-_executable_dirpath = os.path.dirname(_os.path.abspath(__file__))
+_executable_dirpath = os.path.dirname(os.path.abspath(__file__))
 _executable_filepath = os.path.join(_executable_dirpath, 'executable.py')
 
 EXECUTABLE = '{}'.format(_executable_filepath)
