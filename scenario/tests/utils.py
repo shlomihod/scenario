@@ -1,3 +1,5 @@
+__all__ = [ANNABEL_LEE, EXECUTABLE]
+
 ANNABEL_LEE = '''It was many and many a year ago,
 In a kingdom by the sea,
 That a maiden there lived whom you may know
@@ -11,8 +13,9 @@ I and my Annabel Lee--
 With a love that the winged seraphs of heaven
 Coveted her and me.'''
 
-import os as _os
-_executable_dirpath = _os.path.dirname(_os.path.abspath(__file__))
-_executable_filepath = _os.path.join(_executable_dirpath, 'executable.py')
+import os
+
+_executable_dirpath = os.path.dirname(_os.path.abspath(__file__))
+_executable_filepath = os.path.join(_executable_dirpath, 'executable.py')
 
 EXECUTABLE = '{}'.format(_executable_filepath)
