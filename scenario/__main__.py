@@ -8,7 +8,12 @@ import traceback
 import collections
 import json
 
+import jsonschema
+
 from scenario.runner import run_scenario
+from scenario.parser import ParserJSONLoadingError, \
+                            ParserJSONValidationError
+
 
 from scenario.consts import VERBOSITY,\
                             TIMEOUT_DEFAULT,              \
@@ -54,7 +59,7 @@ def main():
                                     args.t,
                                     args.a)
 
-            result = feedback['result']
+            result = feedback['result']['bool']
             signal_ = feedback['signal_code']
 
             feedback_text = build_feedback_text(feedback)
@@ -77,7 +82,7 @@ def main():
                 feedback_texts.append(scenario_file_feedback['log']['text'] + \
                  '\n' +'====' + '\n' + str(feedback['result']['bool']))
 
-            result = all([feedback['result'] for feedback in feedbacks])
+            result = all([feedback['result']['bool'] for feedback in feedbacks])
 
             signals = [feedback['signal_code'] for feedback in feedbacks]
             signal_ = next((item for item in signals if item is not None), None)
@@ -85,12 +90,16 @@ def main():
 
             feedback_text = build_feedback_text(feedback)
 
+    except (ParserJSONLoadingError, ParserJSONValidationError) as e:
+        print(e.msg)
+        sys.exit(2)
+
     except Exception as e:
         if args.v and args.v >= VERBOSITY['DEBUG']:
             traceback.print_exc()
         else:
             print('ERROR: {!s}'.format(e))
-        sys.exit(2)
+        sys.exit(-1)
 
     if args.format == 'json':
         print(json.dumps(feedback, indent=2, sort_keys=True))

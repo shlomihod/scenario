@@ -25,6 +25,14 @@ optional arguments:
   -f {json,text}, --format {json,text}
                         output format to stdout`
 
+## Exit Code
+| Value | Meaning                   |
+|-------|---------------------------|
+|  0    | Success Scenario          |
+|  1    | Failed Scenario           |
+|  2    | Error in Scenario JSON    |
+| -1    | Error in Scenario Program |
+
 ## Known Issues (TODO update)
 * Extra spaces in the beginning of a line with NONSTRICT mode won't be reported to user (yet the scenario will return success)
 * Extra space in the end of a line with STRICT mode are ignored

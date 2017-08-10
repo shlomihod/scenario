@@ -60,7 +60,7 @@ class TestPlayer(TestCase):
             scenario['dialogue'] = [('O', quote) \
                                   for quote in ANNABEL_LEE.splitlines()]   \
                                   + [('I', 'some text')]                   \
-                                  + [('O', 'some text')]      
+                                  + [('O', 'some text')]
 
         elif test_name.startswith('snr-exta-spaces-end-line_print-input'):
             scenario['args'] = 'print_print-input'
@@ -76,7 +76,7 @@ class TestPlayer(TestCase):
             scenario['dialogue'] = [['O', quote] \
                                   for quote in ANNABEL_LEE.splitlines()]   \
                                   + [('I', 'some text')]                   \
-                                  + [('O', 'some text')] 
+                                  + [('O', 'some text')]
             scenario['dialogue'][3][1] = scenario['dialogue'][3][1] + ' '
             scenario['dialogue'][5][1] = scenario['dialogue'][5][1] + '  '
             scenario['dialogue'][7][1] = '    '.join(scenario['dialogue'][7][1].split())
@@ -85,7 +85,7 @@ class TestPlayer(TestCase):
     def __tester(self, test_name):
         scenario, exp_result, exp_feedback = self.__generate_scenario_test(test_name)
         feedback, feedback_text = play_scenario(scenario, EXECUTABLE, verbosity=4)
-        
+
         result = feedback['result']
         print feedback_text
 
@@ -94,7 +94,7 @@ class TestPlayer(TestCase):
 
     def test_print(self):
         self.__tester('print')
-    
+
     def test_print_input(self):
         self.__tester('print_input')
 
@@ -133,4 +133,3 @@ class TestPlayer(TestCase):
 
     def test_snr_exta_spaces_end_line__input__nonstrict(self):
         self.__tester('snr-exta-spaces-end-line_print-input_nonstrict')
-
