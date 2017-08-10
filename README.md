@@ -33,6 +33,10 @@ optional arguments:
 |  2    | Error in Scenario JSON    |
 | -1    | Error in Scenario Program |
 
+## Note
+* `flow` should be `True`
+* `strictness` should be `False`
+
 ## Known Issues (TODO update)
 * Extra spaces in the beginning of a line with NONSTRICT mode won't be reported to user (yet the scenario will return success)
 * Extra space in the end of a line with STRICT mode are ignored

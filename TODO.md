@@ -3,6 +3,7 @@
 [x] Delete extra code
 [x] What is missing for new working testing
 [x] simple README documentation
-[ ] support in new return code 
+[x] support in new return code
+[ ] assert only nonstrict and flow in parser
 [ ] Testing! Testing! Testing! (What about strict and non flow? later!)
 [ ] Fix Bugs
