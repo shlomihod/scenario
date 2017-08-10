@@ -1,63 +1,44 @@
+# -*- coding: utf-8 -*-
+
 import re
 import string
 import difflib
 import copy
+import json
 
 import pexpect
+import jsonschema
 
-from scenario.consts import VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
+from scenario.consts import VERBOSITY_DEFAULT, TIMEOUT_DEFAULT, FEEDBACK_JSON_SCHEMA
 
-from scenario.player.exceptions import FileContentIncorrect, FileShouldNotExist, FileShouldExist, \
-                                       OutputBeforeInput, ShouldEOF, ShouldOutputBeforeEOF, ShouldInputBeforeEOF
+from scenario.player.feedback_exceptions import SholdNoOutputBeforeInput, \
+                                                ShouldEOF,                \
+                                                ShouldOutputBeforeEOF,    \
+                                                ShouldInputBeforeEOF,     \
+                                                OutputIncorrect,          \
+                                                EOFIncorrect,             \
+                                                MemoryFeedbackError
+                                    #FileContentIncorrect, FileShouldNotExist, FileShouldExist, \
 
-from scenario.player.files import pre_scenario, play_file_quote
+
+#from scenario.player.files import pre_scenario, play_file_quote
 
 from scenario.player.feedback import generate_feedback_text#, create_empty_feedback
 
-def get_new_execution_text(p, with_after=True):
-    text = p.before
-
-    if with_after and isinstance(p.after, str):
-        text += p.after
-
-    return ('O', text)
+from scenario.utils import xstr,                \
+                           get_cleaned_before,  \
+                           get_cleaned_after,   \
+                           get_result_dict,     \
+                           get_quote_type_dict, \
+                           get_feedback_dict
 
 def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeout=TIMEOUT_DEFAULT, executable_extra_args=None):
 
     feedback = copy.deepcopy(scenario)
-    feedback['log'] = []
-    feedback['feedback'] = []
+    feedback['log'] = {'quotes': [], 'text': ''}
+    feedback['feedback'] = {'type': None, 'text': None}
 
 
-    def get_cleaned_before():
-        if isinstance(p.before, str):
-
-            if scenario['strictness']:
-
-                before_lines = p.before.split('\r\n')
-                if not any([set(l) - set(' ') for l in before_lines[:-1]]):
-                    return before_lines[-1]
-                else:
-                    return p.before.strip('\r\n')
-
-            else:
-                return p.before.strip(' \r\n')
-
-    def get_cleaned_after():
-        if isinstance(p.after, str):
-
-            if scenario['strictness']:
-
-                #In STRICT mode, spaces in the end of the line are ignored
-                after_lines = p.after.split('\r\n')
-                if (after_lines and
-                    not any([set(l) - set(' ') for l in after_lines[1:]])):
-                    return after_lines[0].strip(' \r\n')
-                else:
-                    return p.after.strip('\r\n')
-
-            else:
-                return p.after.strip(' \r\n')
 
     # pre_scenario(scenario['pre_dialogue'])
 
@@ -86,7 +67,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     # Right spaces cannot be seen in run example
                     quote_value = quote['value'].rstrip()
 
-                    # if O is empty, then something need to be printed
+                    # if output is empty, then something need to be printed
                     if not quote_value:
                         escaped_quote_value = '.+\r\n'
 
@@ -124,29 +105,41 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     try:
                         index = p.expect(patterns)
                     except pexpect.EOF:
-                        raise ShouldOutputBeforeEOF('')
+                        raise ShouldOutputBeforeEOF(quote)
+                    except pexpect.TIMEOUT:
+                        raise OutputIncorrect(quote)
 
+                    # BEFORE the quote match
+                    if not scenario['flow'] and get_cleaned_before(p, scenario['strictness']):
+                        raise OutputIncorrect(quote)
 
-                    if not scenario['flow'] and get_cleaned_before():
-                        raise pexpect.TIMEOUT('')
+                    else:
+                        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
+                                                 'value': p.before,
+                                                 })
+                    # THE MATCH of the quote
+                    assert p.after is not None
+                    feedback['log']['quotes'].append({ 'type': get_quote_type_dict('output'),
+                                             'name': quote['name'],
+                                             'value': p.after,
+                                             })
 
-
-                    # NEED TO BE DOCUMENTED OR REFACTORED
-                    _, text = get_new_execution_text(p)
+                    # AFTER the quote match UNTIL THE END OF THE LINE
+                    p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
 
                     if not scenario['flow']:
-                        p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
-                        _, text_br = get_new_execution_text(p)
-                        text += text_br
+                        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
+                                                 'value': p.before + xstr(p.after)
+                                                 })
 
-                    # WHY DO I CHECK THAT \r\n IS NOT IN TEXT?!
-                    if scenario['flow'] and '\r\n' not in text:
-                        feedback['log'].append(('O+', text ))
+                        if get_cleaned_before(p, scenario['strictness']).strip(' '):
+                            raise OutputIncorrect(quote)
+
+
                     else:
-                        feedback['log'].append(('O', text ))
-
-                    if not scenario['flow'] and get_cleaned_before().strip(' '):
-                        raise pexpect.TIMEOUT('')
+                        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
+                                                 'value': p.before + p.after
+                                                 })
 
                     '''
                     if verbosity >= VERBOSITY['ERROR'] and index != 0:
@@ -163,112 +156,143 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
                     '''
 
                 elif quote['type'] == 'input':
-                    p.expect(['.+', pexpect.TIMEOUT])
+                    try:
+                        p.expect(['.+', pexpect.TIMEOUT])
+                    except pexpect.EOF:
+                        raise EOFIncorrect(quote)
 
-                    if not scenario['flow'] and get_cleaned_after():
-                        raise OutputBeforeInput('')
+                    feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
+                                             'value': p.before + xstr(p.after)
+                                             })
+
+
+                    if not scenario['flow'] and get_cleaned_after(p, scenario['strictness']):
+                        raise SholdNoOutputBeforeInput(quote)
 
                     if not p.isalive():
-                        raise ShouldInputBeforeEOF('')
+                        raise ShouldInputBeforeEOF(quote)
 
                     p.sendline(quote['value'])
-                    feedback['log'].append(get_new_execution_text(p))
-                    feedback['log'].append(('I', quote))
+
+                    quote['type'] = get_quote_type_dict('input')
+                    feedback['log']['quotes'].append(quote)# ('I', quote))
             '''
             elif actor == 'F':
                 is_msg = play_file_quote(quote)
 
                 if is_msg:
-                        feedback['log'].append(('F', 'Content of {!r} is correct'.format(quote[1])))
+                        feedback['log']['quotes'].append(('F', 'Content of {!r} is correct'.format(quote[1])))
             '''
         if scenario['flow']:
             p.expect(['.+', pexpect.TIMEOUT, pexpect.EOF])
+
+            feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
+                                    'value': p.before + xstr(p.after)
+                                 })
+            '''
             _, text = get_new_execution_text(p)
 
             lines = string.split(text, '\r\n', maxsplit=1)
             if len(lines) > 0:
-                feedback['log'].append(('O+', lines[0] ))
+                feedback['log']['quotes'].append(('O+', lines[0] ))
 
                 if len(lines) > 1 and lines[1]:
-                    feedback['log'].append(('O', lines[1] ))
+                    feedback['log']['quotes'].append(('O', lines[1] ))
 
-            #feedback['log'].append(get_new_execution_text(p))
+            #feedback['log']['quotes'].append(get_new_execution_text(p))
+            '''
 
         try:
             p.expect(pexpect.EOF)
 
-            if not scenario['flow'] and get_cleaned_before():
-                raise pexpect.TIMEOUT('')
+            if not scenario['flow'] and get_cleaned_before(p, scenario['strictness']):
+                raise pexpect.TIMEOUT
 
         except pexpect.TIMEOUT:
-            raise ShouldEOF()
+            raise ShouldEOF(quote)
 
-        feedback['result'] = True
+        feedback['result'] = get_result_dict(True)
+        feedback['feedback'] = get_feedback_dict(None)
 
-    except pexpect.EOF:
-        feedback['result'] = False
+    ### REAL FEEDBACK EXCEPTIONS PART ###
 
-        feedback['log'].append(get_new_execution_text(p))
+    except EOFIncorrect:
+        feedback['result'] = get_result_dict(False)
 
-        feedback['feedback'].append('the program finished too early')
+        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
+                                'value': p.before + xstr(p.after)
+                             })
 
-    except pexpect.TIMEOUT:
-        feedback['result'] = False
+        feedback['feedback'] = get_feedback_dict(e)
+
+    except OutputIncorrect as e:
+        feedback['result'] = get_result_dict(False)
 
         #if scenario['flow']:
-        feedback['log'].append(get_new_execution_text(p))
+        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
+                                'value': p.before + xstr(p.after)
+                             })
+
+#        feedback['last'] = True
+        feedback['feedback'] = get_feedback_dict(e)
+        #feedback['feedback'].append('{!r}'.format(quote))
+
+
+    except SholdNoOutputBeforeInput as e:
+        feedback['result'] = get_result_dict(False)
+
+        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
+                                'value': p.before
+                             })
 
         feedback['last'] = True
-        feedback['feedback'].append('the program should have had this output instead:')
-        feedback['feedback'].append('{!r}'.format(quote))
+        feedback['feedback'] = get_feedback_dict(e)
+        #feedback['feedback'].append('the program should get input')
 
+    except ShouldInputBeforeEOF as e:
+        feedback['result'] = get_result_dict(False)
 
-    except OutputBeforeInput:
-        feedback['result'] = False
+        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
+                                'value': p.before + xstr(p.after)
+                             })
 
-        feedback['log'].append(get_new_execution_text(p, False))
+        feedback['feedback'] = get_feedback_dict(e)
+        #feedback['feedback'].append('the program should get input')
 
-        feedback['last'] = True
-        feedback['feedback'].append('the program should not have output')
-        feedback['feedback'].append('the program should get input')
+    except ShouldOutputBeforeEOF as e:
+        feedback['result'] = get_result_dict(False)
 
-    except ShouldInputBeforeEOF:
-        feedback['result'] = False
-
-        feedback['log'].append(get_new_execution_text(p))
-
-        feedback['feedback'].append('the program finished too early')
-        feedback['feedback'].append('the program should get input')
-
-    except ShouldOutputBeforeEOF:
-        feedback['result'] = False
-
-        feedback['log'].append(get_new_execution_text(p))
+        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
+                                'value': p.before + xstr(p.after)
+                             })
 
         feedback['last'] = True
-        feedback['feedback'].append('the program should have had this output before finishing:')
-        feedback['feedback'].append('{!r}'.format(quote))
+        feedback['feedback'] = get_feedback_dict(e)
+        #feedback['feedback'].append('{!r}'.format(quote))
 
-    except ShouldEOF:
-        feedback['result'] = False
+    except ShouldEOF as e:
+        feedback['result'] = get_result_dict(False)
 
-        feedback['log'].append(get_new_execution_text(p))
+        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
+                                'value': p.before + xstr(p.after)
+                             })
 
-        feedback['feedback'].append('the program should have finished')
+        #feedback['feedback'] = ('the program should have finished')
 
         if not scenario['flow']:
-            feedback['feedback'].append('instead the last line')
+            pass
+            #feedback['feedback'].append('instead the last line')
 
-        feedback['feedback'].append('it might be that the program expects input, although it should not')
+        feedback['feedback'] = get_feedback_dict(e)
 
         '''
-        if get_cleaned_before():
-            feedback.append('[{:02d}] {!r}'.format(n_line+1, get_cleaned_before().split('\r\n')[0]))
+        if get_cleaned_before(p, scenario['strictness']):
+            feedback.append('[{:02d}] {!r}'.format(n_line+1, get_cleaned_before(p, scenario['strictness']).split('\r\n')[0]))
         feedback.append('----> the program should have finished')
-        if get_cleaned_before():
+        if get_cleaned_before(p, scenario['strictness']):
             feedback.append('----> instead the last line')
         '''
-
+    '''
     except FileContentIncorrect:
         feedback['result'] = False
 
@@ -293,6 +317,7 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         feedback['result'] = False
 
         feedback['feedback'].append('File {!r} should exist'.format(quote[1]))
+    '''
 
     p.close()
     feedback['exit_code'] = p.exitstatus
@@ -303,12 +328,27 @@ def play_scenario(scenario, executable_path, verbosity=VERBOSITY_DEFAULT, timeou
         feedback['signal_code'] = feedback['exit_code'] - 128
         feedback['exit_code'] = None
 
+    if feedback['signal_code'] == 0:
+        feedback['signal_code'] = None
+
+    # WHY?
     if feedback['signal_code'] == 1:
         feedback['signal_code'] = None
 
     if feedback['signal_code'] is not None:
-        feedback['result'] = False
+        feedback['result'] = get_result_dict(False)
+        feedback['feedback'] = get_feedback_dict(MemoryFeedbackError())
 
-    feedback_text = generate_feedback_text(feedback, verbosity)
+    for quote in feedback['log']['quotes']:
+        if quote['type']['en'] == 'output':
+            feedback['log']['text'] += '<'
+        feedback['log']['text'] += quote['value']
+        if quote['type']['en'] == 'output':
+            feedback['log']['text'] += '>'
 
-    return feedback, feedback_text
+        if quote['type']['en'] == 'input':
+            feedback['log']['text'] += '\r\n'
+
+    jsonschema.validate(feedback, FEEDBACK_JSON_SCHEMA)
+
+    return feedback

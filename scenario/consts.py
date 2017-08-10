@@ -1,9 +1,15 @@
+# -*- coding: utf-8 -*-
+
 from collections import OrderedDict
 import json
 import pkg_resources
 
 SCENARIO_JSON_SCHEMA_PATH = 'schema/scenario.json'
 SCENARIO_JSON_SCHEMA = json.load(pkg_resources.resource_stream('scenario', SCENARIO_JSON_SCHEMA_PATH))
+
+FEEDBACK_JSON_SCHEMA_PATH = 'schema/feedback.json'
+FEEDBACK_JSON_SCHEMA = json.load(pkg_resources.resource_stream('scenario', FEEDBACK_JSON_SCHEMA_PATH))
+
 
 ACTORS = list('NMRAIOVF')
 
@@ -29,6 +35,18 @@ VERBOSITY = OrderedDict(
 VERBOSITY_DEFAULT = VERBOSITY['RESULT']
 
 TIMEOUT_DEFAULT = 1
+
+OUTPUT_FORMATS = ['json', 'text']
+OUTPUT_FORMATS_DEFAULT = 'text'
+
+RESULT_TEXT = { False : u'אי-הצלחה',
+                True  : u'הצלחה'
+               }
+
+QUOTE_TYPE_HE_TEXT = { 'printing' : u'הדפסה',
+              'output'   : u'פלט',
+              'input'    : u'קלט'
+            }
 
 # https://people.cs.pitt.edu/~alanjawi/cs449/code/shell/UnixSignals.htm
 SIGNALS = {

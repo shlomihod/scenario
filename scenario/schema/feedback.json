@@ -1,152 +1,127 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "https://raw.github.com/shlomihod/scenario/tree/master/scenario/schema/feedback.json",
   "type": "object",
-  "properties": {
-    "id": {
-      "type": "string"
-    },
-    "name": {
-      "type": "string"
-    },
-    "description": {
-      "type": "string"
-    },
-    "verbosity": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 5
-    },
-    "flow": {
-      "type": "boolean"
-    },
-    "strictness": {
-      "type": "boolean"
-    },
-    "args": {
-      "type": "array",
-      "items": {
-        "type": [
-          "string",
-          "number"
-        ]
-      },
-      "dialogue": {
-        "type": "array",
-        "items": {
+  "allOf": [
+    { "$ref": "file:///Users/shlomi/projects/scenario/scenario/schema/scenario.json" },
+    { "properties": {
+        "log": {
           "type": "object",
           "properties": {
-            "type": {
+            "quotes": {
+
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "object",
+                    "properties": {
+                      "en": {
+                        "type": "string",
+                        "enum": [
+                          "output",
+                          "input",
+                          "printing"
+                        ]
+                      },
+                      "he": {
+                        "type": "string",
+                        "enum": [
+                          "פלט",
+                          "קלט",
+                          "הדפסה"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "en",
+                      "he"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  }
+                },
+                "required": [
+                  "type",
+                  "value"
+                ]
+              }
+            },
+            "text": { "type": "string" }
+          },
+          "required": [
+            "quotes",
+            "text"
+          ]
+
+        },
+        "result": {
+          "type": "object",
+          "properties": {
+            "bool": {
+              "type": "boolean"
+            },
+            "text": {
               "type": "string",
               "enum": [
-                "output",
-                "input"
+                "הצלחה",
+                "אי-הצלחה"
               ]
-            },
-            "name": {
-              "type": "string"
-            },
-            "value": {
-              "type": "string"
             }
           },
           "required": [
-            "type",
-            "name",
-            "value"
+            "bool",
+            "text"
           ]
-        }
-      }
-    },
-    "log": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "en": {
-            "type": "string",
-            "enum": [
-              "output",
-              "input",
-              "print"
-            ]
-          },
-          "he": {
-            "type": "string",
-            "enum": [
-              "פלט",
-              "קלט",
-              "הדפסה"
-            ]
-          },
-          "name": {
-            "type": "string"
-          },
-          "value": {
-            "type": [
-              "string",
-              "number"
-            ]
+        },
+        "feedback": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "oneOf": [
+                { "type": "string" },
+                { "type": "null" }
+              ]
+            },
+            "text": {
+              "oneOf": [
+                { "type": "string" },
+                { "type": "null" }
+              ]
+            }
           }
         },
-        "required": [
-          "type",
-          "value"
-        ]
-      }
-    },
-    "result": {
-      "type": "object",
-      "properties": {
-        "bool": {
-          "type": "boolean"
+        "exit_code": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 255
+            },
+            { "type": "null" }
+          ]
         },
-        "text": {
-          "type": "string",
-          "enum": [
-            "הצלחה",
-            "אי-הצלחה"
+        "signal_code": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 30
+            },
+            { "type": "null" }
           ]
         }
-      },
-      "required": [
-        "bool",
-        "text"
-      ]
-    },
-    "feedback": {
-      "type": "string"
-    },
-    "exit_code": {
-      "oneOf": [
-        {
-          "type": "number",
-          "minimum": 1,
-          "maximum": 30
-        },
-        { "type": "null" }
-      ]
-    },
-    "signal_code": {
-      "oneOf": [
-        {
-          "type": "number",
-          "minimum": 1,
-          "maximum": 30
-        },
-        { "type": "null" }
-      ]
-    },
-  },
+      }
+    }
+  ],
   "required": [
-    "id",
-    "name",
-    "description",
-    "verbosity",
-    "flow",
-    "strictness",
-    "args",
-    "dialogue"
     "log",
     "result",
     "feedback",
