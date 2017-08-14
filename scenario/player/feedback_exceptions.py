@@ -11,17 +11,20 @@ class FileShouldExist(Exception):
     pass
 '''
 
+
 class FeedbackException(Exception):
     def __init__(self, msg, quote=None):
         Exception.__init__(self)
         self.quote = quote
         self.feedback = msg.format(**quote)
 
+
 class OutputIncorrect(FeedbackException):
     msg = u'הפלט {name} {value} לא הופיע או הופיע במקום הלא מתאים.'
 
     def __init__(self, quote):
         FeedbackException.__init__(self, OutputIncorrect.msg, quote)
+
 
 class EOFIncorrect(FeedbackException):
     msg = u'הפלט {name} {value} לא הופיע או הופיע במקום הלא מתאים.'
@@ -37,6 +40,7 @@ class ShouldEOF(FeedbackException):
     def __init__(self, quote):
         FeedbackException.__init__(self, ShouldEOF.msg, quote)
 
+
 class ShouldOutputBeforeEOF(FeedbackException):
     msg = u'ריצת התכנית הסתיימה, אך הפלט {name} {value} לא הופיע או הופיע במקום הלא מתאים לפי כן.'
 
@@ -48,7 +52,7 @@ class SholdNoOutputBeforeInput(FeedbackException):
     msg = u'התכנית לא הייתה אמורה להדפיס פלט לפני קבלת הקלט {name} {value}'
 
     def __init__(self, quote):
-        FeedbackException.__init__(self,SholdNoOutputBeforeInput.msg, quote)
+        FeedbackException.__init__(self, SholdNoOutputBeforeInput.msg, quote)
 
 
 class ShouldInputBeforeEOF(FeedbackException):
@@ -56,6 +60,7 @@ class ShouldInputBeforeEOF(FeedbackException):
 
     def __init__(self, quote):
         FeedbackException.__init__(self, ShouldInputBeforeEOF.msg, quote)
+
 
 class MemoryFeedbackError(FeedbackException):
     msg = u'התרחשה שגיאת זיכרון'
