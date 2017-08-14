@@ -5,5 +5,6 @@
 [x] simple README documentation
 [x] support in new return code
 [x] assert only nonstrict and flow in parser
-[ ] Testing! Testing! Testing! (What about strict and non flow? later!)
-[ ] Fix Bugs
+[x] Testing! Testing! Testing! (What about strict and non flow? later!)
+[ ] Go through the Test Cases and make sure it covers all
+[ ] Go through Asana: Bugs and Features
