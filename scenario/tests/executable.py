@@ -27,7 +27,7 @@ if __name__ == '__main__':
         text = ANNABEL_LEE[:].splitlines()
         text[3] = text[3].upper()
         text[4] = text[4].replace(' ', '  ')
-        text[5] = text[5] + '    ' 
+        text[5] = text[5] + '    '
         text[6] = text[6].lower().replace(' ', '  ')
         text = '\n'.join(text)
         print text
