@@ -162,9 +162,13 @@ def play_scenario(scenario, executable_path,
                     if not p.isalive():
                         raise ShouldInputBeforeEOF(quote)
 
-                    p.sendline(quote['value'])
+                    try:
+                        p.sendline(quote['value'])
+                    except OSError:
+                        raise ShouldInputBeforeEOF(quote)
 
                     feedback['log']['quotes'].append({'type': get_quote_type_dict('input'),
+                                                      'name': quote['name'],
                                                       'value': quote['value']
                                                       })
 
