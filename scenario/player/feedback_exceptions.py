@@ -9,6 +9,10 @@ class FeedbackException(Exception):
 
 
 class OutputIncorrect(FeedbackException):
+    '''
+    The output is not just before EOF
+    '''
+
     msg = u'הפלט {name} {value} לא הופיע או הופיע במקום הלא מתאים.'
 
     def __init__(self, quote):
@@ -38,6 +42,10 @@ class ShouldOutputBeforeEOF(FeedbackException):
 
 
 class SholdNoOutputBeforeInput(FeedbackException):
+    '''
+    only in `flow = False`
+    '''
+
     msg = u'התכנית לא הייתה אמורה להדפיס פלט לפני קבלת הקלט {name} {value}'
 
     def __init__(self, quote):
