@@ -19,13 +19,6 @@ class OutputIncorrect(FeedbackException):
         FeedbackException.__init__(self, OutputIncorrect.msg, quote)
 
 
-class EOFIncorrect(FeedbackException):
-    msg = u'הפלט {name} {value} לא הופיע או הופיע במקום הלא מתאים.'
-
-    def __init__(self, quote):
-        FeedbackException.__init__(self, EOFIncorrect.msg, quote)
-
-
 class ShouldEOF(FeedbackException):
     msg = u'ריצת התכנית אמורה הייתה להסתיים לאחר הקלטים והפלטים שנבדקו, אך התכנית עדיין רצה.' + u'\n' + \
           u'אולי יש לולאה אינסופית בקוד? אולי יש getchar מיותר בסוף ה-main?'

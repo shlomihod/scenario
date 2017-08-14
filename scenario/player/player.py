@@ -13,7 +13,6 @@ from scenario.player.feedback_exceptions import SholdNoOutputBeforeInput, \
     ShouldOutputBeforeEOF,    \
     ShouldInputBeforeEOF,     \
     OutputIncorrect,          \
-    EOFIncorrect,             \
     MemoryFeedbackError
 
 from scenario.utils import xstr,                \
@@ -150,10 +149,8 @@ def play_scenario(scenario, executable_path,
                     '''
 
                 elif quote['type'] == 'input':
-                    try:
-                        p.expect(['.+', pexpect.TIMEOUT])
-                    except pexpect.EOF:
-                        raise EOFIncorrect(quote)
+
+                    p.expect(['.+', pexpect.TIMEOUT, pexpect.EOF])
 
                     feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
                                                       'value': p.before + xstr(p.after)
@@ -190,15 +187,6 @@ def play_scenario(scenario, executable_path,
         feedback['feedback'] = get_feedback_dict(None)
 
     ### REAL FEEDBACK EXCEPTIONS PART ###
-
-    except EOFIncorrect as e:
-        feedback['result'] = get_result_dict(False)
-
-        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
-                                          'value': p.before + xstr(p.after)
-                                          })
-
-        feedback['feedback'] = get_feedback_dict(e)
 
     except OutputIncorrect as e:
         feedback['result'] = get_result_dict(False)
