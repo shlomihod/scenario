@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-import string
-import difflib
 import copy
-import json
 
 import pexpect
 import jsonschema
@@ -39,12 +36,18 @@ def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT,
         executable_path_with_snr_args += ' ' + ' '.join(scenario['args'])
 
     if not executable_extra_args:
-        p = pexpect.spawn(executable_path_with_snr_args, timeout=timeout, echo=False)
+        p = pexpect.spawn(
+            executable_path_with_snr_args,
+            timeout=timeout, echo=False
+        )
 
     else:
-        executable_path_with_all_args = executable_path_with_snr_args + ' ' + executable_extra_args
+        executable_path_with_all_args = (executable_path_with_snr_args +
+                                         ' ' + executable_extra_args)
         p = pexpect.spawn(
-            '/bin/bash', ['-c', executable_path_with_all_args], timeout=timeout, echo=False)
+            '/bin/bash', ['-c', executable_path_with_all_args],
+            timeout=timeout, echo=False
+        )
 
     try:
         for index, quote in enumerate(scenario['dialogue']):
@@ -74,7 +77,8 @@ def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT,
 
                         if not scenario['strictness']:
 
-                            pattern_cases = re.compile(escaped_quote_value, re.IGNORECASE)
+                            pattern_cases = re.compile(escaped_quote_value,
+                                                       re.IGNORECASE)
                             patterns.append(pattern_cases)
 
                             # expand only spaces
