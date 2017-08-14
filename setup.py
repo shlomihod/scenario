@@ -9,16 +9,16 @@ setup(name='scenario',
       version='0.4.0',
       packages=['scenario', 'scenario.player'],
       classifiers=[
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2 :: Only',
-        ],
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 2',
+          'Programming Language :: Python :: 2 :: Only',
+      ],
       install_requires=['pexpect', 'jsonschema'],
       entry_points={
           'console_scripts': [
               'scenario = scenario.__main__:main'
           ]
-        },
+      },
       test_suite='nose.collector',
-	    tests_require=['nose'],
+      tests_require=['nose'],
       )
