@@ -191,7 +191,7 @@ def play_scenario(scenario, executable_path,
 
     ### REAL FEEDBACK EXCEPTIONS PART ###
 
-    except EOFIncorrect:
+    except EOFIncorrect as e:
         feedback['result'] = get_result_dict(False)
 
         feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
