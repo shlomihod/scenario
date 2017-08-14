@@ -12,19 +12,20 @@ import jsonschema
 from scenario.consts import TIMEOUT_DEFAULT, FEEDBACK_JSON_SCHEMA
 
 from scenario.player.feedback_exceptions import SholdNoOutputBeforeInput, \
-                                                ShouldEOF,                \
-                                                ShouldOutputBeforeEOF,    \
-                                                ShouldInputBeforeEOF,     \
-                                                OutputIncorrect,          \
-                                                EOFIncorrect,             \
-                                                MemoryFeedbackError
+    ShouldEOF,                \
+    ShouldOutputBeforeEOF,    \
+    ShouldInputBeforeEOF,     \
+    OutputIncorrect,          \
+    EOFIncorrect,             \
+    MemoryFeedbackError
 
 from scenario.utils import xstr,                \
-                           get_cleaned_before,  \
-                           get_cleaned_after,   \
-                           get_result_dict,     \
-                           get_quote_type_dict, \
-                           get_feedback_dict
+    get_cleaned_before,  \
+    get_cleaned_after,   \
+    get_result_dict,     \
+    get_quote_type_dict, \
+    get_feedback_dict
+
 
 def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT, executable_extra_args=None):
 
@@ -42,8 +43,8 @@ def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT,
 
     else:
         executable_path_with_all_args = executable_path_with_snr_args + ' ' + executable_extra_args
-        p = pexpect.spawn('/bin/bash', ['-c', executable_path_with_all_args], timeout=timeout, echo=False)
-
+        p = pexpect.spawn(
+            '/bin/bash', ['-c', executable_path_with_all_args], timeout=timeout, echo=False)
 
     try:
         for index, quote in enumerate(scenario['dialogue']):
@@ -81,7 +82,7 @@ def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT,
 
                             # expand between every two chars
                             spaces_pattern_string = ' '.join(list(quote_value.replace(' ', '').
-                                                                        replace('\t', '')))
+                                                                  replace('\t', '')))
                             spaces_pattern_string = re.escape(spaces_pattern_string)
                             spaces_pattern_string = spaces_pattern_string.replace('\ ', '\s*')
 
@@ -103,32 +104,31 @@ def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT,
                         raise OutputIncorrect(quote)
 
                     else:
-                        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
-                                                 'value': p.before,
-                                                 })
+                        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                                          'value': p.before,
+                                                          })
                     # THE MATCH of the quote
                     assert p.after is not None
-                    feedback['log']['quotes'].append({ 'type': get_quote_type_dict('output'),
-                                             'name': quote['name'],
-                                             'value': p.after,
-                                             })
+                    feedback['log']['quotes'].append({'type': get_quote_type_dict('output'),
+                                                      'name': quote['name'],
+                                                      'value': p.after,
+                                                      })
 
                     # AFTER the quote match UNTIL THE END OF THE LINE
                     p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
 
                     if not scenario['flow']:
-                        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
-                                                 'value': p.before + xstr(p.after)
-                                                 })
+                        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                                          'value': p.before + xstr(p.after)
+                                                          })
 
                         if get_cleaned_before(p, scenario['strictness']).strip(' '):
                             raise OutputIncorrect(quote)
 
-
                     else:
-                        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
-                                                 'value': p.before + p.after
-                                                 })
+                        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                                          'value': p.before + p.after
+                                                          })
 
                     '''
                     if verbosity >= VERBOSITY['ERROR'] and index != 0:
@@ -150,10 +150,9 @@ def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT,
                     except pexpect.EOF:
                         raise EOFIncorrect(quote)
 
-                    feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
-                                             'value': p.before + xstr(p.after)
-                                             })
-
+                    feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                                      'value': p.before + xstr(p.after)
+                                                      })
 
                     if not scenario['flow'] and get_cleaned_after(p, scenario['strictness']):
                         raise SholdNoOutputBeforeInput(quote)
@@ -164,14 +163,14 @@ def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT,
                     p.sendline(quote['value'])
 
                     quote['type'] = get_quote_type_dict('input')
-                    feedback['log']['quotes'].append(quote)# ('I', quote))
+                    feedback['log']['quotes'].append(quote)  # ('I', quote))
 
         if scenario['flow']:
             p.expect(['.+', pexpect.TIMEOUT, pexpect.EOF])
 
-            feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
-                                    'value': p.before + xstr(p.after)
-                                 })
+            feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                              'value': p.before + xstr(p.after)
+                                              })
 
         try:
             p.expect(pexpect.EOF)
@@ -190,29 +189,28 @@ def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT,
     except EOFIncorrect:
         feedback['result'] = get_result_dict(False)
 
-        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
-                                'value': p.before + xstr(p.after)
-                             })
+        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                          'value': p.before + xstr(p.after)
+                                          })
 
         feedback['feedback'] = get_feedback_dict(e)
 
     except OutputIncorrect as e:
         feedback['result'] = get_result_dict(False)
 
-        #if scenario['flow']:
-        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
-                                'value': p.before + xstr(p.after)
-                             })
+        # if scenario['flow']:
+        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                          'value': p.before + xstr(p.after)
+                                          })
 
         feedback['feedback'] = get_feedback_dict(e)
-
 
     except SholdNoOutputBeforeInput as e:
         feedback['result'] = get_result_dict(False)
 
-        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
-                                'value': p.before
-                             })
+        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                          'value': p.before
+                                          })
 
         feedback['last'] = True
         feedback['feedback'] = get_feedback_dict(e)
@@ -220,18 +218,18 @@ def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT,
     except ShouldInputBeforeEOF as e:
         feedback['result'] = get_result_dict(False)
 
-        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
-                                'value': p.before + xstr(p.after)
-                             })
+        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                          'value': p.before + xstr(p.after)
+                                          })
 
         feedback['feedback'] = get_feedback_dict(e)
 
     except ShouldOutputBeforeEOF as e:
         feedback['result'] = get_result_dict(False)
 
-        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
-                                'value': p.before + xstr(p.after)
-                             })
+        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                          'value': p.before + xstr(p.after)
+                                          })
 
         feedback['last'] = True
         feedback['feedback'] = get_feedback_dict(e)
@@ -239,10 +237,9 @@ def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT,
     except ShouldEOF as e:
         feedback['result'] = get_result_dict(False)
 
-        feedback['log']['quotes'].append({ 'type': get_quote_type_dict('printing'),
-                                'value': p.before + xstr(p.after)
-                             })
-
+        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                          'value': p.before + xstr(p.after)
+                                          })
 
         if not scenario['flow']:
             pass
