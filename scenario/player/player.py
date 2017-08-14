@@ -164,8 +164,9 @@ def play_scenario(scenario, executable_path,
 
                     p.sendline(quote['value'])
 
-                    quote['type'] = get_quote_type_dict('input')
-                    feedback['log']['quotes'].append(quote)  # ('I', quote))
+                    feedback['log']['quotes'].append({'type': get_quote_type_dict('input'),
+                                                      'value': quote['value']
+                                                      })
 
         if scenario['flow']:
             p.expect(['.+', pexpect.TIMEOUT, pexpect.EOF])
