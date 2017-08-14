@@ -20,6 +20,7 @@ from scenario.utils import build_feedback_text
 def main():
 
     parser = argparse.ArgumentParser(description='Checking an IO scenario on execution.')
+
     parser.add_argument('executable_path', type=str,
                         help='executable to be checked')
 
@@ -32,10 +33,12 @@ def main():
     parser.add_argument('-a', type=str,
                         help='set extra arguments for executable')
 
-    parser.add_argument('-d', '--directory', help='run on all scenario files (.json) in the directory',
+    parser.add_argument('-d', '--directory',
+                        help='run on all scenario files (.json) in the directory',
                         action="store_true")
 
-    parser.add_argument('-s', '--forward-signal', help='forward signal from executable to scenario',
+    parser.add_argument('-s', '--forward-signal',
+                        help='forward signal from executable to scenario',
                         action="store_true")
 
     parser.add_argument('-t', type=float, default=TIMEOUT_DEFAULT,
