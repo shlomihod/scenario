@@ -24,7 +24,8 @@ from scenario.utils import xstr,                \
     get_feedback_dict
 
 
-def play_scenario(scenario, executable_path, verbosity, timeout=TIMEOUT_DEFAULT, executable_extra_args=None):
+def play_scenario(scenario, executable_path,
+                  timeout=TIMEOUT_DEFAULT, executable_extra_args=None):
 
     feedback = copy.deepcopy(scenario)
     feedback['log'] = {'quotes': [], 'text': ''}
