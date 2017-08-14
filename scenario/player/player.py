@@ -180,13 +180,13 @@ def play_scenario(scenario, executable_path,
             if not scenario['flow'] and get_cleaned_before(p, scenario['strictness']):
                 raise pexpect.TIMEOUT
 
+    # REAL FEEDBACK EXCEPTIONS PART #
+
         except pexpect.TIMEOUT:
             raise ShouldEOF(quote)
 
         feedback['result'] = get_result_dict(True)
         feedback['feedback'] = get_feedback_dict(None)
-
-    ### REAL FEEDBACK EXCEPTIONS PART ###
 
     except OutputIncorrect as e:
         feedback['result'] = get_result_dict(False)
