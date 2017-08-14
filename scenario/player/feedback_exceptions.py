@@ -1,16 +1,5 @@
 # -*- coding: utf-8 -*-
 
-'''
-class FileContentIncorrect(Exception):
-    pass
-
-class FileShouldNotExist(Exception):
-    pass
-
-class FileShouldExist(Exception):
-    pass
-'''
-
 
 class FeedbackException(Exception):
     def __init__(self, msg, quote=None):
