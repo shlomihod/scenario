@@ -1,8 +1,19 @@
 #!/usr/bin/python
 
 import sys
+import ctypes
 
-from utils import ANNABEL_LEE
+from consts import ANNABEL_LEE
+
+
+def crash():
+    i = ctypes.c_char('a')
+    j = ctypes.pointer(i)
+    c = 0
+    while True:
+        j[c] = 'a'
+        c += 1
+
 
 if __name__ == '__main__':
 
@@ -15,6 +26,9 @@ if __name__ == '__main__':
 
         elif arg == 'output':
             print(s)
+
+        elif arg == 'crash':
+            crash()
 
         else:
             print('Wrong Argument ' + arg)
