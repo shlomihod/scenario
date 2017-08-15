@@ -1,5 +1,29 @@
 # -*- coding: utf-8 -*-
 
+'''
+========================
+Feedback Exception Logic
+========================
+
+Scenario "consume" all the Input in the Executable, then:
+
++-----------------------------------------------------------+
+| Executable          | Scenario    | Feedback              |
++ ====================+=============+=======================+
+| EOF                 | More Input  | ShouldInputBeforeEOF  |
++---------------------+-------------+-----------------------+
+| EOF                 | More Output | ShouldOutputBeforeEOF |
++---------------------+-------------+-----------------------+
+| Input or            | EOF         | ShouldEOF             |
+| Not Exiting         |             |                       |
++---------------------+-------------+-----------------------+
+| Input or            | More Output | ShouldOutput          |
+| Not Exiting         |             |                       |
++---------------------+-------------+-----------------------+
+| Signal              |             | MemoryFeedbackError   |
++---------------------+-------------+-----------------------+
+'''
+
 
 class FeedbackException(Exception):
     def __init__(self, msg, quote=None):
@@ -8,7 +32,7 @@ class FeedbackException(Exception):
         self.feedback = msg.format(**quote)
 
 
-class OutputIncorrect(FeedbackException):
+class ShouldOutput(FeedbackException):
     '''
     The output is not just before EOF
     '''
@@ -16,7 +40,7 @@ class OutputIncorrect(FeedbackException):
     msg = u'הפלט {name} {value} לא הופיע או הופיע במקום הלא מתאים.'
 
     def __init__(self, quote):
-        FeedbackException.__init__(self, OutputIncorrect.msg, quote)
+        FeedbackException.__init__(self, ShouldOutput.msg, quote)
 
 
 class ShouldEOF(FeedbackException):
@@ -56,4 +80,4 @@ class MemoryFeedbackError(FeedbackException):
     msg = u'התרחשה שגיאת זיכרון'
 
     def __init__(self):
-        FeedbackException.__init__(self, ShouldInputBeforeEOF.msg, {})
+        FeedbackException.__init__(self, MemoryFeedbackError.msg, {})
