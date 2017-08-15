@@ -12,7 +12,7 @@ from scenario.player.feedback_exceptions import SholdNoOutputBeforeInput, \
     ShouldEOF,                \
     ShouldOutputBeforeEOF,    \
     ShouldInputBeforeEOF,     \
-    OutputIncorrect,          \
+    ShouldOutput,          \
     MemoryFeedbackError
 
 from scenario.utils import xstr,                \
@@ -101,11 +101,11 @@ def play_scenario(scenario, executable_path,
                     except pexpect.EOF:
                         raise ShouldOutputBeforeEOF(quote)
                     except pexpect.TIMEOUT:
-                        raise OutputIncorrect(quote)
+                        raise ShouldOutput(quote)
 
                     # BEFORE the quote match
                     if not scenario['flow'] and get_cleaned_before(p, scenario['strictness']):
-                        raise OutputIncorrect(quote)
+                        raise ShouldOutput(quote)
 
                     else:
                         feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
@@ -127,7 +127,7 @@ def play_scenario(scenario, executable_path,
                                                           })
 
                         if get_cleaned_before(p, scenario['strictness']).strip(' '):
-                            raise OutputIncorrect(quote)
+                            raise ShouldOutput(quote)
 
                     else:
                         feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
@@ -193,7 +193,7 @@ def play_scenario(scenario, executable_path,
         feedback['result'] = get_result_dict(True)
         feedback['feedback'] = get_feedback_dict(None)
 
-    except OutputIncorrect as e:
+    except ShouldOutput as e:
         feedback['result'] = get_result_dict(False)
 
         # if scenario['flow']:
