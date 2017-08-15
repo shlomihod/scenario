@@ -1,9 +1,10 @@
 import unittest
+import pprint
 
 import jsonschema
 
 from scenario.player import play_scenario
-from scenario.tests.consts import EXECUTABLE, DIALOUGE_PIECES, ANNABEL_LEE
+from scenario.tests.consts import EXECUTABLE, DIALOUGE_PIECES
 from scenario.consts import SCENARIO_JSON_SCHEMA
 
 
@@ -34,6 +35,7 @@ class PlayerTest(unittest.TestCase):
 
         feedback = play_scenario(scenario, EXECUTABLE)
 
+        pprint.pprint(feedback['log'])
         self.assertEqual(feedback['result']['bool'], result_bool)
         self.assertEqual(feedback['feedback']['type'], feedback_type)
 
@@ -135,17 +137,16 @@ class StrictnnessTests(PlayerTest):
 
 
 class ResultFalseTests(PlayerTest):
-    def test_OutputIncorrect(self):
+    def test_ShouldOutput(self):
         '''
         Feedback Error: Output Incorrect
         '''
 
-        dialogue = [DIALOUGE_PIECES['output_poet'],
-                    DIALOUGE_PIECES['input_comment']]
+        dialogue = [DIALOUGE_PIECES['output_poet']]
 
         args = ['print', 'input']
 
-        self._run_test(False, 'OutputIncorrect', args, dialogue)
+        self._run_test(False, 'ShouldOutput', args, dialogue)
 
     def test_ShouldEOF(self):
         '''
@@ -191,3 +192,17 @@ class ResultFalseTests(PlayerTest):
 
     def test_MemoryFeedbackError(self):
         pass
+
+
+class MemoryTests(PlayerTest):
+    def test_MemoryFeedback(self):
+        '''
+        Feedback Error: MemoryFeedback
+        '''
+
+        dialogue = [DIALOUGE_PIECES['output_poet'],
+                    DIALOUGE_PIECES['input_comment']]
+
+        args = ['print', 'crash', 'input']
+
+        self._run_test(False, 'MemoryFeedbackError', args, dialogue)
