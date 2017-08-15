@@ -11,7 +11,6 @@ from scenario.runner import run_scenario
 from scenario.parser import ParserError
 
 from scenario.consts import VERBOSITY,\
-    TIMEOUT_DEFAULT,              \
     OUTPUT_FORMATS, OUTPUT_FORMATS_DEFAULT
 
 from scenario.utils import build_feedback_text
@@ -41,7 +40,7 @@ def main():
                         help='forward signal from executable to scenario',
                         action="store_true")
 
-    parser.add_argument('-t', type=float, default=TIMEOUT_DEFAULT,
+    parser.add_argument('-t', type=float,
                         help='set execution timeout in seconds')
 
     parser.add_argument('-f', '--format', dest='format', default=OUTPUT_FORMATS_DEFAULT,

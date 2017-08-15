@@ -6,7 +6,7 @@ import copy
 import pexpect
 import jsonschema
 
-from scenario.consts import TIMEOUT_DEFAULT, FEEDBACK_JSON_SCHEMA
+from scenario.consts import FEEDBACK_JSON_SCHEMA
 
 from scenario.player.feedback_exceptions import SholdNoOutputBeforeInput, \
     ShouldEOF,                \
@@ -24,7 +24,7 @@ from scenario.utils import xstr,                \
 
 
 def play_scenario(scenario, executable_path,
-                  timeout=TIMEOUT_DEFAULT, executable_extra_args=None):
+                  executable_extra_args=None):
 
     feedback = copy.deepcopy(scenario)
     feedback['log'] = {'quotes': [], 'text': ''}
@@ -38,7 +38,7 @@ def play_scenario(scenario, executable_path,
     if not executable_extra_args:
         p = pexpect.spawn(
             executable_path_with_snr_args,
-            timeout=timeout, echo=False
+            timeout=scenario['timeout'], echo=False
         )
 
     else:
@@ -46,7 +46,7 @@ def play_scenario(scenario, executable_path,
                                          ' ' + executable_extra_args)
         p = pexpect.spawn(
             '/bin/bash', ['-c', executable_path_with_all_args],
-            timeout=timeout, echo=False
+            timeout=scenario['timeout'], echo=False
         )
 
     try:

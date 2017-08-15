@@ -17,6 +17,7 @@ class PlayerTest(unittest.TestCase):
             'description': name,
             'flow': True,
             'strictness': strictness,
+            'timeout': 1,
             'verbosity': 4,
             'args': args,
             'dialogue': dialogue

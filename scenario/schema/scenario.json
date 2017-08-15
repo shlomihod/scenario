@@ -16,6 +16,10 @@
       "minimum": 0,
       "maximum": 5
     },
+    "timeout": {
+        "type": "number",
+        "minimum": 0
+    },
     "flow": {
       "type": "boolean"
     },
@@ -62,6 +66,7 @@
     "id",
     "name",
     "description",
+    "timeout",
     "verbosity",
     "flow",
     "strictness",

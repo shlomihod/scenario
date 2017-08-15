@@ -23,8 +23,6 @@ VERBOSITY = OrderedDict(
      ('DEBUG', 5),
      ])
 
-TIMEOUT_DEFAULT = 1
-
 OUTPUT_FORMATS = ['json', 'text']
 OUTPUT_FORMATS_DEFAULT = 'text'
 
