@@ -75,14 +75,22 @@ def play_scenario(scenario, executable_path,
 
                         patterns.append(pattern_quote_value)
 
-                        if not scenario['strictness']:
+                        if 'strictness' in quote:
+                            strictness = quote['strictness']
+                            print('IN QOUTE!')
+                        else:
+                            strictness = scenario['strictness']
+
+                        assert isinstance(strictness, bool)
+
+                        if not strictness:
 
                             pattern_cases = re.compile(escaped_quote_value,
                                                        re.IGNORECASE)
                             patterns.append(pattern_cases)
 
                             # expand only spaces
-                            #spaces_pattern_string = re.escape(' '.join(quote_value.split())).replace('\ ', '\s+')
+                            # spaces_pattern_string = re.escape(' '.join(quote_value.split())).replace('\ ', '\s+')
 
                             # expand between every two chars
                             spaces_pattern_string = ' '.join(list(quote_value.replace(' ', '').
@@ -113,10 +121,14 @@ def play_scenario(scenario, executable_path,
                                                           })
                     # THE MATCH of the quote
                     assert p.after is not None
-                    feedback['log']['quotes'].append({'type': get_quote_type_dict('output'),
-                                                      'name': quote['name'],
-                                                      'value': p.after,
-                                                      })
+                    log_quote = {'type': get_quote_type_dict('output'),
+                                 'name': quote['name'],
+                                 'value': p.after,
+                                 }
+                    if 'strictness' in quote:
+                        log_quote['strictness'] = quote['strictness']
+
+                    feedback['log']['quotes'].append(log_quote)
 
                     # AFTER the quote match UNTIL THE END OF THE LINE
                     p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
@@ -145,7 +157,8 @@ def play_scenario(scenario, executable_path,
                         if index == 3:
                             msg = 'Letter Cases & Spaces'
 
-                        feedback['warnings'].append('[{:02d}] [WARNNING] {!s} are not precise'.format(n_line, msg) )
+                        feedback['warnings'].append(
+                            '[{:02d}] [WARNNING] {!s} are not precise'.format(n_line, msg) )
                     '''
 
                 elif quote['type'] == 'input':
@@ -241,13 +254,14 @@ def play_scenario(scenario, executable_path,
 
         if not scenario['flow']:
             pass
-            #feedback['feedback'].append('instead the last line')
+            # feedback['feedback'].append('instead the last line')
 
         feedback['feedback'] = get_feedback_dict(e)
 
         '''
         if get_cleaned_before(p, scenario['strictness']):
-            feedback.append('[{:02d}] {!r}'.format(n_line+1, get_cleaned_before(p, scenario['strictness']).split('\r\n')[0]))
+            feedback.append('[{:02d}] {!r}'.format(
+                n_line+1, get_cleaned_before(p, scenario['strictness']).split('\r\n')[0]))
         feedback.append('----> the program should have finished')
         if get_cleaned_before(p, scenario['strictness']):
             feedback.append('----> instead the last line')
