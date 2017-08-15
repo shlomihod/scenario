@@ -2,11 +2,11 @@ import sys
 from setuptools import setup
 
 if sys.version_info[0] != 2:
-    sys.stderr.write("This package only supports Python 2.\n")
+    sys.stderr.write('This package only supports Python 2.\n')
     sys.exit(1)
 
 setup(name='scenario',
-      version='0.4.0',
+      version='2.0.0',
       packages=['scenario', 'scenario.player'],
       classifiers=[
           'Programming Language :: Python',
