@@ -77,7 +77,6 @@ def play_scenario(scenario, executable_path,
 
                         if 'strictness' in quote:
                             strictness = quote['strictness']
-                            print('IN QOUTE!')
                         else:
                             strictness = scenario['strictness']
 
