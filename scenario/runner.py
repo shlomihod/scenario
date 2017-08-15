@@ -1,17 +1,22 @@
-from scenario.consts import VERBOSITY, VERBOSITY_DEFAULT, TIMEOUT_DEFAULT
+# -*- coding: utf-8 -*-
 
-from scenario.parser import parse_scenario_file
+from scenario.parser import parse_scenario_json
 from scenario.player import play_scenario
 
-def run_scenario(executable_path, scenario_path, verbosity=None, timeout=TIMEOUT_DEFAULT, executable_extra_args=None):
-    scenario = parse_scenario_file(scenario_path, executable_path)
 
-    if verbosity is None:
-        if scenario['verbosity'] is not None:
-            verbosity = VERBOSITY[scenario['verbosity']]
-        else:
-            verbosity = VERBOSITY_DEFAULT
+def run_scenario(executable_path, scenario_path,
+                 verbosity=None, timeout=None,
+                 executable_extra_args=None):
 
-    feedback, feedback_text = play_scenario(scenario, executable_path, verbosity, timeout, executable_extra_args)
+    scenario = parse_scenario_json(scenario_path)
 
-    return feedback, feedback_text
+    if verbosity is not None:
+        scenario['verbosity'] = verbosity
+
+    if verbosity is not None:
+        scenario['timeout'] = timeout
+
+    feedback = play_scenario(scenario, executable_path,
+                             timeout, executable_extra_args)
+
+    return feedback

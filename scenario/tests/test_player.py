@@ -1,136 +1,209 @@
-from unittest import TestCase
-import pexpect
-from scenario import play_scenario
+import unittest
+import pprint
 
-from utils import ANNABEL_LEE, EXECUTABLE
+import jsonschema
 
-TEST_VERBOSITY = 4
+from scenario.player import play_scenario
+from scenario.tests.consts import EXECUTABLE, DIALOUGE_PIECES
+from scenario.consts import SCENARIO_JSON_SCHEMA
 
-class TestPlayer(TestCase):
-    def __generate_scenario_test(self, test_name, strictness=True):
-        scenario = {}
-        scenario['name'] = test_name
-        scenario['pre_dialog'] = []
-        scenario['verobisty'] = TEST_VERBOSITY
-        scenario['strictness'] = True
-        scenario['flow'] = False
 
-        scenario['args'] = test_name.replace('_strict', '') \
-                                    .replace('_nonstrict', '')
+class PlayerTest(unittest.TestCase):
 
-        if test_name == 'print':
-            scenario['dialog'] = [('O', quote) \
-                                  for quote in ANNABEL_LEE.splitlines()]
-            exp_result = True
+    def _generate_scenario(self, name, args, dialogue, strictness=False):
+        scenario = {
+            'id': name,
+            'name': name,
+            'description': name,
+            'flow': True,
+            'strictness': strictness,
+            'timeout': 1,
+            'verbosity': 4,
+            'args': args,
+            'dialogue': dialogue
+        }
 
-        elif test_name == 'print_input':
-            scenario['dialog'] = [('O', quote) \
-                                  for quote in ANNABEL_LEE.splitlines()]   \
-                                  + [('I', 'some text')]
-            exp_result = True
+        return scenario
 
-        elif test_name == 'print_print-input':
-            scenario['dialog'] = [('O', quote) \
-                                  for quote in ANNABEL_LEE.splitlines()]   \
-                                  + [('I', 'some text')]                   \
-                                  + [('O', 'some text')]
-            exp_result = True
+    def _run_test(self, result_bool, feedback_type, args, dialogue, **kwargs):
+        name = '='.join([str(result_bool),
+                         str(feedback_type),
+                         '+'.join(args)])
 
-        elif test_name == 'print-input':
-            scenario['dialog'] =  [('I', 'some text')]                    \
-                                  + [('O', 'some text')]
-            exp_result = True
+        scenario = self._generate_scenario(name, args, dialogue, **kwargs)
 
-        elif test_name.startswith('print-cases-spaces_print-input')          or \
-             test_name.startswith('extra-spaces-beginning-line-print_input') or \
-             test_name.startswith('extra-spaces-end-line-print_input')       or \
-             test_name.startswith('extra-spaces-end-print_input'):
+        jsonschema.validate(scenario, SCENARIO_JSON_SCHEMA)
 
-            if 'nonstrict' in test_name:
-                scenario['strictness'] = False
-                exp_result = True
+        feedback = play_scenario(scenario, EXECUTABLE)
 
-            elif 'strict' in test_name:
-                scenario['strictness'] = True
-                if 'end' in test_name:
-                    exp_result = True
-                else:
-                    exp_result = False
+        pprint.pprint(feedback['log'])
+        self.assertEqual(feedback['result']['bool'], result_bool)
+        self.assertEqual(feedback['feedback']['type'], feedback_type)
 
-            scenario['dialog'] = [('O', quote) \
-                                  for quote in ANNABEL_LEE.splitlines()]   \
-                                  + [('I', 'some text')]                   \
-                                  + [('O', 'some text')]      
 
-        elif test_name.startswith('snr-exta-spaces-end-line_print-input'):
-            scenario['args'] = 'print_print-input'
+class ResultTrueTests(PlayerTest):
 
-            if 'nonstrict' in test_name:
-                scenario['strictness'] = False
-                exp_result = True
+    def test_all_print(self):
+        '''
+        Working: Empty Scenario
+        Empty `dialogue` with only print executable
+        '''
 
-            elif 'strict' in test_name:
-                scenario['strictness'] = True
-                exp_result = False
+        dialogue = []
 
-            scenario['dialog'] = [['O', quote] \
-                                  for quote in ANNABEL_LEE.splitlines()]   \
-                                  + [('I', 'some text')]                   \
-                                  + [('O', 'some text')] 
-            scenario['dialog'][3][1] = scenario['dialog'][3][1] + ' '
-            scenario['dialog'][5][1] = scenario['dialog'][5][1] + '  '
-            scenario['dialog'][7][1] = '    '.join(scenario['dialog'][7][1].split())
-        return scenario, exp_result, ''
+        args = ['print']
 
-    def __tester(self, test_name):
-        scenario, exp_result, exp_feedback = self.__generate_scenario_test(test_name)
-        feedback, feedback_text = play_scenario(scenario, EXECUTABLE, verbosity=4)
-        
-        result = feedback['result']
-        print feedback_text
+        self._run_test(True, None, args, dialogue)
 
-        self.assertTrue(exp_result == result)
-        #self.assertTrue(exp_feedback == feedback)
+    def test_all_output(self):
+        '''
+        Working: All Output
+        `dialogue` contains all output of executable
+        '''
 
-    def test_print(self):
-        self.__tester('print')
-    
-    def test_print_input(self):
-        self.__tester('print_input')
+        dialogue = DIALOUGE_PIECES['output_all']
 
-    def test_print__print_input(self):
-        self.__tester('print_print-input')
+        args = ['print']
 
-    def test_print__input(self):
-        self.__tester('print-input')
+        self._run_test(True, None, args, dialogue)
 
-    def test_print_caeses_spaces__print_input__strict(self):
-        self.__tester('print-cases-spaces_print-input_strict')
+    def test_one_output(self):
+        '''
+        Working: One Output
+        `dialogue` contains upper case one output of executable
+        '''
 
-    def test_print_caeses_spaces__print_input__nonstrict(self):
-        self.__tester('print-cases-spaces_print-input_nonstrict')
+        dialogue = [DIALOUGE_PIECES['output4']]
 
-    def test_extra_spaces_beginning_line_print__input__strict(self):
-        self.__tester('extra-spaces-beginning-line-print_input_strict')
+        args = ['print']
 
-    def test_extra_spaces_beginning_line_print__input__nonstrict(self):
-        self.__tester('extra-spaces-beginning-line-print_input_nonstrict')
+        self._run_test(True, None, args, dialogue)
 
-    def test_extra_spaces_end_line_print__input__strict(self):
-        self.__tester('extra-spaces-end-line-print_input_strict')
+    def test_one_output_input_output(self):
+        '''
+        Working: One Output -> Input -> Output (flow=True)
+        `dialogue` contains one output line of executable
+        and then input and output
+        '''
 
-    def test_extra_spaces_end_line_print__input__nonstrict(self):
-        self.__tester('extra-spaces-end-line-print_input_nonstrict')
+        dialogue = [DIALOUGE_PIECES['output4'],
+                    DIALOUGE_PIECES['input_comment'],
+                    DIALOUGE_PIECES['output_comment']]
 
-    def test_extra_spaces_end_print__input__strict(self):
-        self.__tester('extra-spaces-end-print_input_strict')
+        args = ['print', 'input', 'output']
 
-    def test_extra_spaces_end_print__input__nonstrict(self):
-        self.__tester('extra-spaces-end-print_input_nonstrict')
+        self._run_test(True, None, args, dialogue)
 
-    def test_snr_exta_spaces_end_line__input__strict(self):
-        self.__tester('snr-exta-spaces-end-line_print-input_strict')
+    def test_input_one_output_output(self):
+        '''
+        Working: Input -> One Output -> Output (flow=True)
+        `dialogue` contains one output line of executable
+        but before input and after output
+        '''
 
-    def test_snr_exta_spaces_end_line__input__nonstrict(self):
-        self.__tester('snr-exta-spaces-end-line_print-input_nonstrict')
+        dialogue = [DIALOUGE_PIECES['input_comment'],
+                    DIALOUGE_PIECES['output4'],
+                    DIALOUGE_PIECES['output_comment']]
 
+        args = ['input', 'print', 'output']
+
+        self._run_test(True, None, args, dialogue)
+
+
+class StrictnnessTests(PlayerTest):
+    def test_one_output_upper_strictness_false(self):
+        '''
+        Working: One Output Upper (strictness=False)
+        `dialogue` contains upper case one output of executable
+        '''
+
+        dialogue = [DIALOUGE_PIECES['output4_upper']]
+
+        args = ['print']
+
+        self._run_test(True, None, args, dialogue)
+
+    def test_one_output_upper_strictness_true(self):
+        '''
+        Working: One Output Upper (strictness=True)
+        `dialogue` contains upper case one output of executable
+        '''
+
+        dialogue = [DIALOUGE_PIECES['output4_upper']]
+
+        args = ['print']
+
+        self._run_test(False, 'ShouldOutputBeforeEOF', args, dialogue,
+                       strictness=True)
+
+
+class ResultFalseTests(PlayerTest):
+    def test_ShouldOutput(self):
+        '''
+        Feedback Error: Output Incorrect
+        '''
+
+        dialogue = [DIALOUGE_PIECES['output_poet']]
+
+        args = ['print', 'input']
+
+        self._run_test(False, 'ShouldOutput', args, dialogue)
+
+    def test_ShouldEOF(self):
+        '''
+        Feedback Error: Should EOF
+        '''
+
+        dialogue = [DIALOUGE_PIECES['output4']]
+
+        args = ['print', 'input']
+
+        self._run_test(False, 'ShouldEOF', args, dialogue)
+
+    def test_ShouldOutputBeforeEOF(self):
+        '''
+        Feedback Error: Shpuld Output Before EOF
+        '''
+
+        dialogue = [DIALOUGE_PIECES['output4'],
+                    DIALOUGE_PIECES['output_poet']]
+
+        args = ['print']
+
+        self._run_test(False, 'ShouldOutputBeforeEOF', args, dialogue)
+
+    def test_SholdNoOutputBeforeInput(self):
+        '''
+        Feedback Error: Should No Output Before Input (flow=False)
+        '''
+
+        raise unittest.SkipTest
+
+    def test_ShouldInputBeforeEOF(self):
+        '''
+        Feedback Error: Should Input Before EOF
+        '''
+
+        dialogue = [DIALOUGE_PIECES['output4'],
+                    DIALOUGE_PIECES['input_comment']]
+
+        args = ['print']
+
+        self._run_test(False, 'ShouldInputBeforeEOF', args, dialogue)
+
+    def test_MemoryFeedbackError(self):
+        pass
+
+
+class MemoryTests(PlayerTest):
+    def test_MemoryFeedback(self):
+        '''
+        Feedback Error: MemoryFeedback
+        '''
+
+        dialogue = [DIALOUGE_PIECES['output_poet'],
+                    DIALOUGE_PIECES['input_comment']]
+
+        args = ['print', 'crash', 'input']
+
+        self._run_test(False, 'MemoryFeedbackError', args, dialogue)
