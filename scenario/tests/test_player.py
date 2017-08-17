@@ -70,7 +70,7 @@ class ResultTrueTests(PlayerTest):
     def test_one_output(self):
         '''
         Working: One Output
-        `dialogue` contains upper case one output of executable
+        `dialogue` contains one output of executable
         '''
 
         dialogue = [DIALOUGE_PIECES['output4']]
@@ -111,30 +111,83 @@ class ResultTrueTests(PlayerTest):
 
 
 class StrictnnessTests(PlayerTest):
-    def test_one_output_upper_strictness_false(self):
+
+    def _run_strictness_test(self, result_bool, feedback_type,
+                             sglobal, slocal=None):
         '''
-        Working: One Output Upper (strictness=False)
+        Helper method: One Output Upper (strictness: sglobal & slocal)
         `dialogue` contains upper case one output of executable
         '''
 
-        dialogue = [DIALOUGE_PIECES['output4_upper']]
+        quote = DIALOUGE_PIECES['output4_upper'].copy()
+
+        if slocal is not None:
+            quote['strictness'] = slocal
+
+        dialogue = [quote]
 
         args = ['print']
 
-        self._run_test(True, None, args, dialogue)
+        self._run_test(result_bool, feedback_type, args, dialogue,
+                       strictness=sglobal)
 
-    def test_one_output_upper_strictness_true(self):
+    def test_one_output_upper_strictness_global_false(self):
         '''
-        Working: One Output Upper (strictness=True)
+        Working: One Output Upper (strictness: global=False)
         `dialogue` contains upper case one output of executable
         '''
 
-        dialogue = [DIALOUGE_PIECES['output4_upper']]
+        self._run_strictness_test(True, None,
+                                  sglobal=False)
 
-        args = ['print']
+    def test_one_output_upper_strictness_global_true(self):
+        '''
+        Not Working: One Output Upper (strictness: global=True)
+        `dialogue` contains upper case one output of executable
+        '''
 
-        self._run_test(False, 'ShouldOutputBeforeEOF', args, dialogue,
-                       strictness=True)
+        self._run_strictness_test(False, 'ShouldOutputBeforeEOF',
+                                  sglobal=True)
+
+    def test_one_output_upper_strictness_local_false_global_false(self):
+        '''
+        Working: One Output Upper (strictness: local=False, global=False)
+        `dialogue` contains upper case one output of executable
+        '''
+
+        self._run_strictness_test(True, None,
+                                  sglobal=False,
+                                  slocal=False)
+
+    def test_one_output_upper_strictness_local_true_global_false(self):
+        '''
+        Not Working: One Output Upper (strictness: local=True, global=False)
+        `dialogue` contains upper case one output of executable
+        '''
+
+        self._run_strictness_test(False, 'ShouldOutputBeforeEOF',
+                                  sglobal=False,
+                                  slocal=True)
+
+    def test_one_output_upper_strictness_local_false_global_true(self):
+        '''
+        Working: One Output Upper (strictness: local=False, global=True)
+        `dialogue` contains upper case one output of executable
+        '''
+
+        self._run_strictness_test(True, None,
+                                  sglobal=True,
+                                  slocal=False)
+
+    def test_one_output_upper_strictness_local_true_global_true(self):
+        '''
+        Not Working: One Output Upper (strictness: local=True, global=True)
+        `dialogue` contains upper case one output of executable
+        '''
+
+        self._run_strictness_test(False, 'ShouldOutputBeforeEOF',
+                                  sglobal=True,
+                                  slocal=True)
 
 
 class ResultFalseTests(PlayerTest):

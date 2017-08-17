@@ -6,7 +6,8 @@ Testing console applications I/O
 `pip install git+https://github.com/shlomihod/scenario.git`
 
 ## Usage
-`usage: scenario [-h] [-v V] [-a A] [-d] [-s] [-t T] [-f {json,text}]
+```
+usage: scenario [-h] [-v V] [-a A] [-d] [-s] [-t T] [-f {json,text}]
                 executable_path scenario_path
 
 Checking an IO scenario on execution.
@@ -23,7 +24,8 @@ optional arguments:
   -s, --forward-signal  forward signal from executable to scenario
   -t T                  set execution timeout in seconds
   -f {json,text}, --format {json,text}
-                        output format to stdout`
+                        output format to stdout
+```
 
 ## Exit Code
 | Value | Meaning                   |
