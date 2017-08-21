@@ -10,8 +10,9 @@ import json
 from scenario.runner import run_scenario
 from scenario.parser import ParserError
 
-from scenario.consts import VERBOSITY,\
-    OUTPUT_FORMATS, OUTPUT_FORMATS_DEFAULT
+from scenario.consts import VERBOSITY,      \
+    OUTPUT_FORMATS, OUTPUT_FORMATS_DEFAULT, \
+    OUTPUT_HTML_PAGE, OUTPUT_HTML_RESOURCES_PATH_DEFALT
 
 from scenario.utils import build_feedback_text
 
@@ -43,8 +44,12 @@ def main():
     parser.add_argument('-t', type=float,
                         help='set execution timeout in seconds')
 
-    parser.add_argument('-f', '--format', dest='format', default=OUTPUT_FORMATS_DEFAULT,
+    parser.add_argument('-f', '--format', default=OUTPUT_FORMATS_DEFAULT,
                         action='store', choices=OUTPUT_FORMATS, help='output format to stdout')
+
+    parser.add_argument('-p', '--resources-path', action='store',
+                        default=OUTPUT_HTML_RESOURCES_PATH_DEFALT,
+                        help='url to js/css resources for html output format')
 
     args = parser.parse_args()
 
@@ -62,6 +67,9 @@ def main():
             feedback_text = build_feedback_text(feedback)
 
         else:
+            assert args.format != 'html', \
+                'Cannot use `--format html` format with `-d`/`--directory`'
+
             feedback = []
             feedback_texts = []
 
@@ -102,6 +110,17 @@ def main():
 
     elif args.format == 'text':
         print(feedback_text)
+
+    elif args.format == 'html':
+        # feedback have to be an object and not list
+        # because `--format html` cannot be with `--direcotry`
+
+        if not args.resources_path.endswith('/'):
+            args.resources_path += '/'
+
+        print(OUTPUT_HTML_PAGE.format(feedback_json=json.dumps(
+            feedback, indent=2, sort_keys=True),
+            resources_path=args.resources_path))
 
     if args.forward_signal and signal_ is not None:
         os.kill(os.getpid(), signal_)
