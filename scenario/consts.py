@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from collections import OrderedDict
+import os
 import json
 import pkg_resources
+
+from collections import OrderedDict
 
 SCENARIO_JSON_SCHEMA_PATH = 'schema/scenario.json'
 SCENARIO_JSON_SCHEMA = json.load(
@@ -23,8 +25,20 @@ VERBOSITY = OrderedDict(
      ('DEBUG', 5),
      ])
 
-OUTPUT_FORMATS = ['json', 'text']
+OUTPUT_FORMATS = ['json', 'text', 'html']
+
 OUTPUT_FORMATS_DEFAULT = 'text'
+
+OUTPUT_HTML_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    'formats',
+    'html')
+
+# TODO from github
+OUTPUT_HTML_RESOURCES_PATH_DEFALT = 'https://cdn.rawgit.com/shlomihod/scenario/master/scenario/formats/html/'
+
+with open(os.path.join(OUTPUT_HTML_PATH, 'index.html'), 'r') as f:
+    OUTPUT_HTML_PAGE = f.read()
 
 RESULT_TEXT = {False: u'אי-הצלחה',
                True: u'הצלחה'

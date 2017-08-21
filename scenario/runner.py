@@ -17,6 +17,6 @@ def run_scenario(executable_path, scenario_path,
         scenario['timeout'] = timeout
 
     feedback = play_scenario(scenario, executable_path,
-                             timeout, executable_extra_args)
+                             executable_extra_args)
 
     return feedback
