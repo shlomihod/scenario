@@ -1,88 +1,116 @@
 <!DOCTYPE html>
 <html lang="he">
-<head>
+    <head>
 
-  <!-- Basic Page Needs
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta charset="utf-8">
-  <title>Scenario Feedback</title>
-  <meta name="description" content="">
-  <meta name="author" content="">
+      <!-- Basic Page Needs
+      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+      <meta charset="utf-8">
+      <title>Scenario Feedback</title>
+      <meta name="description" content="">
+      <meta name="author" content="">
 
-  <!-- Mobile Specific Metas
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+      <!-- Mobile Specific Metas
+      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+      <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- FONT
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
-  <link href="//fonts.googleapis.com/css?family=Alef|Open+Sans" rel="stylesheet">
+      <!-- FONT
+      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+      <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+      <link href="//fonts.googleapis.com/css?family=Alef|Open+Sans" rel="stylesheet">
 
-  <!-- CSS
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link rel="stylesheet" href="{resources_path}css/normalize.css">
-  <link rel="stylesheet" href="{resources_path}css/skeleton.css">
-  <link rel="stylesheet" href="{resources_path}css/terminal.css">
+      <!-- CSS
+      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+      <link rel="stylesheet" href="{resources_path}css/normalize.css">
+      <link rel="stylesheet" href="{resources_path}css/skeleton.css">
+      <link rel="stylesheet" href="{resources_path}css/terminal.css">
 
-  <link rel="stylesheet" href="{resources_path}css/side-comments.css" />
-  <link rel="stylesheet" href="{resources_path}css/default-theme.css" />
+      <link rel="stylesheet" href="{resources_path}css/side-comments.css" />
+      <link rel="stylesheet" href="{resources_path}css/default-theme.css" />
 
-</head>
-<body>
+    </head>
+    <body>
 
-  <!-- Primary Page Layout
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <div class="container">
-    <div class="row">
-      <div class="twelve columns" dir="rtl">
-        <h1><div id="scenario_name"></div></h1>
-      </div>
-    </div>
+      <!-- Primary Page Layout
+      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+      <div class="container">
+        <div class="row">
+          <div class="twelve columns" dir="rtl">
+            <h1><div id="scenario_name"></div></h1>
+          </div>
+        </div>
 
-    <div class="row">
+        <div class="row">
 
-      <div class="six columns" dir="rtl">
-        <h2>פידבק</h2>
-        <p><div id="scenario_result"></div><div id="scenario_feedback"></div></p>
-      </div>
+          <div class="six columns" dir="rtl">
+            <h2>פידבק</h2>
+            <p><div id="scenario_result"></div><div id="scenario_feedback"></div></p>
+          </div>
 
-      <div class="six columns" dir="rtl">
-        <h2>תרחיש</h2>
-        <p><div id="scenario_description"></div></p>
-      </div>
+          <div class="six columns" dir="rtl">
+            <h2>תרחיש</h2>
+            <p><div id="scenario_description"></div></p>
+          </div>
 
-    </div>
-    <details>
-      <summary dir="rtl">
-        <h5>פירוט נוסף</h5>
-      </summary>
+        </div>
+          <details>
+            <summary dir="rtl">
+              <h5>פירוט נוסף</h5>
+            </summary>
 
-      <div class="twelve columns" dir="ltr">
-        <div class="eight columns offset-by-two">
-          <div class="shell-wrap">
-            <p class="shell-top-bar">Command Line</p>
-            <ul class="shell-body">
-              <div id="commentable-container" class="container commentable-container">
-                <div id="scenario_log"></div>
+            <div class="twelve columns" dir="ltr">
+              <div class="eight columns offset-by-two">
+                <div class="shell-wrap">
+                  <p class="shell-top-bar">Command Line</p>
+                  <ul class="shell-body">
+                    <div id="commentable-container" class="container commentable-container">
+                      <div id="scenario_log"></div>
+                      </div>
+                    </div>
+                  </ul>
                 </div>
               </div>
-            </ul>
-          </div>
+            </div>
+
+          </details>
         </div>
       </div>
 
-    </details>
-    </div>
-  </div>
+      <script>
+        var feedback = JSON.parse({feedback_json});
+      </script>
+      <script src="https://rawgit.com/shlomihod/scenario/dev/scenario/formats/html/js/jquery.js"></script>
+      <script type="application/javascript" >
+          function loadScript( url, callback ) {
+              var script = document.createElement( "script" );
+              script.type = "text/javascript";
+              if(script.readyState) {  //IE
+                  script.onreadystatechange = function() {
+                      if ( script.readyState === "loaded" || script.readyState === "complete" ) {
+                          script.onreadystatechange = null;
+                          callback();
+                      }
+                  };
+              } else {  //Others
+                  script.onload = function() {
+                      callback();
+                  };
+              }
 
-  <script>
-    var feedback = JSON.parse({feedback_json});
-  </script>
-  <script src="{resources_path}js/jquery.js"></script>
-  <script src="{resources_path}js/side-comments.js"></script>
-  <script src="{resources_path}js/process_feedback.js"></script>
+              script.src = url;
+              document.getElementsByTagName( "head" )[0].appendChild( script );
+          }
 
-<!-- End Document
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-</body>
+
+          // call the function...
+          loadScript('https://rawgit.com/shlomihod/scenario/dev/scenario/formats/html/js/side-comments.js', function() {
+              loadScript('https://rawgit.com/shlomihod/scenario/dev/scenario/formats/html/js/process_feedback.js', function(){
+                  console.log('loaded');
+              })
+          });
+
+      </script>
+
+      <!-- End Document
+      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    </body>
 </html>

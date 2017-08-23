@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "allOf": [
-    { "$ref": "file:///Users/shlomi/projects/scenario/scenario/schema/scenario.json" },
+    { "$ref": "file:///Volumes/Development/scenario/scenario/schema/scenario.json" },
     { "properties": {
         "log": {
           "type": "object",
