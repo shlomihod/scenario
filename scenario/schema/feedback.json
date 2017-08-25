@@ -1,127 +1,206 @@
 {
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
-  "allOf": [
-    { "$ref": "https://rawgit.com/shlomihod/scenario/master/scenario/schema/scenario.json" },
-    { "properties": {
-        "log": {
-          "type": "object",
-          "properties": {
-            "quotes": {
-
-              "type": "array",
-              "items": {
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "verbosity": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "timeout": {
+      "type": "number",
+      "minimum": 0
+    },
+    "flow": {
+      "type": "boolean"
+    },
+    "strictness": {
+      "type": "boolean"
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "number"
+        ]
+      }
+    },
+    "dialogue": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "output",
+              "input"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "strictness": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "value"
+        ]
+      }
+    },
+    "log": {
+      "type": "object",
+      "properties": {
+        "quotes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
                 "type": "object",
                 "properties": {
-                  "type": {
-                    "type": "object",
-                    "properties": {
-                      "en": {
-                        "type": "string",
-                        "enum": [
-                          "output",
-                          "input",
-                          "printing"
-                        ]
-                      },
-                      "he": {
-                        "type": "string",
-                        "enum": [
-                          "פלט",
-                          "קלט",
-                          "הדפסה"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "en",
-                      "he"
+                  "en": {
+                    "type": "string",
+                    "enum": [
+                      "output",
+                      "input",
+                      "printing"
                     ]
                   },
-                  "name": {
-                    "type": "string"
-                  },
-                  "value": {
-                    "type": [
-                      "string",
-                      "number"
+                  "he": {
+                    "type": "string",
+                    "enum": [
+                      "פלט",
+                      "קלט",
+                      "הדפסה"
                     ]
                   }
                 },
                 "required": [
-                  "type",
-                  "value"
+                  "en",
+                  "he"
+                ]
+              },
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number"
                 ]
               }
             },
-            "text": { "type": "string" }
-          },
-          "required": [
-            "quotes",
-            "text"
-          ]
-
-        },
-        "result": {
-          "type": "object",
-          "properties": {
-            "bool": {
-              "type": "boolean"
-            },
-            "text": {
-              "type": "string",
-              "enum": [
-                "הצלחה",
-                "אי-הצלחה"
-              ]
-            }
-          },
-          "required": [
-            "bool",
-            "text"
-          ]
-        },
-        "feedback": {
-          "type": "object",
-          "properties": {
-            "type": {
-              "oneOf": [
-                { "type": "string" },
-                { "type": "null" }
-              ]
-            },
-            "text": {
-              "oneOf": [
-                { "type": "string" },
-                { "type": "null" }
-              ]
-            }
+            "required": [
+              "type",
+              "value"
+            ]
           }
         },
-        "exit_code": {
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "quotes",
+        "text"
+      ]
+    },
+    "result": {
+      "type": "object",
+      "properties": {
+        "bool": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string",
+          "enum": [
+            "הצלחה",
+            "אי-הצלחה"
+          ]
+        }
+      },
+      "required": [
+        "bool",
+        "text"
+      ]
+    },
+    "feedback": {
+      "type": "object",
+      "properties": {
+        "type": {
           "oneOf": [
             {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 255
+              "type": "string"
             },
-            { "type": "null" }
+            {
+              "type": "null"
+            }
           ]
         },
-        "signal_code": {
+        "text": {
           "oneOf": [
             {
-              "type": "number",
-              "minimum": 1,
-              "maximum": 30
+              "type": "string"
             },
-            { "type": "null" }
+            {
+              "type": "null"
+            }
           ]
         }
       }
+    },
+    "exit_code": {
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 255
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "signal_code": {
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 30
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
-  ],
+  },
   "required": [
+    "id",
+    "name",
+    "description",
+    "timeout",
+    "verbosity",
+    "flow",
+    "strictness",
+    "args",
+    "dialogue",
     "log",
     "result",
     "feedback",
