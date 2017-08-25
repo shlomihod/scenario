@@ -6,7 +6,7 @@ if sys.version_info[0] != 2:
     sys.exit(1)
 
 setup(name='scenario',
-      version='2.0.0',
+      version='2.1.0',
       packages=['scenario',
                 'scenario.player',
                 'scenario.parser',
