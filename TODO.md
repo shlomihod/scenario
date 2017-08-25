@@ -6,3 +6,4 @@ TODO
 * [ ] Pre / Post dialogue support
 * [ ] Maybe `press` type  in  dialogue (input without linefeed)
 * [ ] Why `strictness` is passed in `get_cleaned_before`?
+* [ ] Taking scenario.json into feedback.json with absolute path in setup.py
