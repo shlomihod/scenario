@@ -2,9 +2,8 @@ $(document).ready(function() {
       $("#scenario_name").text(feedback_data.name);
       $("#scenario_description").text(feedback_data.description);
       $("#scenario_result").html("<strong>" + feedback_data.result.text + "</strong>");
-      console.log(feedback_data.result.bool);
+
       if (!feedback_data.result.bool) {
-        console.log('IN!');
         $("#scenario_feedback").text(feedback_data.feedback.text);
       }
 
@@ -24,7 +23,6 @@ $(document).ready(function() {
           line.addClass("commentable-section");
           line.attr("data-section-id", i.toString());
 
-          console.log(COMMENTS_IMAGES);
           comments.push({
             "sectionId": i.toString(),
             "comments": [
