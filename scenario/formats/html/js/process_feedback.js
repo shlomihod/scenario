@@ -24,12 +24,13 @@ $(document).ready(function() {
           line.addClass("commentable-section");
           line.attr("data-section-id", i.toString());
 
+          console.log(COMMENTS_IMAGES);
           comments.push({
             "sectionId": i.toString(),
             "comments": [
               {
                 "id": i.toString(),
-                "authorAvatarUrl": "img/" + feedback_data.log.quotes[i].type.en + ".png",
+                "authorAvatarUrl": COMMENTS_IMAGES[feedback_data.log.quotes[i].type.en],
                 "authorName": feedback_data.log.quotes[i].type.he,
                 "comment": feedback_data.log.quotes[i].name
               }
@@ -51,7 +52,7 @@ $(document).ready(function() {
           "comments": [
             {
               "id": "feedback",
-              "authorAvatarUrl": "img/" + feedback_data.result.bool + ".png",
+              "authorAvatarUrl": COMMENTS_IMAGES[feedback_data.result.bool.toString() + "_"],
               "authorName": feedback_data.result.text,
               "comment": feedback_data.feedback
             }
