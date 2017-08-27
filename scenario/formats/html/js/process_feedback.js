@@ -70,5 +70,5 @@
     };
 
   var SideComments = require('side-comments');
-  window.sideComments = new SideComments('#commentable-container', currentUser, comments);
+  window.sideComments = new SideComments('#commentable-container' + scenario_id_str, currentUser, comments);
 }
