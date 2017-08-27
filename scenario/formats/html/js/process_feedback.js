@@ -12,7 +12,7 @@
       for (var i = 0; i < feedback_data.args.length; i++) {
         command_line += " " + feedback_data.args[i];
       }
-      $("#scenario_log").append("<li>" + command_line + "<li>")
+      $("#scenario_log" + scenario_id_str).append("<li>" + command_line + "<li>")
 
       comments = [];
 
@@ -37,7 +37,7 @@
           });
       }
 
-      $("#scenario_log").append(line);
+      $("#scenario_log" + scenario_id_str).append(line);
     }
 
       if (!feedback_data.result.bool) {
@@ -58,7 +58,7 @@
           ]
         });
 
-        $("#scenario_log").append(line);
+        $("#scenario_log" + scenario_id_str).append(line);
 
       }
 
