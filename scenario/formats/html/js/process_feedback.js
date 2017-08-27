@@ -2,9 +2,8 @@ $(document).ready(function() {
       $("#scenario_name").text(feedback_data.name);
       $("#scenario_description").text(feedback_data.description);
       $("#scenario_result").html("<strong>" + feedback_data.result.text + "</strong>");
-      console.log(feedback_data.result.bool);
+
       if (!feedback_data.result.bool) {
-        console.log('IN!');
         $("#scenario_feedback").text(feedback_data.feedback.text);
       }
 
@@ -29,7 +28,7 @@ $(document).ready(function() {
             "comments": [
               {
                 "id": i.toString(),
-                "authorAvatarUrl": "img/" + feedback_data.log.quotes[i].type.en + ".png",
+                "authorAvatarUrl": COMMENTS_IMAGES[feedback_data.log.quotes[i].type.en],
                 "authorName": feedback_data.log.quotes[i].type.he,
                 "comment": feedback_data.log.quotes[i].name
               }
@@ -51,7 +50,7 @@ $(document).ready(function() {
           "comments": [
             {
               "id": "feedback",
-              "authorAvatarUrl": "img/" + feedback_data.result.bool + ".png",
+              "authorAvatarUrl": COMMENTS_IMAGES[feedback_data.result.bool.toString() + "_"],
               "authorName": feedback_data.result.text,
               "comment": feedback_data.feedback
             }

@@ -13,7 +13,7 @@ def run_scenario(executable_path, scenario_path,
     if verbosity is not None:
         scenario['verbosity'] = verbosity
 
-    if verbosity is not None:
+    if timeout is not None:
         scenario['timeout'] = timeout
 
     feedback = play_scenario(scenario, executable_path,
