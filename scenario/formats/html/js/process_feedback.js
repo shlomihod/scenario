@@ -1,10 +1,11 @@
     function processFeedback(scenario_id) {
-      $("#scenario_name").text(feedback_data.name);
-      $("#scenario_description").text(feedback_data.description);
-      $("#scenario_result").html("<strong>" + feedback_data.result.text + "</strong>");
+      scenario_id_str = "-" + scenario_id
+      $("#scenario_name" + scenario_id_str).text(feedback_data.name);
+      $("#scenario_description" + scenario_id_str).text(feedback_data.description);
+      $("#scenario_result" + scenario_id_str).html("<strong>" + feedback_data.result.text + "</strong>");
 
       if (!feedback_data.result.bool) {
-        $("#scenario_feedback").text(feedback_data.feedback.text);
+        $("#scenario_feedback" + scenario_id_str).text(feedback_data.feedback.text);
       }
 
       var command_line = "C:\\Magshimim> program.exe";
