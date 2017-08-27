@@ -1,4 +1,4 @@
-    function processFeedback() {
+    function processFeedback(scenario_id) {
       $("#scenario_name").text(feedback_data.name);
       $("#scenario_description").text(feedback_data.description);
       $("#scenario_result").html("<strong>" + feedback_data.result.text + "</strong>");
