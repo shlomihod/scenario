@@ -23,6 +23,22 @@ from scenario.utils import xstr,                \
     get_feedback_dict
 
 
+def break_lines_log_quotes(feedback_log_quotes):
+    new_feedback_log_quotes = []
+
+    for quote in feedback_log_quotes:
+        if quote['type']['en'] == 'printing' and '\r\n' in quote['value']:
+            for line in quote['value'].splitlines():
+                new_feedback_log_quotes.append({
+                    'type': quote['type'],
+                    'value': line
+                })
+        else:
+            new_feedback_log_quotes.append(quote)
+
+    return new_feedback_log_quotes
+
+
 def play_scenario(scenario, executable_path,
                   executable_extra_args=None):
 
@@ -285,6 +301,9 @@ def play_scenario(scenario, executable_path,
     if feedback['signal_code'] is not None:
         feedback['result'] = get_result_dict(False)
         feedback['feedback'] = get_feedback_dict(MemoryFeedbackError())
+
+    feedback['log']['quotes'] = break_lines_log_quotes(
+        feedback['log']['quotes'])
 
     for quote in feedback['log']['quotes']:
         if quote['type']['en'] == 'output':

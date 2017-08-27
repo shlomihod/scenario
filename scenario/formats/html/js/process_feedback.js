@@ -1,17 +1,18 @@
-$(document).ready(function() {
-      $("#scenario_name").text(feedback_data.name);
-      $("#scenario_description").text(feedback_data.description);
-      $("#scenario_result").html("<strong>" + feedback_data.result.text + "</strong>");
+    function processFeedback(scenario_id) {
+      scenario_id_str = "-" + scenario_id
+      $("#scenario_name" + scenario_id_str).text(feedback_data.name);
+      $("#scenario_description" + scenario_id_str).text(feedback_data.description);
+      $("#scenario_result" + scenario_id_str).html("<strong>" + feedback_data.result.text + "</strong>");
 
       if (!feedback_data.result.bool) {
-        $("#scenario_feedback").text(feedback_data.feedback.text);
+        $("#scenario_feedback" + scenario_id_str).text(feedback_data.feedback.text);
       }
 
       var command_line = "C:\\Magshimim> program.exe";
       for (var i = 0; i < feedback_data.args.length; i++) {
         command_line += " " + feedback_data.args[i];
       }
-      $("#scenario_log").append("<li>" + command_line + "<li>")
+      $("#scenario_log" + scenario_id_str).append("<li>" + command_line + "<li>")
 
       comments = [];
 
@@ -36,7 +37,7 @@ $(document).ready(function() {
           });
       }
 
-      $("#scenario_log").append(line);
+      $("#scenario_log" + scenario_id_str).append(line);
     }
 
       if (!feedback_data.result.bool) {
@@ -57,7 +58,7 @@ $(document).ready(function() {
           ]
         });
 
-        $("#scenario_log").append(line);
+        $("#scenario_log" + scenario_id_str).append(line);
 
       }
 
@@ -69,6 +70,5 @@ $(document).ready(function() {
     };
 
   var SideComments = require('side-comments');
-  window.sideComments = new SideComments('#commentable-container', currentUser, comments);
-
-});
+  window.sideComments = new SideComments('#commentable-container' + scenario_id_str, currentUser, comments);
+}
