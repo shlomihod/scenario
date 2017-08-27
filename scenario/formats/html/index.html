@@ -76,9 +76,14 @@
       </div>
 
       <script>
-        var feedback = JSON.parse({feedback_json});
+        var feedback_data = JSON.parse({feedback_json});
+        const COMMENTS_IMAGES = {{
+            output: "{resources_path}img/output.png",
+                input: "{resources_path}img/input.png",
+                false: "{resources_path}img/false.png",
+        }};
       </script>
-      <script src="https://rawgit.com/shlomihod/scenario/dev/scenario/formats/html/js/jquery.js"></script>
+      <script src="{resources_path}js/jquery.js"></script>
       <script type="application/javascript">
           function loadScript( url, callback ) {{
               var script = document.createElement( "script" );
@@ -102,28 +107,13 @@
 
 
           // call the function...
-          loadScript('https://rawgit.com/shlomihod/scenario/dev/scenario/formats/html/js/side-comments.js', function() {{
-              loadScript('https://rawgit.com/shlomihod/scenario/dev/scenario/formats/html/js/process_feedback.js', function(){{
+          loadScript("{resources_path}js/side-comments.js", function() {{
+              loadScript("{resources_path}js/process_feedback.js", function(){{
                   console.log('loaded');
               }})
           }});
 
       </script>
-      <script>
-        var feedback_data = {feedback_json};
-      </script>
-
-      <script>
-        const COMMENTS_IMAGES = {{
-         output: "{resources_path}img/output.png",
-         input: "{resources_path}img/input.png",
-         false: "{resources_path}img/false.png",
-        }};
-      </script>
-
-      <script src="{resources_path}js/jquery.js"></script>
-      <script src="{resources_path}js/side-comments.js"></script>
-      <script src="{resources_path}js/process_feedback.js"></script>
 
       <!-- End Document
       –––––––––––––––––––––––––––––––––––––––––––––––––– -->
