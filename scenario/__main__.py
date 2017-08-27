@@ -51,6 +51,9 @@ def main():
                         default=OUTPUT_HTML_RESOURCES_PATH_DEFALT,
                         help='url to js/css resources for html output format')
 
+    parser.add_argument('-i', '--id', action='store', default=0,
+                        help='div id for html output format')
+
     args = parser.parse_args()
 
     try:
@@ -120,7 +123,8 @@ def main():
 
         print(OUTPUT_HTML_PAGE.format(feedback_json=json.dumps(
             feedback, indent=2, sort_keys=True),
-            resources_path=args.resources_path))
+            resources_path=args.resources_path,
+            id=args.id))
 
     if args.forward_signal and signal_ is not None:
         os.kill(os.getpid(), signal_)
