@@ -1,4 +1,4 @@
-$(document).ready(function() {
+    function processFeedback() {
       $("#scenario_name").text(feedback_data.name);
       $("#scenario_description").text(feedback_data.description);
       $("#scenario_result").html("<strong>" + feedback_data.result.text + "</strong>");
@@ -70,5 +70,4 @@ $(document).ready(function() {
 
   var SideComments = require('side-comments');
   window.sideComments = new SideComments('#commentable-container', currentUser, comments);
-
-});
+}
