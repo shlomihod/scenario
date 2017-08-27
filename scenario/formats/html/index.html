@@ -35,7 +35,7 @@
       <div class="container">
         <div class="row">
           <div class="twelve columns" dir="rtl">
-            <h1><div id="scenario_name"></div></h1>
+            <h1><div id="scenario_name-{id}"></div></h1>
           </div>
         </div>
 
@@ -43,12 +43,12 @@
 
           <div class="six columns" dir="rtl">
             <h2>פידבק</h2>
-            <p><div id="scenario_result"></div><div id="scenario_feedback"></div></p>
+            <p><div id="scenario_result-{id}"></div><div id="scenario_feedback-{id}"></div></p>
           </div>
 
           <div class="six columns" dir="rtl">
             <h2>תרחיש</h2>
-            <p><div id="scenario_description"></div></p>
+            <p><div id="scenario_description-{id}"></div></p>
           </div>
 
         </div>
@@ -62,8 +62,8 @@
                 <div class="shell-wrap">
                   <p class="shell-top-bar">Command Line</p>
                   <ul class="shell-body">
-                    <div id="commentable-container" class="container commentable-container">
-                      <div id="scenario_log"></div>
+                    <div id="commentable-container-{id}" class="container commentable-container">
+                      <div id="scenario_log-{id}"></div>
                       </div>
                     </div>
                   </ul>
@@ -86,7 +86,7 @@
                   input: "{resources_path}img/input.png",
                   false: "{resources_path}img/false.png",
           }};
-          
+
           function loadScript( url, callback ) {{
               var script = document.createElement( "script" );
               script.type = "text/javascript";
@@ -112,7 +112,10 @@
           loadScript("{resources_path}js/side-comments.js", function() {{
               loadScript("{resources_path}js/process_feedback.js", function(){{
                   console.log('loaded');
-              }})
+                  $(document).ready(function() {{
+                    processFeedback({id});
+                }});
+              }});
           }});
 
       </script>
