@@ -1,6 +1,6 @@
 TODO
 ====
-* [ ] No line break before/after match of `output` in the same line (for `printing`)
+* [ ] HTML output format use `\r\n` data in log's quotes
 * [ ] Updating [https://docs.google.com/document/d/1fS_GZFhFWBzTAX_tgAiZKXgHkePR_MwVQx1vtqnDZWA/edit?usp=sharing] & Linking to README.md
 * [ ] 'How to write scenario?' Documentation
 * [ ] Files feedback support
