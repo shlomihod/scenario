@@ -76,7 +76,7 @@
       </div>
 
       <script>
-        var feedback_data = {feedback_json};
+        var feedbackData{id} = {feedback_json};
       </script>
       <script src="{resources_path}js/jquery.js"></script>
 
@@ -113,7 +113,7 @@
               loadScript("{resources_path}js/process_feedback.js", function(){{
                   console.log('loaded');
                   $(document).ready(function() {{
-                    processFeedback({id});
+                    processFeedback(feedbackData{id}, {id});
                 }});
               }});
           }});
