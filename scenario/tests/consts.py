@@ -39,6 +39,24 @@ DIALOUGE_PIECES = {
         'value': ANNABEL_LEE.splitlines()[4].upper()
     },
 
+    'output4_prefix': {
+        'type': 'output',
+        'name': 'poem line prefix',
+        'value': ANNABEL_LEE.splitlines()[4][0]
+    },
+
+    'output4_middle': {
+        'type': 'output',
+        'name': 'poem line',
+        'value': ANNABEL_LEE.splitlines()[4][1:-1]
+    },
+
+    'output4_suffix': {
+        'type': 'output',
+        'name': 'poem line suffix',
+        'value': ANNABEL_LEE.splitlines()[4][-1]
+    },
+
     'input_comment': {
         'type': 'input',
         'name': 'comment',

@@ -40,6 +40,8 @@ class PlayerTest(unittest.TestCase):
         self.assertEqual(feedback['result']['bool'], result_bool)
         self.assertEqual(feedback['feedback']['type'], feedback_type)
 
+        return feedback
+
 
 class ResultTrueTests(PlayerTest):
 
@@ -260,3 +262,26 @@ class MemoryTests(PlayerTest):
         args = ['print', 'crash', 'input']
 
         self._run_test(False, 'MemoryFeedbackError', args, dialogue)
+
+
+class LogTests(PlayerTest):
+    def test_log_break_lines(self):
+        '''
+        Log: Break Lines
+        The \\r\\n should be added only for the last log quote in the line
+        '''
+
+        dialogue = [DIALOUGE_PIECES['output4_middle']]
+
+        args = ['print']
+
+        feedback = self._run_test(True, None, args, dialogue)
+
+        self.assertEqual(feedback['log']['quotes'][4]['value'],
+                         DIALOUGE_PIECES['output4_prefix']['value'])
+
+        self.assertEqual(feedback['log']['quotes'][5]['value'],
+                         DIALOUGE_PIECES['output4_middle']['value'])
+
+        self.assertEqual(feedback['log']['quotes'][6]['value'],
+                         DIALOUGE_PIECES['output4_suffix']['value'] + '\r\n')
