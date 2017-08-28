@@ -31,7 +31,7 @@ def break_lines_log_quotes(feedback_log_quotes):
             for line in quote['value'].splitlines():
                 new_feedback_log_quotes.append({
                     'type': quote['type'],
-                    'value': line
+                    'value': line + '\r\n'
                 })
         else:
             new_feedback_log_quotes.append(quote)
@@ -197,7 +197,7 @@ def play_scenario(scenario, executable_path,
 
                     feedback['log']['quotes'].append({'type': get_quote_type_dict('input'),
                                                       'name': quote['name'],
-                                                      'value': quote['value']
+                                                      'value': quote['value'] + '\r\n'
                                                       })
 
         if scenario['flow']:
@@ -308,12 +308,14 @@ def play_scenario(scenario, executable_path,
     for quote in feedback['log']['quotes']:
         if quote['type']['en'] == 'output':
             feedback['log']['text'] += '<'
+
         feedback['log']['text'] += quote['value']
+
         if quote['type']['en'] == 'output':
             feedback['log']['text'] += '>'
 
-        if quote['type']['en'] == 'input':
-            feedback['log']['text'] += '\r\n'
+        # if quote['type']['en'] == 'input':
+        #    feedback['log']['text'] += '\r\n'
 
     jsonschema.validate(feedback, FEEDBACK_JSON_SCHEMA)
 
