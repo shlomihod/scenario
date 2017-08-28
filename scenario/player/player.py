@@ -28,10 +28,10 @@ def break_lines_log_quotes(feedback_log_quotes):
 
     for quote in feedback_log_quotes:
         if quote['type']['en'] == 'printing' and '\r\n' in quote['value']:
-            for line in quote['value'].splitlines():
+            for line in quote['value'].splitlines(True):
                 new_feedback_log_quotes.append({
                     'type': quote['type'],
-                    'value': line + '\r\n'
+                    'value': line
                 })
         else:
             new_feedback_log_quotes.append(quote)
