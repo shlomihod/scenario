@@ -1,26 +1,26 @@
-    function processFeedback(scenario_id) {
-      scenario_id_str = "-" + scenario_id
-      $("#scenario_name" + scenario_id_str).text(feedback_data.name);
-      $("#scenario_description" + scenario_id_str).text(feedback_data.description);
-      $("#scenario_result" + scenario_id_str).html("<strong>" + feedback_data.result.text + "</strong>");
+function processFeedback(feedbackData, scenarioId) {
+      scenarioIdStr = "-" + scenarioId
+      $("#scenario_name" + scenarioIdStr).text(feedbackData.name);
+      $("#scenario_description" + scenarioIdStr).text(feedbackData.description);
+      $("#scenario_result" + scenarioIdStr).html("<strong>" + feedbackData.result.text + "</strong>");
 
-      if (!feedback_data.result.bool) {
-        $("#scenario_feedback" + scenario_id_str).text(feedback_data.feedback.text);
+      if (!feedbackData.result.bool) {
+        $("#scenario_feedback" + scenarioIdStr).text(feedbackData.feedback.text);
       }
 
       var command_line = "C:\\Magshimim> program.exe";
-      for (var i = 0; i < feedback_data.args.length; i++) {
-        command_line += " " + feedback_data.args[i];
+      for (var i = 0; i < feedbackData.args.length; i++) {
+        command_line += " " + feedbackData.args[i];
       }
-      $("#scenario_log" + scenario_id_str).append("<li>" + command_line + "<li>")
+      $("#scenario_log" + scenarioIdStr).append("<li>" + command_line + "<li>")
 
       comments = [];
 
-      for (var i = 0; i < feedback_data.log.quotes.length; i++) {
+      for (var i = 0; i < feedbackData.log.quotes.length; i++) {
         var line = $('<li></li>');
-        line.text(feedback_data.log.quotes[i].value);
+        line.text(feedbackData.log.quotes[i].value);
 
-        if (feedback_data.log.quotes[i].type.en == "input" || feedback_data.log.quotes[i].type.en == "output") {
+        if (feedbackData.log.quotes[i].type.en == "input" || feedbackData.log.quotes[i].type.en == "output") {
           line.addClass("commentable-section");
           line.attr("data-section-id", i.toString());
 
@@ -29,18 +29,18 @@
             "comments": [
               {
                 "id": i.toString(),
-                "authorAvatarUrl": COMMENTS_IMAGES[feedback_data.log.quotes[i].type.en],
-                "authorName": feedback_data.log.quotes[i].type.he,
-                "comment": feedback_data.log.quotes[i].name
+                "authorAvatarUrl": COMMENTS_IMAGES[feedbackData.log.quotes[i].type.en],
+                "authorName": feedbackData.log.quotes[i].type.he,
+                "comment": feedbackData.log.quotes[i].name
               }
             ]
           });
       }
 
-      $("#scenario_log" + scenario_id_str).append(line);
+      $("#scenario_log" + scenarioIdStr).append(line);
     }
 
-      if (!feedback_data.result.bool) {
+      if (!feedbackData.result.bool) {
         var line = $('<li></li>');
         line.html("<br>")
         line.addClass("commentable-section");
@@ -51,14 +51,14 @@
           "comments": [
             {
               "id": "feedback",
-              "authorAvatarUrl": COMMENTS_IMAGES[feedback_data.result.bool.toString() + "_"],
-              "authorName": feedback_data.result.text,
+              "authorAvatarUrl": COMMENTS_IMAGES[feedbackData.result.bool.toString() + "_"],
+              "authorName": feedbackData.result.text,
               "comment": feedback_data.feedback
             }
           ]
         });
 
-        $("#scenario_log" + scenario_id_str).append(line);
+        $("#scenario_log" + scenarioIdStr).append(line);
 
       }
 
@@ -70,5 +70,5 @@
     };
 
   var SideComments = require('side-comments');
-  window.sideComments = new SideComments('#commentable-container' + scenario_id_str, currentUser, comments);
+  window.sideComments = new SideComments('#commentable-container' + scenarioIdStr, currentUser, comments);
 }
