@@ -78,7 +78,6 @@
       <script>
         var feedbackData{id} = {feedback_json};
       </script>
-      <script src="{resources_path}js/jquery.js"></script>
 
       <script type="application/javascript">
           var COMMENTS_IMAGES = {{
@@ -108,15 +107,29 @@
           }}
 
 
-          // call the function...
-          loadScript("{resources_path}js/side-comments.js", function() {{
-              loadScript("{resources_path}js/process_feedback.js", function(){{
-                  console.log('loaded');
-                  $(document).ready(function() {{
-                    processFeedback(feedbackData{id}, {id});
+
+          function loadProcessJs(){{
+            // call the function...
+            loadScript("{resources_path}js/side-comments.js", function() {{
+                loadScript("{resources_path}js/process_feedback.js", function(){{
+                    console.log('loaded');
+                    $(document).ready(function() {{
+                      processFeedback(feedbackData{id}, {id});
+                  }});
                 }});
-              }});
-          }});
+            }});
+          }}
+
+          // loading jquery twice creates a bug in inginious.
+          // https://github.com/UCL-INGI/INGInious/issues/243
+          // This code prevents it from happening
+          if(typeof jQuery=='undefined') {{
+              loadScript("{resources_path}js/jquery.js", function(){{
+                   loadProcessJs()
+              }})
+          }} else {{
+              loadProcessJs()
+          }}
 
       </script>
 
