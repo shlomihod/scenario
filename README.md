@@ -1,5 +1,7 @@
 # Scenario
 
+[![Build Status](https://semaphoreci.com/api/v1/cyber-org-il/scenario/branches/master/badge.svg)](https://semaphoreci.com/cyber-org-il/scenario)
+
 Testing console applications I/O
 
 ## Install
@@ -7,7 +9,8 @@ Testing console applications I/O
 
 ## Usage
 ```
-usage: scenario [-h] [-v V] [-a A] [-d] [-s] [-t T] [-f {json,text}]
+usage: scenario [-h] [-v V] [-a A] [-d] [-s] [-t T] [-f {json,text,html}]
+                [-p RESOURCES_PATH] [-i ID]
                 executable_path scenario_path
 
 Checking an IO scenario on execution.
@@ -20,11 +23,14 @@ optional arguments:
   -h, --help            show this help message and exit
   -v V                  set output verbosity
   -a A                  set extra arguments for executable
-  -d, --directory       run on all scenario files (.snr) in the directory
+  -d, --directory       run on all scenario files (.json) in the directory
   -s, --forward-signal  forward signal from executable to scenario
   -t T                  set execution timeout in seconds
-  -f {json,text}, --format {json,text}
+  -f {json,text,html}, --format {json,text,html}
                         output format to stdout
+  -p RESOURCES_PATH, --resources-path RESOURCES_PATH
+                        url to js/css resources for html output format
+  -i ID, --id ID        div id for html output format
 ```
 
 ## Exit Code

@@ -36,7 +36,16 @@ class PlayerTest(unittest.TestCase):
 
         feedback = play_scenario(scenario, EXECUTABLE)
 
+        print('args:')
+        pprint.pprint(args)
+        print
+
+        print('dialogue:')
+        pprint.pprint(dialogue)
+        print
+
         pprint.pprint(feedback['log'])
+
         self.assertEqual(feedback['result']['bool'], result_bool)
         self.assertEqual(feedback['feedback']['type'], feedback_type)
 
