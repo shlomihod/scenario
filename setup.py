@@ -20,7 +20,7 @@ setup(name='scenario',
           'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 2 :: Only',
       ],
-      install_requires=['pexpect', 'jsonschema'],
+      install_requires=['pexpect', 'jsonschema', 'nose'],
       entry_points={
           'console_scripts': [
               'scenario = scenario.__main__:main'
