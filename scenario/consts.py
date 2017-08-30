@@ -49,6 +49,11 @@ QUOTE_TYPE_HE_TEXT = {'printing': u'הדפסה',
                       'input': u'קלט'
                       }
 
+# Delay before send/sendline in seconds
+# In order to get currect `isalive` in Linux
+# (not needed in macOS)
+DELAY_BEFORE_SEND = 0.5
+
 # https://people.cs.pitt.edu/~alanjawi/cs449/code/shell/UnixSignals.htm
 SIGNALS = {
     1: ('SIGHUP', 'Hangup'),

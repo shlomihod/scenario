@@ -2,11 +2,13 @@
 
 import re
 import copy
+import time
 
 import pexpect
 import jsonschema
 
-from scenario.consts import FEEDBACK_JSON_SCHEMA
+from scenario.consts import FEEDBACK_JSON_SCHEMA, \
+    DELAY_BEFORE_SEND
 
 from scenario.player.feedback_exceptions import SholdNoOutputBeforeInput, \
     ShouldEOF,                \
@@ -186,6 +188,8 @@ def play_scenario(scenario, executable_path,
 
                     if not scenario['flow'] and get_cleaned_after(p, scenario['strictness']):
                         raise SholdNoOutputBeforeInput(quote)
+
+                    time.sleep(DELAY_BEFORE_SEND)
 
                     if not p.isalive():
                         raise ShouldInputBeforeEOF(quote)
