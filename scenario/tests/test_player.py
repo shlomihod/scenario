@@ -248,6 +248,8 @@ class ResultFalseTests(PlayerTest):
         Feedback Error: Should Input Before EOF
         '''
 
+        raise unittest.SkipTest
+
         dialogue = [DIALOUGE_PIECES['output4'],
                     DIALOUGE_PIECES['input_comment']]
 
