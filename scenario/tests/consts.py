@@ -18,7 +18,7 @@ Coveted her and me.'''
 _executable_dirpath = os.path.dirname(os.path.abspath(__file__))
 _executable_filepath = os.path.join(_executable_dirpath, 'executable.py')
 
-EXECUTABLE = '{}'.format(_executable_filepath)
+EXECUTABLE = 'python {}'.format(_executable_filepath)
 
 DIALOUGE_PIECES = {
     'output_all': [{
