@@ -1,6 +1,5 @@
 TODO
 ====
-* [ ] Why `ShouldInputBeforeEOF` fails in Linux, but not in macOS? Then re-enable this test
 * [ ] HTML output format use `\r\n` data in log's quotes
 * [ ] Updating [https://docs.google.com/document/d/1fS_GZFhFWBzTAX_tgAiZKXgHkePR_MwVQx1vtqnDZWA/edit?usp=sharing] & Linking to README.md
 * [ ] 'How to write scenario?' Documentation

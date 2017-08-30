@@ -1,4 +1,4 @@
-__all__ = ['EXECUTABLE', 'DIALOUGE_PICES', 'ANNABEL_LEE']
+__all__ = ['EXECUTABLE', 'DIALOUGE_PIECES', 'ANNABEL_LEE']
 
 import os
 
