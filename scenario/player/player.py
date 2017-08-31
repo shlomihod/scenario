@@ -147,21 +147,17 @@ def play_scenario(scenario, executable_path,
 
                     feedback['log']['quotes'].append(log_quote)
 
-                    # AFTER the quote match UNTIL THE END OF THE LINE
-                    p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
-
+                    # for flow False, no output should be
+                    # AFTER the quote match UNTIL the END of the current LINE
                     if not scenario['flow']:
+                        p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
+
                         feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
                                                           'value': p.before + xstr(p.after)
                                                           })
 
                         if get_cleaned_before(p, scenario['strictness']).strip(' '):
                             raise ShouldOutput(quote)
-
-                    else:
-                        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
-                                                          'value': p.before + p.after
-                                                          })
 
                     '''
                     if verbosity >= VERBOSITY['ERROR'] and index != 0:
