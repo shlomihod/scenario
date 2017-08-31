@@ -87,15 +87,14 @@ def main():
                                                       args.a)
 
                 feedback.append(scenario_file_feedback)
-                feedback_texts.append(scenario_file_feedback['log']['text'] +
-                                      '\n' + '====' + '\n' + str(feedback['result']['bool']))
+                feedback_texts.append(build_feedback_text(scenario_file_feedback))
 
             result = all([fb['result']['bool'] for fb in feedback])
 
-            signals = [feedback['signal_code'] for fb in feedback]
+            signals = [fb['signal_code'] for fb in feedback]
             signal_ = next((item for item in signals if item is not None), None)
 
-            feedback_text = build_feedback_text(feedback)
+            feedback_text = '\n\n\n'.join(feedback_texts)
 
     except ParserError as e:
         print(e.msg)

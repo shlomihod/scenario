@@ -147,21 +147,17 @@ def play_scenario(scenario, executable_path,
 
                     feedback['log']['quotes'].append(log_quote)
 
-                    # AFTER the quote match UNTIL THE END OF THE LINE
-                    p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
-
+                    # for flow False, no output should be
+                    # AFTER the quote match UNTIL the END of the current LINE
                     if not scenario['flow']:
+                        p.expect(['\r\n', pexpect.TIMEOUT, pexpect.EOF])
+
                         feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
                                                           'value': p.before + xstr(p.after)
                                                           })
 
                         if get_cleaned_before(p, scenario['strictness']).strip(' '):
                             raise ShouldOutput(quote)
-
-                    else:
-                        feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
-                                                          'value': p.before + p.after
-                                                          })
 
                     '''
                     if verbosity >= VERBOSITY['ERROR'] and index != 0:
@@ -309,17 +305,15 @@ def play_scenario(scenario, executable_path,
     feedback['log']['quotes'] = break_lines_log_quotes(
         feedback['log']['quotes'])
 
+    # Generate feedback LOG text
     for quote in feedback['log']['quotes']:
         if quote['type']['en'] == 'output':
-            feedback['log']['text'] += '<'
+            feedback['log']['text'] += '<<'
 
         feedback['log']['text'] += quote['value']
 
         if quote['type']['en'] == 'output':
-            feedback['log']['text'] += '>'
-
-        # if quote['type']['en'] == 'input':
-        #    feedback['log']['text'] += '\r\n'
+            feedback['log']['text'] += '>>'
 
     jsonschema.validate(feedback, FEEDBACK_JSON_SCHEMA)
 

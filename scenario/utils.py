@@ -72,6 +72,9 @@ def build_feedback_text(feedback):
     text = ''
 
     text += str(feedback['result']['bool'])
+    text += '\n'
+    text += feedback['id']
+
     text += '\n====\n'
 
     if not feedback['result']['bool']:
