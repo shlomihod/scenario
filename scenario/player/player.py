@@ -314,9 +314,6 @@ def play_scenario(scenario, executable_path,
         if quote['type']['en'] == 'output':
             feedback['log']['text'] += '>'
 
-        # if quote['type']['en'] == 'input':
-        #    feedback['log']['text'] += '\r\n'
-
     jsonschema.validate(feedback, FEEDBACK_JSON_SCHEMA)
 
     return feedback
