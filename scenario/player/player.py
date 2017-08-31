@@ -305,6 +305,7 @@ def play_scenario(scenario, executable_path,
     feedback['log']['quotes'] = break_lines_log_quotes(
         feedback['log']['quotes'])
 
+    # Generate feedback LOG text
     for quote in feedback['log']['quotes']:
         if quote['type']['en'] == 'output':
             feedback['log']['text'] += '<<'
