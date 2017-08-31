@@ -307,12 +307,12 @@ def play_scenario(scenario, executable_path,
 
     for quote in feedback['log']['quotes']:
         if quote['type']['en'] == 'output':
-            feedback['log']['text'] += '<'
+            feedback['log']['text'] += '<<'
 
         feedback['log']['text'] += quote['value']
 
         if quote['type']['en'] == 'output':
-            feedback['log']['text'] += '>'
+            feedback['log']['text'] += '>>'
 
     jsonschema.validate(feedback, FEEDBACK_JSON_SCHEMA)
 
