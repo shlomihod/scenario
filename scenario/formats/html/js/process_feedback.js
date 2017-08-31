@@ -53,7 +53,7 @@ function processFeedback(feedbackData, scenarioId) {
               "id": "feedback",
               "authorAvatarUrl": COMMENTS_IMAGES[feedbackData.result.bool.toString() + "_"],
               "authorName": feedbackData.result.text,
-              "comment": feedback_data.feedback
+              "comment": feedbackData.feedback
             }
           ]
         });
