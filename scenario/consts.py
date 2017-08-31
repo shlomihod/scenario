@@ -35,7 +35,7 @@ OUTPUT_HTML_PATH = os.path.join(
     'html')
 
 # TODO from github
-OUTPUT_HTML_RESOURCES_PATH_DEFALT = 'https://cdn.rawgit.com/shlomihod/scenario/master/scenario/formats/html/'
+OUTPUT_HTML_RESOURCES_PATH_DEFALT = 'https://cdn.rawgit.com/shlomihod/scenario/v2.1.0/scenario/formats/html/'
 
 with open(os.path.join(OUTPUT_HTML_PATH, 'index.html'), 'r') as f:
     OUTPUT_HTML_PAGE = f.read()
