@@ -37,7 +37,7 @@ class ShouldOutput(FeedbackException):
     The output is not just before EOF
     '''
 
-    msg = u'הפלט {name} {value} לא הופיע או הופיע במקום הלא מתאים.'
+    msg = u'הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים.'
 
     def __init__(self, quote):
         FeedbackException.__init__(self, ShouldOutput.msg, quote)
@@ -52,7 +52,7 @@ class ShouldEOF(FeedbackException):
 
 
 class ShouldOutputBeforeEOF(FeedbackException):
-    msg = u'ריצת התכנית הסתיימה, אך הפלט {name} {value} לא הופיע או הופיע במקום הלא מתאים לפי כן.'
+    msg = u'ריצת התכנית הסתיימה, אך הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים לפי כן.'
 
     def __init__(self, quote):
         FeedbackException.__init__(self, ShouldOutputBeforeEOF.msg, quote)
@@ -63,14 +63,14 @@ class SholdNoOutputBeforeInput(FeedbackException):
     only in `flow = False`
     '''
 
-    msg = u'התכנית לא הייתה אמורה להדפיס פלט לפני קבלת הקלט {name} {value}'
+    msg = u'התכנית לא הייתה אמורה להדפיס פלט לפני קבלת הקלט {name} ({value})'
 
     def __init__(self, quote):
         FeedbackException.__init__(self, SholdNoOutputBeforeInput.msg, quote)
 
 
 class ShouldInputBeforeEOF(FeedbackException):
-    msg = u'ריצת התכנית הסתיימה, אך התכנית אמורה הייתה לקלוט את הקלט {name} {value}.'
+    msg = u'ריצת התכנית הסתיימה, אך התכנית אמורה הייתה לקלוט את הקלט {name} ({value}).'
 
     def __init__(self, quote):
         FeedbackException.__init__(self, ShouldInputBeforeEOF.msg, quote)
