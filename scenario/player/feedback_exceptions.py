@@ -77,7 +77,7 @@ class ShouldInputBeforeEOF(FeedbackException):
 
 
 class MemoryFeedbackError(FeedbackException):
-    msg = u'התרחשה שגיאת זיכרון'
+    msg = u'התרחשה שגיאת זיכרון.'
 
     def __init__(self):
         FeedbackException.__init__(self, MemoryFeedbackError.msg, {})
