@@ -45,7 +45,7 @@ class ShouldOutput(FeedbackException):
 
 class ShouldEOF(FeedbackException):
     msg = u'ריצת התכנית אמורה הייתה להסתיים לאחר הקלטים והפלטים שנבדקו, אך התכנית עדיין רצה.' + u'\n' + \
-          u'אולי יש לולאה אינסופית בקוד? אולי יש getchar מיותר בסוף ה-main?'
+          u'אולי התכנית מחכה לקלט נוסף שהיא לא הייתה אמורה לקלוט? אולי יש לולאה אינסופית בקוד? אולי יש getchar מיותר בסוף ה-main?'
 
     def __init__(self, quote):
         FeedbackException.__init__(self, ShouldEOF.msg, quote)
