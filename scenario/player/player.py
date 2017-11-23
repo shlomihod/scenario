@@ -178,10 +178,6 @@ def play_scenario(scenario, executable_path,
 
                     p.expect(['.+', pexpect.TIMEOUT, pexpect.EOF])
 
-                    feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
-                                                      'value': p.before + xstr(p.after)
-                                                      })
-
                     if not scenario['flow'] and get_cleaned_after(p, scenario['strictness']):
                         raise SholdNoOutputBeforeInput(quote)
 
@@ -194,6 +190,17 @@ def play_scenario(scenario, executable_path,
                         p.sendline(quote['value'])
                     except OSError:
                         raise ShouldInputBeforeEOF(quote)
+
+                    # relate to the p.expect inline 179 that catch everything
+                    # it will run only if sendline was succefull,
+                    # otherwise the priniting quote
+                    # will be added in the relavent except blcok
+                    # TODO: maybe refactor that, and remove the printing quote
+                    # adding in the except block, and move this line stright
+                    # after the p.expect call
+                    feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
+                                                      'value': p.before + xstr(p.after)
+                                                      })
 
                     feedback['log']['quotes'].append({'type': get_quote_type_dict('input'),
                                                       'name': quote['name'],
@@ -242,12 +249,13 @@ def play_scenario(scenario, executable_path,
         feedback['feedback'] = get_feedback_dict(e)
 
     except ShouldInputBeforeEOF as e:
+        print('ShouldInputBeforeEOF - BEFORE', feedback['log']['quotes'])
         feedback['result'] = get_result_dict(False)
 
         feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
                                           'value': p.before + xstr(p.after)
                                           })
-
+        print('ShouldInputBeforeEOF - AFTER', feedback['log']['quotes'])
         feedback['feedback'] = get_feedback_dict(e)
 
     except ShouldOutputBeforeEOF as e:
