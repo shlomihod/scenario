@@ -8,6 +8,7 @@ if sys.version_info[0] != 2:
 setup(name='scenario',
       version='2.1.0',
       packages=['scenario',
+                'scenario.api',
                 'scenario.player',
                 'scenario.parser',
                 'scenario.tests'],
