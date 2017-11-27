@@ -7,21 +7,25 @@ Feedback Exception Logic
 
 Scenario "consume" all the Input in the Executable, then:
 
-+-----------------------------------------------------------+
-| Executable          | Scenario    | Feedback              |
-+ ====================+=============+=======================+
-| EOF                 | More Input  | ShouldInputBeforeEOF  |
-+---------------------+-------------+-----------------------+
-| EOF                 | More Output | ShouldOutputBeforeEOF |
-+---------------------+-------------+-----------------------+
-| Input or            | EOF         | ShouldEOF             |
-| Not Exiting         |             |                       |
-+---------------------+-------------+-----------------------+
-| Input or            | More Output | ShouldOutput          |
-| Not Exiting         |             |                       |
-+---------------------+-------------+-----------------------+
-| Signal              |             | MemoryFeedbackError   |
-+---------------------+-------------+-----------------------+
++-----------------------------------------------------------+----------+
+| Executable          | Scenario    | Feedback              | Invoke   |
++ ====================+=============+=======================+==========+
+| EOF                 | More Input  | ShouldInputBeforeEOF  | Internal |
++---------------------+-------------+-----------------------+----------+
+| EOF                 | More Output | ShouldOutputBeforeEOF | Internal |
++---------------------+-------------+-----------------------+----------+
+| Input or            | EOF         | ShouldEOF             | Internal |
+| Not Exiting         |             |                       |          |
++---------------------+-------------+-----------------------+----------+
+| Input or            | More Output | ShouldOutput          | Internal |
+| Not Exiting         |             |                       |          |
++---------------------+-------------+-----------------------+----------+
+| Signal              |             | MemoryFeedbackError   | Internal |
++---------------------+-------------+-----------------------+----------+
+| Timeout             |             | TimeoutFeedbackError  | External |
++---------------------+-------------+-----------------------+----------+
+| Overflow            |             | OverflowFeedbackError | External |
++---------------------+-------------+-----------------------+----------+
 '''
 
 
@@ -32,7 +36,12 @@ class FeedbackException(Exception):
         self.feedback = msg.format(**quote)
 
 
-class ShouldOutput(FeedbackException):
+class InternalFeedbackException(FeedbackException):
+    def __init__(self, msg, quote=None):
+        FeedbackException.__init__(self, msg, quote)
+
+
+class ShouldOutput(InternalFeedbackException):
     '''
     The output is not just before EOF
     '''
@@ -40,25 +49,25 @@ class ShouldOutput(FeedbackException):
     msg = u'הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים.'
 
     def __init__(self, quote):
-        FeedbackException.__init__(self, ShouldOutput.msg, quote)
+        InternalFeedbackException.__init__(self, ShouldOutput.msg, quote)
 
 
-class ShouldEOF(FeedbackException):
+class ShouldEOF(InternalFeedbackException):
     msg = u'ריצת התכנית אמורה הייתה להסתיים לאחר הקלטים והפלטים שנבדקו, אך התכנית עדיין רצה.' + u'\n' + \
-          u'אולי יש לולאה אינסופית בקוד? אולי יש getchar מיותר בסוף ה-main?'
+          u'אולי התכנית מחכה לקלט נוסף שהיא לא הייתה אמורה לקלוט? אולי יש לולאה אינסופית בקוד? אולי יש getchar מיותר בסוף ה-main?'
 
     def __init__(self, quote):
-        FeedbackException.__init__(self, ShouldEOF.msg, quote)
+        InternalFeedbackException.__init__(self, ShouldEOF.msg, quote)
 
 
-class ShouldOutputBeforeEOF(FeedbackException):
+class ShouldOutputBeforeEOF(InternalFeedbackException):
     msg = u'ריצת התכנית הסתיימה, אך הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים לפי כן.'
 
     def __init__(self, quote):
-        FeedbackException.__init__(self, ShouldOutputBeforeEOF.msg, quote)
+        InternalFeedbackException.__init__(self, ShouldOutputBeforeEOF.msg, quote)
 
 
-class SholdNoOutputBeforeInput(FeedbackException):
+class SholdNoOutputBeforeInput(InternalFeedbackException):
     '''
     only in `flow = False`
     '''
@@ -66,18 +75,37 @@ class SholdNoOutputBeforeInput(FeedbackException):
     msg = u'התכנית לא הייתה אמורה להדפיס פלט לפני קבלת הקלט {name} ({value})'
 
     def __init__(self, quote):
-        FeedbackException.__init__(self, SholdNoOutputBeforeInput.msg, quote)
+        InternalFeedbackException.__init__(self, SholdNoOutputBeforeInput.msg, quote)
 
 
-class ShouldInputBeforeEOF(FeedbackException):
+class ShouldInputBeforeEOF(InternalFeedbackException):
     msg = u'ריצת התכנית הסתיימה, אך התכנית אמורה הייתה לקלוט את הקלט {name} ({value}).'
 
     def __init__(self, quote):
-        FeedbackException.__init__(self, ShouldInputBeforeEOF.msg, quote)
+        InternalFeedbackException.__init__(self, ShouldInputBeforeEOF.msg, quote)
 
 
-class MemoryFeedbackError(FeedbackException):
+class MemoryFeedbackError(InternalFeedbackException):
     msg = u'התרחשה שגיאת זיכרון.'
 
     def __init__(self):
-        FeedbackException.__init__(self, MemoryFeedbackError.msg, {})
+        InternalFeedbackException.__init__(self, MemoryFeedbackError.msg, {})
+
+
+class ExternalFeedbackException(FeedbackException):
+    def __init__(self, msg, quote=None):
+        FeedbackException.__init__(self, msg, quote)
+
+
+class TimeoutFeedbackError(ExternalFeedbackException):
+    msg = u'התכנית רצה יותר מדי זמן. אולי יש לולאה אינסופית בקוד?'
+
+    def __init__(self):
+        ExternalFeedbackException.__init__(self, TimeoutFeedbackError.msg, {})
+
+
+class OverflowFeedbackError(ExternalFeedbackException):
+    msg = u'התכנית השתמשה ביותר מדי זיכרון. אולי התכנית מדפיסה יותר מדי פלט? אולי יש לולאה אינסופית בקוד?.'
+
+    def __init__(self):
+        ExternalFeedbackException.__init__(self, OverflowFeedbackError.msg, {})
