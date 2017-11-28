@@ -1,6 +1,7 @@
 __all__ = ['EXECUTABLE', 'DIALOUGE_PIECES', 'ANNABEL_LEE']
 
 import os
+import sys
 
 ANNABEL_LEE = '''It was many and many a year ago,
 In a kingdom by the sea,
@@ -18,7 +19,13 @@ Coveted her and me.'''
 _executable_dirpath = os.path.dirname(os.path.abspath(__file__))
 _executable_filepath = os.path.join(_executable_dirpath, 'executable.py')
 
-EXECUTABLE = 'python {}'.format(_executable_filepath)
+
+if sys.version_info[0] < 3:
+    PYTHON_COMMAND = 'python'
+else:
+    PYTHON_COMMAND = 'python3'
+
+EXECUTABLE = PYTHON_COMMAND + _executable_filepath
 
 DIALOUGE_PIECES = {
     'output_all': [{
