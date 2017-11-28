@@ -29,6 +29,10 @@ else:
     # there is `python3` command in bash
     if shutil.which('python3') is not None:
         PYTHON_COMMAND = 'python3'
+    elif shutil.which('python3.5') is not None:
+        PYTHON_COMMAND = 'python3.5'
+    elif shutil.which('python3.4') is not None:
+        PYTHON_COMMAND = 'python3.4'
     else:
         PYTHON_COMMAND = 'python'
 
