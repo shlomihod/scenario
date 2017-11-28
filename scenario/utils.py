@@ -4,7 +4,7 @@ from scenario.consts import RESULT_TEXT, QUOTE_TYPE_HE_TEXT
 
 
 def xstr(s):
-    if not isinstance(s, basestring):
+    if not isinstance(s, str):
         return ''
     return str(s)
 
@@ -61,7 +61,7 @@ def get_feedback_dict(e):
 
 
 def get_quote_type_dict(quote_type):
-    assert isinstance(quote_type, basestring)
+    assert isinstance(quote_type, str)
 
     return {'en': quote_type,
             'he': QUOTE_TYPE_HE_TEXT[quote_type]

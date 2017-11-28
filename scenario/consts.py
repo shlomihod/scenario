@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import os
 import json
 import pkg_resources
@@ -7,14 +9,14 @@ import pkg_resources
 from collections import OrderedDict
 
 SCENARIO_JSON_SCHEMA_PATH = 'schema/scenario.json'
-SCENARIO_JSON_SCHEMA = json.load(
+SCENARIO_JSON_SCHEMA = json.loads(
     pkg_resources.resource_stream('scenario',
-                                  SCENARIO_JSON_SCHEMA_PATH))
+                                  SCENARIO_JSON_SCHEMA_PATH).read().decode('utf-8'))
 
 FEEDBACK_JSON_SCHEMA_PATH = 'schema/feedback.json'
-FEEDBACK_JSON_SCHEMA = json.load(
+FEEDBACK_JSON_SCHEMA = json.loads(
     pkg_resources.resource_stream('scenario',
-                                  FEEDBACK_JSON_SCHEMA_PATH))
+                                  FEEDBACK_JSON_SCHEMA_PATH).read().decode('utf-8'))
 
 VERBOSITY = OrderedDict(
     [('RETURN_CODE', 0),
@@ -37,16 +39,16 @@ OUTPUT_HTML_PATH = os.path.join(
 # TODO from github
 OUTPUT_HTML_RESOURCES_PATH_DEFALT = 'https://cdn.rawgit.com/shlomihod/scenario/v2.1.0/scenario/formats/html/'
 
-with open(os.path.join(OUTPUT_HTML_PATH, 'index.html'), 'r') as f:
+with open(os.path.join(OUTPUT_HTML_PATH, 'index.html'), 'r', encoding='utf-8') as f:
     OUTPUT_HTML_PAGE = f.read()
 
-RESULT_TEXT = {False: u'אי-הצלחה',
-               True: u'הצלחה'
+RESULT_TEXT = {False: 'אי-הצלחה',
+               True: 'הצלחה'
                }
 
-QUOTE_TYPE_HE_TEXT = {'printing': u'הדפסה',
-                      'output': u'פלט',
-                      'input': u'קלט'
+QUOTE_TYPE_HE_TEXT = {'printing': 'הדפסה',
+                      'output': 'פלט',
+                      'input': 'קלט'
                       }
 
 # Delay before send/sendline in seconds
