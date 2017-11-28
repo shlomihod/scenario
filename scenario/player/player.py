@@ -54,7 +54,7 @@ def play_scenario(scenario, executable_path,
         executable_path_with_snr_args += ' ' + ' '.join(scenario['args'])
 
     if not executable_extra_args:
-        p = pexpect.spawn(
+        p = pexpect.spawnu(
             executable_path_with_snr_args,
             timeout=scenario['timeout'], echo=False
         )
@@ -62,7 +62,7 @@ def play_scenario(scenario, executable_path,
     else:
         executable_path_with_all_args = (executable_path_with_snr_args +
                                          ' ' + executable_extra_args)
-        p = pexpect.spawn(
+        p = pexpect.spawnu(
             '/bin/bash', ['-c', executable_path_with_all_args],
             timeout=scenario['timeout'], echo=False
         )
@@ -249,13 +249,12 @@ def play_scenario(scenario, executable_path,
         feedback['feedback'] = get_feedback_dict(e)
 
     except ShouldInputBeforeEOF as e:
-        print('ShouldInputBeforeEOF - BEFORE', feedback['log']['quotes'])
         feedback['result'] = get_result_dict(False)
 
         feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
                                           'value': p.before + xstr(p.after)
                                           })
-        print('ShouldInputBeforeEOF - AFTER', feedback['log']['quotes'])
+
         feedback['feedback'] = get_feedback_dict(e)
 
     except ShouldOutputBeforeEOF as e:
@@ -291,15 +290,19 @@ def play_scenario(scenario, executable_path,
         '''
 
     p.close()
+    print('exit code', p.exitstatus)
+    print('signal code', p.signalstatus)
     feedback['exit_code'] = p.exitstatus
     feedback['signal_code'] = p.signalstatus
 
     # http://www.tldp.org/LDP/abs/html/exitcodes.html
-    if 129 <= feedback['exit_code'] <= 162:
+    if (feedback['exit_code'] is not None and
+            129 <= feedback['exit_code'] <= 162):
         feedback['signal_code'] = feedback['exit_code'] - 128
         feedback['exit_code'] = None
 
-    if feedback['signal_code'] == 0:
+    if (feedback['signal_code'] is not None and
+            feedback['signal_code'] == 0):
         feedback['signal_code'] = None
 
     # WHY?

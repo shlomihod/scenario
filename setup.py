@@ -1,10 +1,11 @@
 import sys
 from setuptools import setup
 
+'''
 if sys.version_info[0] != 2:
     sys.stderr.write('This package only supports Python 2.\n')
     sys.exit(1)
-
+'''
 setup(name='scenario',
       version='2.1.0',
       packages=['scenario',
@@ -19,7 +20,7 @@ setup(name='scenario',
       classifiers=[
           'Programming Language :: Python',
           'Programming Language :: Python :: 2',
-          'Programming Language :: Python :: 2 :: Only',
+          'Programming Language :: Python :: 3',
       ],
       install_requires=['pexpect', 'jsonschema', 'nose'],
       entry_points={

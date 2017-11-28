@@ -1,6 +1,8 @@
 __all__ = ['EXECUTABLE', 'DIALOUGE_PIECES', 'ANNABEL_LEE']
 
 import os
+import sys
+import shutil
 
 ANNABEL_LEE = '''It was many and many a year ago,
 In a kingdom by the sea,
@@ -18,7 +20,19 @@ Coveted her and me.'''
 _executable_dirpath = os.path.dirname(os.path.abspath(__file__))
 _executable_filepath = os.path.join(_executable_dirpath, 'executable.py')
 
-EXECUTABLE = 'python {}'.format(_executable_filepath)
+
+# running in Python 3
+if sys.version_info[0] < 3:
+    PYTHON_COMMAND = 'python'
+# running in Python 2
+else:
+    # there is `python3` command in bash
+    if shutil.which('python3') is not None:
+        PYTHON_COMMAND = 'python3'
+    else:
+        PYTHON_COMMAND = 'python'
+
+EXECUTABLE = PYTHON_COMMAND ' ' + _executable_filepath
 
 DIALOUGE_PIECES = {
     'output_all': [{
