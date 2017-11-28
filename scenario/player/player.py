@@ -249,13 +249,12 @@ def play_scenario(scenario, executable_path,
         feedback['feedback'] = get_feedback_dict(e)
 
     except ShouldInputBeforeEOF as e:
-        print('ShouldInputBeforeEOF - BEFORE', feedback['log']['quotes'])
         feedback['result'] = get_result_dict(False)
 
         feedback['log']['quotes'].append({'type': get_quote_type_dict('printing'),
                                           'value': p.before + xstr(p.after)
                                           })
-        print('ShouldInputBeforeEOF - AFTER', feedback['log']['quotes'])
+
         feedback['feedback'] = get_feedback_dict(e)
 
     except ShouldOutputBeforeEOF as e:
