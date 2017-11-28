@@ -3,7 +3,7 @@
 import sys
 import ctypes
 
-from scenario.consts import ANNABEL_LEE
+from scenario.tests.consts import ANNABEL_LEE
 
 
 def crash():
