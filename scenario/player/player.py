@@ -290,8 +290,7 @@ def play_scenario(scenario, executable_path,
         '''
 
     p.close()
-    print('exit code', p.exitstatus)
-    print('signal code', p.signalstatus)
+
     feedback['exit_code'] = p.exitstatus
     feedback['signal_code'] = p.signalstatus
 
