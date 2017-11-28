@@ -32,7 +32,7 @@ else:
     else:
         PYTHON_COMMAND = 'python'
 
-EXECUTABLE = PYTHON_COMMAND + _executable_filepath
+EXECUTABLE = PYTHON_COMMAND ' ' + _executable_filepath
 
 DIALOUGE_PIECES = {
     'output_all': [{
