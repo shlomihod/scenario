@@ -7,11 +7,11 @@ from scenario.tests.consts import ANNABEL_LEE
 
 
 def crash():
-    i = ctypes.c_char('a')
+    i = ctypes.c_char(b'a')
     j = ctypes.pointer(i)
     c = 0
     while True:
-        j[c] = 'a'
+        j[c] = b'a'
         c += 1
 
 
@@ -22,7 +22,7 @@ if __name__ == '__main__':
             print(ANNABEL_LEE)
 
         elif arg == 'input':
-            s = raw_input('Enter Input: ')
+            s = input('Enter Input: ')
 
         elif arg == 'output':
             print(s)
