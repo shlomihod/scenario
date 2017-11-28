@@ -12,7 +12,7 @@ from scenario.parser.exceptions import ParserJSONLoadingError, \
 
 
 def parse_scenario_json(scenario_path):
-    with open(scenario_path) as f:
+    with open(scenario_path, 'r', encoding='utf-8') as f:
         try:
             scenario = json.load(f)
         except ValueError as e:
