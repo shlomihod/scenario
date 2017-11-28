@@ -26,4 +26,4 @@ def get_timeout_feedback_json(scenario_path):
 
 
 def get_overflow_feedback_json(scenario_path):
-    return _get_feedback_json(scenario, OverflowFeedbackError)
+    return _get_feedback_json(scenario_path, OverflowFeedbackError)
