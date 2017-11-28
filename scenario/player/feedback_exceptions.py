@@ -107,7 +107,7 @@ class TimeoutFeedbackError(ExternalFeedbackException):
 
 
 class OverflowFeedbackError(ExternalFeedbackException):
-    msg = 'התכנית השתמשה ביותר מדי זיכרון. אולי התכנית מדפיסה יותר מדי פלט? אולי יש לולאה אינסופית בקוד?.'
+    msg = 'התכנית השתמשה ביותר מדי זיכרון. אולי התכנית מדפיסה יותר מדי פלט? אולי יש לולאה אינסופית בקוד?'
 
     def __init__(self):
         ExternalFeedbackException.__init__(self, OverflowFeedbackError.msg, {})
