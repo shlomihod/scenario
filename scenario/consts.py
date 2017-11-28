@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import os
 import json
 import pkg_resources
@@ -40,13 +42,13 @@ OUTPUT_HTML_RESOURCES_PATH_DEFALT = 'https://cdn.rawgit.com/shlomihod/scenario/v
 with open(os.path.join(OUTPUT_HTML_PATH, 'index.html'), 'r') as f:
     OUTPUT_HTML_PAGE = f.read()
 
-RESULT_TEXT = {False: u'אי-הצלחה',
-               True: u'הצלחה'
+RESULT_TEXT = {False: 'אי-הצלחה',
+               True: 'הצלחה'
                }
 
-QUOTE_TYPE_HE_TEXT = {'printing': u'הדפסה',
-                      'output': u'פלט',
-                      'input': u'קלט'
+QUOTE_TYPE_HE_TEXT = {'printing': 'הדפסה',
+                      'output': 'פלט',
+                      'input': 'קלט'
                       }
 
 # Delay before send/sendline in seconds
