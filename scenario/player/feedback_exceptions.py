@@ -58,8 +58,8 @@ class ShouldEOF(InternalFeedbackException):
     msg = 'ריצת התכנית אמורה הייתה להסתיים לאחר הקלטים והפלטים שנבדקו, אך התכנית עדיין רצה.' + '\n' + \
           'אולי התכנית מחכה לקלט נוסף שהיא לא הייתה אמורה לקלוט? אולי יש לולאה אינסופית בקוד? אולי יש getchar מיותר בסוף ה-main?'
 
-    def __init__(self, quote):
-        InternalFeedbackException.__init__(self, ShouldEOF.msg, quote)
+    def __init__(self):
+        InternalFeedbackException.__init__(self, ShouldEOF.msg, {})
 
 
 class ShouldOutputBeforeEOF(InternalFeedbackException):

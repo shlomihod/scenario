@@ -223,7 +223,7 @@ def play_scenario(scenario, executable_path,
     # REAL FEEDBACK EXCEPTIONS PART #
 
         except pexpect.TIMEOUT:
-            raise ShouldEOF(quote)
+            raise ShouldEOF()
 
         feedback['result'] = get_result_dict(True)
         feedback['feedback'] = get_feedback_dict(None)
