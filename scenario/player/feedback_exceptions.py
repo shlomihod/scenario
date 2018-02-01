@@ -48,7 +48,7 @@ class ShouldOutput(InternalFeedbackException):
     The output is not just before EOF
     '''
 
-    msg = 'הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים.'
+    msg = 'הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים לפני כן.'
 
     def __init__(self, quote):
         InternalFeedbackException.__init__(self, ShouldOutput.msg, quote)
@@ -56,14 +56,14 @@ class ShouldOutput(InternalFeedbackException):
 
 class ShouldEOF(InternalFeedbackException):
     msg = 'ריצת התכנית אמורה הייתה להסתיים לאחר הקלטים והפלטים שנבדקו, אך התכנית עדיין רצה.' + '\n' + \
-          'אולי התכנית מחכה לקלט נוסף שהיא לא הייתה אמורה לקלוט? אולי יש לולאה אינסופית בקוד? אולי יש getchar מיותר בסוף ה-main?'
+          'אולי התכנית מחכה לקלט נוסף שהיא לא הייתה אמורה לקלוט? אולי יש לולאה אינסופית בקוד?'
 
     def __init__(self):
         InternalFeedbackException.__init__(self, ShouldEOF.msg, {})
 
 
 class ShouldOutputBeforeEOF(InternalFeedbackException):
-    msg = 'ריצת התכנית הסתיימה, אך הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים לפי כן.'
+    msg = 'ריצת התכנית הסתיימה, אך הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים לפני כן.'
 
     def __init__(self, quote):
         InternalFeedbackException.__init__(self, ShouldOutputBeforeEOF.msg, quote)
