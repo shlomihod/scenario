@@ -48,22 +48,22 @@ class ShouldOutput(InternalFeedbackException):
     The output is not just before EOF
     '''
 
-    msg = 'הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים.'
+    msg = 'הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים לפני כן.'
 
     def __init__(self, quote):
         InternalFeedbackException.__init__(self, ShouldOutput.msg, quote)
 
 
 class ShouldEOF(InternalFeedbackException):
-    msg = 'ריצת התכנית אמורה הייתה להסתיים לאחר הקלטים והפלטים שנבדקו, אך התכנית עדיין רצה.' + '\n' + \
-          'אולי התכנית מחכה לקלט נוסף שהיא לא הייתה אמורה לקלוט? אולי יש לולאה אינסופית בקוד? אולי יש getchar מיותר בסוף ה-main?'
+    msg = 'ריצת התוכנית אמורה הייתה להסתיים לאחר הקלטים והפלטים שנבדקו, אך התוכנית עדיין רצה.' + '\n' + \
+          'אולי התוכנית מחכה לקלט נוסף שהיא לא הייתה אמורה לקלוט? אולי יש לולאה אינסופית בקוד?'
 
     def __init__(self):
         InternalFeedbackException.__init__(self, ShouldEOF.msg, {})
 
 
 class ShouldOutputBeforeEOF(InternalFeedbackException):
-    msg = 'ריצת התכנית הסתיימה, אך הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים לפי כן.'
+    msg = 'ריצת התוכנית הסתיימה, אך הפלט {name} ({value}) לא הופיע או הופיע במקום הלא מתאים לפני כן.'
 
     def __init__(self, quote):
         InternalFeedbackException.__init__(self, ShouldOutputBeforeEOF.msg, quote)
@@ -74,14 +74,14 @@ class SholdNoOutputBeforeInput(InternalFeedbackException):
     only in `flow = False`
     '''
 
-    msg = 'התכנית לא הייתה אמורה להדפיס פלט לפני קבלת הקלט {name} ({value})'
+    msg = 'התוכנית לא הייתה אמורה להדפיס פלט לפני קבלת הקלט {name} ({value})'
 
     def __init__(self, quote):
         InternalFeedbackException.__init__(self, SholdNoOutputBeforeInput.msg, quote)
 
 
 class ShouldInputBeforeEOF(InternalFeedbackException):
-    msg = 'ריצת התכנית הסתיימה, אך התכנית אמורה הייתה לקלוט את הקלט {name} ({value}).'
+    msg = 'ריצת התוכנית הסתיימה, אך התוכנית אמורה הייתה לקלוט את הקלט {name} ({value}).'
 
     def __init__(self, quote):
         InternalFeedbackException.__init__(self, ShouldInputBeforeEOF.msg, quote)
@@ -100,14 +100,14 @@ class ExternalFeedbackException(FeedbackException):
 
 
 class TimeoutFeedbackError(ExternalFeedbackException):
-    msg = 'התכנית רצה יותר מדי זמן. אולי יש לולאה אינסופית בקוד?'
+    msg = 'התוכנית רצה יותר מדי זמן. אולי יש לולאה אינסופית בקוד?'
 
     def __init__(self):
         ExternalFeedbackException.__init__(self, TimeoutFeedbackError.msg, {})
 
 
 class OverflowFeedbackError(ExternalFeedbackException):
-    msg = 'התכנית השתמשה ביותר מדי זיכרון. אולי התכנית מדפיסה יותר מדי פלט? אולי יש לולאה אינסופית בקוד?'
+    msg = 'התוכנית השתמשה ביותר מדי זיכרון. אולי התוכנית מדפיסה יותר מדי פלט? אולי יש לולאה אינסופית בקוד?'
 
     def __init__(self):
         ExternalFeedbackException.__init__(self, OverflowFeedbackError.msg, {})
